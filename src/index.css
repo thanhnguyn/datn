@@ -12,10 +12,10 @@ body{
   font-optical-sizing: auto;
   background: #f5f0f0;
 }
-.container{
+/* .container{
   width: 90%;
   margin: auto;
-}
+} */
 
 .link:hover{
   color: #ff5252;
