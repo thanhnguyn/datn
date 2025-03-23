@@ -21,19 +21,24 @@ const Navigation = () => {
                             <Link to='/' className='link transition text-[14px] font-[500]'>Home</Link>
                         </li>
                         <li className='list-none'>
-                            <Link to='/' className='link transition text-[14px] font-[500]'>Home</Link>
+                            <Link to='/' className='link transition text-[14px] font-[500]'>Fashion</Link>
                         </li>
                         <li className='list-none'>
-                            <Link to='/' className='link transition text-[14px] font-[500]'>Home</Link>
+                            <Link to='/' className='link transition text-[14px] font-[500]'>Electronics</Link>
                         </li>
                         <li className='list-none'>
-                            <Link to='/' className='link transition text-[14px] font-[500]'>Home</Link>
+                            <Link to='/' className='link transition text-[14px] font-[500]'>Bags</Link>
                         </li>
                         <li className='list-none'>
-                            <Link to='/' className='link transition text-[14px] font-[500]'>Home</Link>
+                            <Link to='/' className='link transition text-[14px] font-[500]'>Footwear</Link>
                         </li>
                         <li className='list-none'>
-                            <Link to='/' className='link transition text-[14px] font-[500]'>Home</Link>
+                            <Link to='/' className='link transition text-[14px] font-[500]'>Groceries</Link>
+                        </li>
+                        <li className='list-none'>
+                            <Link to='/' className='link transition text-[14px] font-[500]'>Beauty</Link>
+                        </li><li className='list-none'>
+                            <Link to='/' className='link transition text-[14px] font-[500]'>Wellness</Link>
                         </li>
                     </ul>
                 </div>
