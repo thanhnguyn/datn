@@ -12,7 +12,24 @@ body{
   font-optical-sizing: auto;
   background: #f5f0f0;
   color: rgba(0,0,0,0.8);
+  overflow-x: hidden;
 }
+
+::-webkit-scrollbar{
+  width: 8px !important;
+  height: 8px !important;
+}
+
+::-webkit-scrollbar-thumb{
+  background: #ff5252;
+}
+
+::-webkit-scrollbar-track{
+  background: #fff
+}
+
+
+
 .container{
   width: 95%;
   margin: auto;
@@ -55,6 +72,18 @@ nav ul button:hover {
   color: #000;
 }
 
+.smlBtn .swiper-button-prev, .smlBtn .swiper-button-next{
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  top: 55% !important;
+}
+
+.smlBtn .swiper-button-prev:after,.smlBtn  .swiper-button-next:after{
+  font-size: 22px !important;
+  color: #000;
+}
+
 .mySwiper {
   overflow: inherit !important;
 }
@@ -81,14 +110,22 @@ nav ul button:hover {
   border: 1px solid rgba(0,0,0,0.1);
 }
 
-.homeCatSlider .swiper-button-prev:hover, .homeCatSlider .swiper-button-next:hover {
+.swiper-button-prev:hover, .swiper-button-next:hover {
   background: #ff5252 !important;
 }
 
-.homeCatSlider .swiper-button-prev:hover::after, .homeCatSlider .swiper-button-next:hover::after{
+.swiper-button-prev:hover::after, .swiper-button-next:hover::after{
   color: #fff !important;
 }
 
 .homeCatSlider .item:hover img {
   transform: scale(1.1);
+}
+
+.MuiTabs-indicator{
+  background-color: #ff5252 !important;
+}
+
+.MuiTab-textColorPrimary.Mui-selected{
+  color: #ff5252 !important;
 }
