@@ -48,7 +48,7 @@ const Home = () => {
                         </div>
                     </div>
 
-                    <ProductsSlider items={5} />
+                    <ProductsSlider items={6} />
                 </div>
             </section>
             <section className='py-16 bg-white'>
