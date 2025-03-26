@@ -18,6 +18,7 @@ import 'swiper/css/navigation';
 // import required modules
 import { Navigation } from 'swiper/modules';
 import BlogItem from '../../components/BlogItem';
+import Footer from '../../components/Footer';
 
 const Home = () => {
 
@@ -103,7 +104,7 @@ const Home = () => {
                         From the blog</h2>
                     <Swiper
                         slidesPerView={4}
-                        spaceBetween={10}
+                        spaceBetween={30}
                         navigation={true}
                         modules={[Navigation]}
                         className="blogSlider"
@@ -111,9 +112,26 @@ const Home = () => {
                         <SwiperSlide>
                             <BlogItem />
                         </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
+                        <SwiperSlide>
+                            <BlogItem />
+                        </SwiperSlide>
                     </Swiper>
                 </div>
             </section>
+
+            <Footer />
         </>
     )
 

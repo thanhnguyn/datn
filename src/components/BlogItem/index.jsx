@@ -1,6 +1,7 @@
 import React from 'react'
 import { IoMdTime } from "react-icons/io";
 import { Link } from 'react-router-dom';
+import { IoIosArrowForward } from "react-icons/io";
 
 const BlogItem = () => {
     return (
@@ -12,9 +13,13 @@ const BlogItem = () => {
                 </span>
             </div>
             <div className='info py-4'>
-                <h2 className='text-[16px] font-[600] text-black'>Lorem ispum</h2>
-                <p className='text-[13px] font-[400] text-[rgba(0,0,0,0.8)]'>Lorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispupumLorem ispumLorem ispumLorem ispum</p>
-                <Link className='link'>Read more</Link>
+                <h2 className='text-[15px] font-[600] text-black'>
+                    <Link to="/" className='link'>
+                        Lorem ispum
+                    </Link>
+                </h2>
+                <p className='text-[13px] font-[400] text-[rgba(0,0,0,0.8)] mb-4'>Lorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispumLorem ispupumLorem ispumLorem ispumLorem ispum</p>
+                <Link className='link font-[500] text-[14px] flex items-center gap-1'>Read more <IoIosArrowForward /></Link>
             </div>
         </div>
     )
