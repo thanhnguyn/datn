@@ -18,6 +18,7 @@ const HomeSlider = () => {
                         spaceBetween={10}
                         navigation={true}
                         centeredSlides={true}
+                        loop={true}
                         autoplay={{
                             delay: 2500,
                             disableOnInteraction: false,

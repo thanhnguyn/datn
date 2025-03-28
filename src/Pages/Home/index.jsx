@@ -19,6 +19,8 @@ import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import BlogItem from '../../components/BlogItem';
 import Footer from '../../components/Footer';
+import HomeBannerV2 from '../../components/HomeSliderV2';
+import BannerBoxV2 from '../../components/bannerBoxV2';
 
 const Home = () => {
 
@@ -31,6 +33,20 @@ const Home = () => {
     return (
         <>
             <HomeSlider />
+
+            <section className='py-6 '>
+                <div className='container flex gap-5'>
+                    <div className='part1 w-[70%]'>
+                        <HomeBannerV2 />
+                    </div>
+
+                    <div className='part2 w-[30%] gap-5 flex items-center justify-between flex-col'>
+                        <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"} />
+                        <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"} />
+                    </div>
+                </div>
+            </section>
+
             <HomeCatSlider />
             <section className='bg-white py-8'>
                 <div className='container'>
