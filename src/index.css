@@ -199,3 +199,7 @@ footer form input::placeholder{
 .homeSliderV2 .info .btn_{
   transition-duration: 2100ms;
 }
+MuiCheckbox-root {
+  padding: 6px !important;
+  
+}
