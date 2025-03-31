@@ -33,8 +33,8 @@ const ProductItem = () => {
 
                 </div>
             </div>
-            <div className='info p-3 py-5 px-8 w-[75%]'>
-                <h6 className='text-[15px] text-left'>
+            <div className='info p-3 py-5 pb-0 px-8 w-[75%]'>
+                <h6 className='text-[15px] !font-[400]'>
                     <Link to="/" className="link transition-all">Soylent Green</Link>
                 </h6>
                 <h3 className='text-[18px] title mt-3 mb-3 font-[500] text-[#000]'>

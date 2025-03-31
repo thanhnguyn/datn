@@ -11,13 +11,18 @@ body{
   font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
   background: #f5f0f0;
-  color: #666;
+  color: #3e3e3e;
   overflow-x: hidden;
 }
 
 p{
   font-size: 14px;
   line-height: 25px;
+  margin-bottom: 10px;
+}
+
+h1, h2, h3, h4, h5, h6{
+  font-weight: 600;
 }
 
 ::-webkit-scrollbar{
@@ -258,4 +263,17 @@ footer form input::placeholder{
 
 .zoomProductSliderThumbs .swiper-button-prev:after{
   transform: rotate(90deg);
+}
+
+.productContent .actions button{
+  min-width: 40px !important;
+  height: 30px !important;
+  border: 1px solid rgba(0,0,0,0.1) !important;
+  color: rgba(0,0,0,0.7);
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button{
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
