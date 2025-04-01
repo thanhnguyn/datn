@@ -1,13 +1,17 @@
 import { Button, dividerClasses } from '@mui/material';
-import React from 'react';
+import React, { useContext } from 'react';
 import "./style.css";
 import { Link } from 'react-router-dom';
 import Rating from '@mui/material/Rating';
 import { FaRegHeart } from "react-icons/fa";
 import { IoGitCompareOutline } from 'react-icons/io5';
 import { MdZoomOutMap } from "react-icons/md";
+import { MyContext } from '../../App';
 
 const ProductItem = () => {
+
+    const context = useContext(MyContext);
+
     return (
         <div className='productItem  shadow-lg rounded-md overflow-hidden border-2 border-[rgba(0,0,0,0.1)]'>
             <div className='group imgWrapper w-[100%] h-[220px] overflow-hidden rounded-md relative'>
@@ -26,7 +30,7 @@ const ProductItem = () => {
                     <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary hover:text-white group'>
                         <IoGitCompareOutline className='text-[18px] !text-black group-hover:text-white hover:!text-white' />
                     </Button>
-                    <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary hover:text-white group'>
+                    <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary hover:text-white group' onClick={() => context.setOpenProductDetailsModal(true)}>
                         <MdZoomOutMap className='text-[18px] !text-black group-hover:text-white hover:!text-white' />
                     </Button>
 
