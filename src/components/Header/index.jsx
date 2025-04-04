@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom';
 import Search from '../Search';
 import Badge from '@mui/material/Badge';
@@ -9,6 +9,7 @@ import { IoGitCompareOutline } from 'react-icons/io5';
 import { FaRegHeart } from 'react-icons/fa6';
 import Tooltip from '@mui/material/Tooltip';
 import Navigation from './Navigation';
+import { MyContext } from '../../App';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -20,6 +21,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 export const Header = () => {
+
+    const context = useContext(MyContext);
+
     return (
         <header className='bg-white'>
             <div className='top-strip py-2 border-t-[1px] border-gray-250 border-b-[1px]'>
@@ -57,12 +61,15 @@ export const Header = () => {
                     <div className='col3 w-[30%] flex items-center pl-7'>
                         <ul className='flex items-center justify-end gap-3 w-full' >
                             <li className='listnone'>
-                                <Link to="/login" className='link transition text-[15px] font-[500]'>Login</Link> | &nbsp; <Link to="/register" className='link transition text-[15px] font-[500]'>Register</Link>
+                                <Link to="/login" className='link transition text-[15px] font-[500]'>Login
+                                </Link> | &nbsp;
+                                <Link to="/register" className='link transition text-[15px] font-[500]'>Register
+                                </Link>
                             </li>
                             <li>
                                 <Tooltip title="Compare">
                                     <IconButton aria-label="cart">
-                                        <StyledBadge badgeContent={6} color="secondary">
+                                        <StyledBadge badgeContent={4} color="secondary">
                                             <IoGitCompareOutline />
                                         </StyledBadge>
                                     </IconButton>
@@ -72,7 +79,7 @@ export const Header = () => {
                             <li>
                                 <Tooltip title="Wishlist">
                                     <IconButton aria-label="cart">
-                                        <StyledBadge badgeContent={6} color="secondary">
+                                        <StyledBadge badgeContent={4} color="secondary">
                                             <FaRegHeart />
                                         </StyledBadge>
                                     </IconButton>
@@ -81,8 +88,8 @@ export const Header = () => {
                             </li>
                             <li>
                                 <Tooltip title="Cart">
-                                    <IconButton aria-label="cart">
-                                        <StyledBadge badgeContent={6} color="secondary">
+                                    <IconButton aria-label="cart" onClick={() => context.setOpenCartPanel(true)}>
+                                        <StyledBadge badgeContent={4} color="secondary">
                                             <MdOutlineShoppingCart />
                                         </StyledBadge>
                                     </IconButton>

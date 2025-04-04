@@ -21,13 +21,21 @@ function App() {
   const [openProductDetailsModal, setOpenProductDetailsModal] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState('md');
+  const [openCartPanel, setOpenCartPanel] = useState(false);
 
   const handleCloseProductDetailsModal = () => {
     setOpenProductDetailsModal(false);
   };
 
+  const toggleCartPanel = (newOpen) => () => {
+    setOpenCartPanel(newOpen);
+  };
+
   const values = {
-    setOpenProductDetailsModal
+    setOpenProductDetailsModal,
+    setOpenCartPanel,
+    toggleCartPanel,
+    openCartPanel
   }
 
   return (
@@ -45,6 +53,7 @@ function App() {
           <Footer />
         </MyContext.Provider>
       </BrowserRouter>
+
       <Dialog
         open={openProductDetailsModal}
         fullWidth={fullWidth}
