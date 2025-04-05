@@ -9,14 +9,14 @@ import { Button } from '@mui/material';
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { MyContext } from '../../App';
 
-const ProductItem = () => {
+const ProductItemListView = () => {
 
     const context = useContext(MyContext);
 
     return (
-        <div className='productItem  shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)] flex items-center'>
+        <div className='productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)] flex items-center pl-3 pb-4'>
             <div className='group imgWrapper w-[25%] overflow-hidden rounded-md relative'>
-                <Link to="/">
+                <Link to="/product/123">
                     <div className='img h-[220px] overflow-hidden'>
                         <img src="https://serviceapi.spicezgold.com/download/1742463096955_hbhb1.jpg" className='w-full' />
 
@@ -61,4 +61,4 @@ const ProductItem = () => {
     )
 }
 
-export default ProductItem;
+export default ProductItemListView;

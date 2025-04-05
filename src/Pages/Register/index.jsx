@@ -35,7 +35,7 @@ const Register = () => {
                         <div className='flex items-center w-full mt-3 mb-3'>
                             <Button className='btn-org btn-lg w-full'>Register</Button>
                         </div>
-                        <p className='text-center'>Already have an account? <Link className='link text-[14px] font-[600] text-primary' to='/register'>Sign in</Link></p>
+                        <p className='text-center'>Already have an account? <Link className='link text-[14px] font-[600] text-primary' to='/login'>Sign in</Link></p>
                         <p className='text-center font-[500]'>Or continue with social account</p>
                         <Button className='flex gap-3 w-full !bg-[#f1f1f1] btn-lg !text-black'>
                             <FcGoogle className='text-[20px]' /> Login with Google

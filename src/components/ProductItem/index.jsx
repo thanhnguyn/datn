@@ -1,4 +1,4 @@
-import { Button, dividerClasses } from '@mui/material';
+import { Button } from '@mui/material';
 import React, { useContext } from 'react';
 import "./style.css";
 import { Link } from 'react-router-dom';
@@ -15,7 +15,7 @@ const ProductItem = () => {
     return (
         <div className='productItem  shadow-lg rounded-md overflow-hidden border-2 border-[rgba(0,0,0,0.1)]'>
             <div className='group imgWrapper w-[100%] h-[220px] overflow-hidden rounded-md relative'>
-                <Link to="/">
+                <Link to="/product/123">
                     <div className='img h-[220px]'>
                         <img src="https://serviceapi.spicezgold.com/download/1742463096955_hbhb1.jpg" className='w-full' />
 
