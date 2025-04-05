@@ -1,25 +1,24 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, TextField } from '@mui/material';
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
 import { Link, useNavigate } from 'react-router-dom';
 import { FcGoogle } from "react-icons/fc";
+import { MyContext } from '../../App';
 
 const Login = () => {
-
     const [isPasswordShow, setIsPasswordShow] = useState(false);
     const [formFields, setFormFields] = useState({
         email: '',
         password: ''
     });
 
+    const context = useContext(MyContext);
     const history = useNavigate();
 
     const forgotPassword = () => {
-        if (formFields.email !== '') {
-
-        }
-        history.push('/verify');
+        context.openAlertBox('success', 'OTP Sent');
+        history('/verify');
     }
 
     return (
