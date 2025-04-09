@@ -1,6 +1,7 @@
 import './App.css'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Dashboard from './Pages/Dashboard';
+import Header from './components/Header';
 function App() {
   const router = createBrowserRouter([
     {
@@ -8,7 +9,9 @@ function App() {
       exact: true,
       element: (
         <>
-          <Dashboard />
+          <section className='main'>
+            <Header />
+          </section>
         </>
       ),
     },
