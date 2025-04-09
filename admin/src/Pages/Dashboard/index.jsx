@@ -3,6 +3,11 @@ import DashboardBoxes from '../../components/DashboardBoxes';
 import { Button } from '@mui/material';
 import { FaAngleDown, FaAngleUp, FaPlus } from "react-icons/fa6";
 import Badge from '../../components/Badge';
+import Checkbox from '@mui/material/Checkbox';
+import { Link } from 'react-router-dom';
+import Progress from '../../components/ProgressBar';
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
 const Dashboard = () => {
     const [isOpenOrderProduct, setIsOpenOrderProduct] = useState(null);
     const isShowOrderProduct = (index) => {
@@ -14,7 +19,7 @@ const Dashboard = () => {
     }
     return (
         <>
-            <div className='w-full py-2 px-5 border bg-white border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md'>
+            <div className='w-full py-2 px-5 border bg-[#f1faff] border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md'>
                 <div className='info'>
                     <h1 className='text-[35px] font-bold leading-10 mb-3'>Good morning,<br /> Thanh </h1>
                     <p>Here is what's happening on your store today. See the statistics at once.</p>
@@ -24,6 +29,94 @@ const Dashboard = () => {
                 <img src="/shop-illustration.png" className='w-[250px]' />
             </div>
             <DashboardBoxes />
+
+            <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
+                <div className='flex items-center justify-between px-5 py-5'>
+                    <h2 className='text-[18px] font-[600]'>Products</h2>
+                </div>
+                <div className="relative overflow-x-auto mt-5 pb-5">
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" className="px-6 py-3" width='10%'>
+                                    <div className='w-[60px]'>
+                                        <Checkbox {...label} size='small' />
+                                    </div>
+                                </th>
+                                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                    PRODUCT
+                                </th>
+                                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                    CATEGORY
+                                </th>
+                                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                    SUB CATEGORY
+                                </th>
+                                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                    BRAND
+                                </th>
+                                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                    PRICE
+                                </th>
+                                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                    SALES
+                                </th>
+                                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                    ACTION
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr className='odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700'>
+                                <td className="px-6 py-2" >
+                                    <div className='w-[60px]'>
+                                        <Checkbox {...label} size='small' />
+                                    </div>
+                                </td>
+                                <td className="px-6 py-2" >
+                                    <div className='flex items-center gap-4 w-[350px]'>
+                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
+                                            <Link to='/product/123'>
+                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
+                                            </Link>
+                                        </div>
+                                        <div className='info w-[75%]'>
+                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
+                                                <Link to='/product/123'>Men Opaque Casual Shirt</Link>
+                                            </h3>
+                                            <span className='text-[12px]'>Books</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-2" >Fashion</td>
+                                <td className="px-6 py-2" >Men</td>
+                                <td className="px-6 py-2" >CLAFOUIS</td>
+                                <td className="px-6 py-2" >
+                                    <div className='flex gap-1 flex-col'>
+                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
+                                            $58.00
+                                        </span>
+                                        <span className='price text-primary text-[14px] font-[600]'>
+                                            $58.00
+                                        </span>
+                                    </div>
+                                </td>
+                                <td className="px-6 py-2" >
+                                    <p className='text-[14px] w-[150px]'><span className='font-[600]'>234</span> sales</p>
+                                    <Progress value={40} type='error' />
+                                </td>
+                                <td className="px-6 py-2" >
+                                    <div className='flex items-center gap-4'>
+                                        <Button className='!w-[35px]'></Button>
+                                    </div>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
                 <div className='flex items-center justify-between px-5 py-5'>
