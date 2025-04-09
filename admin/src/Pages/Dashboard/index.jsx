@@ -1,8 +1,11 @@
 import React from 'react'
+import DashboardBoxes from '../../components/DashboardBoxes';
 
 const Dashboard = () => {
     return (
-        <div>Dashboard</div>
+        <>
+            <DashboardBoxes />
+        </>
     )
 }
 export default Dashboard;
