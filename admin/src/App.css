@@ -1,5 +1,6 @@
 body{
   font-family: "Montserrat", serif;
+  background: #f1f1f1;
 }
 
 .MuiBadge-badge {
@@ -7,7 +8,7 @@ body{
 }
 
 .ReactCollapse--collapse{
-  transition: height 500ms;
+  transition: height 300ms;
 }
 
 ::-webkit-scrollbar{
@@ -17,6 +18,14 @@ body{
 
 ::-webkit-scrollbar-thumb{
   background: #ccc !important;
+}
+
+.btn{
+  padding: 8px 20px !important;
+}
+
+.btn svg{
+  font-size: 20px;
 }
 
 .btn-blue{
@@ -29,6 +38,11 @@ body{
   background: #3067e5 !important;
 }
 
+.btn-sm{
+  padding: 6px 20px !important;
+  font-size: 13px !important;
+}
+
 th.MuiTableCell-root{
-  @apply bg-[#f1f1f1] py-2
+  @apply bg-[#f1f1f1] py-1
 }
