@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom';
 import { RxDashboard } from "react-icons/rx";
 import { FaRegImage } from 'react-icons/fa';
@@ -10,6 +10,7 @@ import { IoBagCheckOutline } from "react-icons/io5";
 import { IoMdLogOut } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa6";
 import { Collapse } from 'react-collapse';
+import { MyContext } from '../../App';
 
 const Sidebar = () => {
     const [submenuIndex, setSubmenuIndex] = useState(null);
@@ -20,9 +21,10 @@ const Sidebar = () => {
             setSubmenuIndex(index);
         }
     }
+    const context = useContext(MyContext);
     return (
         <>
-            <div className='sidebar fixed top-0 left-0 bg-[#fff] w-[18%] h-full border-r border-[rgba(0,0,0,0.1)] py-2 px-4'>
+            <div className={`sidebar fixed top-0 left-0 bg-[#fff] ${context.isSidebarOpened === true ? 'w-[18%]' : 'w-0 opacity-0'} h-full border-r border-[rgba(0,0,0,0.1)] py-2 px-4 transition-all`}>
                 <div className='py-2 w-full'>
                     <Link to='/'>
                         <img src="https://th.bing.com/th/id/OIP.E_y1nVTS6sl3NzrAHzXeowHaEK?w=303&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7" className='w-[120px]' alt="" />
