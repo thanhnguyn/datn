@@ -1,14 +1,19 @@
 import './App.css'
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { createContext, useState } from 'react';
-import Layout from './Layout';
+import Login from './Pages/Login';
+import Layout from './Layout'
+import SignUp from './Pages/SignUp';
 
 const MyContext = createContext();
 function App() {
   const [isSidebarOpened, setIsSidebarOpened] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const values = {
     isSidebarOpened,
-    setIsSidebarOpened
+    setIsSidebarOpened,
+    isLogin,
+    setIsLogin
   };
   const router = createBrowserRouter([
     {
@@ -20,6 +25,25 @@ function App() {
         </>
       ),
     },
+    {
+      path: '/login',
+      exact: true,
+      element: (
+        <>
+          <Login />
+        </>
+      ),
+    },
+    {
+      path: '/sign-up',
+      exact: true,
+      element: (
+        <>
+          <SignUp />
+        </>
+      ),
+    },
+
   ]);
 
   return (
