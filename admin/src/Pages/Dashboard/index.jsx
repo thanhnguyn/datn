@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import DashboardBoxes from '../../components/DashboardBoxes';
 import { Button, MenuItem } from '@mui/material';
 import { FaAngleDown, FaAngleUp, FaPlus } from "react-icons/fa6";
@@ -20,6 +20,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Select from '@mui/material/Select';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { MyContext } from '../../App';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -137,6 +138,8 @@ const Dashboard = () => {
         },
     ]);
 
+    const context = useContext(MyContext);
+
     const handleChangeCatFilter = (event) => {
         setCategoryFilterVal(event.target.value);
     };
@@ -157,7 +160,10 @@ const Dashboard = () => {
                     <h1 className='text-[35px] font-bold leading-10 mb-3'>Good morning,<br /> Thanh </h1>
                     <p>Here is what's happening on your store today. See the statistics at once.</p>
                     <br />
-                    <Button className='btn-blue !capitalize'><FaPlus /> Add product</Button>
+                    <Button className='btn-blue !capitalize' onClick={() => context.setIsOpenFullScreenPanel({
+                        open: true,
+                        model: "Add product"
+                    })}><FaPlus /> Add product</Button>
                 </div>
                 <img src="/shop-illustration.png" className='w-[250px]' />
             </div>
@@ -193,7 +199,10 @@ const Dashboard = () => {
                     </div>
                     <div className='col w-[25%] ml-auto flex items-center gap-3'>
                         <Button className='btn !bg-green-600 !text-white btn-sm'>Export</Button>
-                        <Button className='btn-blue  !text-white btn-sm'>Add product</Button>
+                        <Button className='btn-blue  !text-white btn-sm' onClick={() => context.setIsOpenFullScreenPanel({
+                            open: true,
+                            model: "Add product"
+                        })}>Add product</Button>
                     </div>
                 </div>
 
@@ -564,7 +573,10 @@ const Dashboard = () => {
                     </div>
                     <div className='col w-[25%] ml-auto flex items-center gap-3'>
                         <Button className='btn !bg-green-600 !text-white btn-sm'>Export</Button>
-                        <Button className='btn-blue  !text-white btn-sm'>Add product</Button>
+                        <Button className='btn-blue  !text-white btn-sm' onClick={() => context.setIsOpenFullScreenPanel({
+                            open: true,
+                            model: "Add product"
+                        })}>Add product</Button>
                     </div>
                 </div>
                 <br />

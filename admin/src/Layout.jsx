@@ -1,11 +1,11 @@
-// Layout.jsx
 import Sidebar from './components/Sidebar';
 import Dashboard from './Pages/Dashboard';
 import { useContext } from 'react';
 import { MyContext } from './App';
 import Header from './components/Header';
+import Product from './Pages/Products';
 
-const Layout = () => {
+const Layout = (props) => {
     const { isSidebarOpened } = useContext(MyContext);
 
     return (
@@ -16,7 +16,16 @@ const Layout = () => {
                     <Sidebar />
                 </div>
                 <div className={`contentRight py-4 px-5 ${isSidebarOpened ? 'w-[82%]' : 'w-[100%]'} transition-all`}>
-                    <Dashboard />
+
+                    {
+                        props.page === "Dashboard" ? (
+                            <Dashboard />
+                        ) : props.page === "Product" ? (
+                            <Product />
+                        ) : (
+                            <></>
+                        )
+                    }
                 </div>
             </div>
         </section>
