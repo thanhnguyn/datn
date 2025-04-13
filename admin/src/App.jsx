@@ -14,6 +14,9 @@ import Typography from '@mui/material/Typography';
 import { IoMdClose } from 'react-icons/io';
 import Slide from '@mui/material/Slide';
 import AddProduct from './Pages/Products/addProduct';
+import AddHomeSlide from './Pages/HomeSliderBanners/AddHomeSlide';
+import AddCategory from './Pages/Category/addCategory';
+import AddSubCategory from './Pages/Category/addSubCategory';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -74,7 +77,51 @@ function App() {
         </>
       ),
     },
-
+    {
+      path: '/homeSlider/list',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'HomeSliderBanners'} />
+        </>
+      ),
+    },
+    {
+      path: '/category/list',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'CategoryList'} />
+        </>
+      ),
+    },
+    {
+      path: '/subCategory/list',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'SubCategoryList'} />
+        </>
+      ),
+    },
+    {
+      path: '/users',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'Users'} />
+        </>
+      ),
+    },
+    {
+      path: '/orders',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'Orders'} />
+        </>
+      ),
+    },
   ]);
 
   return (
@@ -105,6 +152,15 @@ function App() {
           </AppBar>
           {
             isOpenFullScreenPanel?.model === "Add product" && <AddProduct />
+          }
+          {
+            isOpenFullScreenPanel?.model === "Add home slide" && <AddHomeSlide />
+          }
+          {
+            isOpenFullScreenPanel?.model === "Add new category" && <AddCategory />
+          }
+          {
+            isOpenFullScreenPanel?.model === "Add new sub category" && <AddSubCategory />
           }
         </Dialog>
 

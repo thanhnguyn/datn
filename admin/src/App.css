@@ -71,3 +71,7 @@ a.active button{
 .MuiSelect-select{
   background: #fff !important;
 }
+
+.MuiDialog-paper{
+  background: #f9fafb !important;
+}

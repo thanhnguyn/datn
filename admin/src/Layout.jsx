@@ -4,6 +4,11 @@ import { useContext } from 'react';
 import { MyContext } from './App';
 import Header from './components/Header';
 import Product from './Pages/Products';
+import HomeSliderBanners from './Pages/HomeSliderBanners';
+import CategoryList from './Pages/Category';
+import SubCategoryList from './Pages/Category/subCatList';
+import Users from './Pages/Users';
+import Orders from './Pages/Orders';
 
 const Layout = (props) => {
     const { isSidebarOpened } = useContext(MyContext);
@@ -22,6 +27,16 @@ const Layout = (props) => {
                             <Dashboard />
                         ) : props.page === "Product" ? (
                             <Product />
+                        ) : props.page === "HomeSliderBanners" ? (
+                            <HomeSliderBanners />
+                        ) : props.page === "CategoryList" ? (
+                            <CategoryList />
+                        ) : props.page === "SubCategoryList" ? (
+                            <SubCategoryList />
+                        ) : props.page === "Users" ? (
+                            <Users />
+                        ) : props.page === "Orders" ? (
+                            <Orders />
                         ) : (
                             <></>
                         )
