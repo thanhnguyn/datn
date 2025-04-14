@@ -12,6 +12,7 @@ import SearchBox from "../../components/SearchBox";
 import { MyContext } from "../../App";
 import { MdOutlineMarkEmailRead } from "react-icons/md"
 import { MdLocalPhone } from "react-icons/md";
+import { SlCalender } from "react-icons/sl";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -26,6 +27,11 @@ const columns = [
     {
         id: 'userPh',
         label: 'USER PHONE NUMBER',
+        minWidth: 130,
+    },
+    {
+        id: 'createdAt',
+        label: 'CREATED AT',
         minWidth: 130,
     },
 ];
@@ -85,7 +91,7 @@ const Users = () => {
                                 </TableCell>
                                 <TableCell style={{ minWidth: columns.minWidth }}>
                                     <div className='flex items-center gap-4 w-[70px]'>
-                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
+                                        <div className='img w-[45px] h-[45px] rounded-md overflow-hidden group'>
                                             <Link to="/product/1234" data-discover='true'>
                                                 <img src="https://mui.com/static/images/avatar/1.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
                                             </Link>
@@ -105,8 +111,204 @@ const Users = () => {
                                         <MdLocalPhone />+84 97 783 7398
                                     </span>
                                 </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <SlCalender />25/03/2025
+                                    </span>
+                                </TableCell>
                             </TableRow>
-
+                            <TableRow>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <Checkbox {...label} size='small' />
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <div className='flex items-center gap-4 w-[70px]'>
+                                        <div className='img w-[45px] h-[45px] rounded-md overflow-hidden group'>
+                                            <Link to="/product/1234" data-discover='true'>
+                                                <img src="https://mui.com/static/images/avatar/1.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    Alexander Romanov
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdOutlineMarkEmailRead />alexander@gmail.com
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdLocalPhone />+84 97 783 7398
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <SlCalender />25/03/2025
+                                    </span>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <Checkbox {...label} size='small' />
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <div className='flex items-center gap-4 w-[70px]'>
+                                        <div className='img w-[45px] h-[45px] rounded-md overflow-hidden group'>
+                                            <Link to="/product/1234" data-discover='true'>
+                                                <img src="https://mui.com/static/images/avatar/1.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    Alexander Romanov
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdOutlineMarkEmailRead />alexander@gmail.com
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdLocalPhone />+84 97 783 7398
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <SlCalender />25/03/2025
+                                    </span>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <Checkbox {...label} size='small' />
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <div className='flex items-center gap-4 w-[70px]'>
+                                        <div className='img w-[45px] h-[45px] rounded-md overflow-hidden group'>
+                                            <Link to="/product/1234" data-discover='true'>
+                                                <img src="https://mui.com/static/images/avatar/1.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    Alexander Romanov
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdOutlineMarkEmailRead />alexander@gmail.com
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdLocalPhone />+84 97 783 7398
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <SlCalender />25/03/2025
+                                    </span>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <Checkbox {...label} size='small' />
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <div className='flex items-center gap-4 w-[70px]'>
+                                        <div className='img w-[45px] h-[45px] rounded-md overflow-hidden group'>
+                                            <Link to="/product/1234" data-discover='true'>
+                                                <img src="https://mui.com/static/images/avatar/1.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    Alexander Romanov
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdOutlineMarkEmailRead />alexander@gmail.com
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdLocalPhone />+84 97 783 7398
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <SlCalender />25/03/2025
+                                    </span>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <Checkbox {...label} size='small' />
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <div className='flex items-center gap-4 w-[70px]'>
+                                        <div className='img w-[45px] h-[45px] rounded-md overflow-hidden group'>
+                                            <Link to="/product/1234" data-discover='true'>
+                                                <img src="https://mui.com/static/images/avatar/1.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    Alexander Romanov
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdOutlineMarkEmailRead />alexander@gmail.com
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdLocalPhone />+84 97 783 7398
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <SlCalender />25/03/2025
+                                    </span>
+                                </TableCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <Checkbox {...label} size='small' />
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <div className='flex items-center gap-4 w-[70px]'>
+                                        <div className='img w-[45px] h-[45px] rounded-md overflow-hidden group'>
+                                            <Link to="/product/1234" data-discover='true'>
+                                                <img src="https://mui.com/static/images/avatar/1.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    Alexander Romanov
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdOutlineMarkEmailRead />alexander@gmail.com
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <MdLocalPhone />+84 97 783 7398
+                                    </span>
+                                </TableCell>
+                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                    <span className='flex items-center gap-2'>
+                                        <SlCalender />25/03/2025
+                                    </span>
+                                </TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>

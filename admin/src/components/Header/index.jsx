@@ -11,6 +11,7 @@ import Divider from '@mui/material/Divider';
 import { FaRegUser } from "react-icons/fa6";
 import { IoMdLogOut } from "react-icons/io";
 import { MyContext } from '../../App';
+import { Link } from 'react-router-dom';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -111,7 +112,9 @@ const Header = () => {
                         </div>
                     )
                         : (
-                            <Button className='btn-blue btn-sm !rounded-full'>Sign in</Button>
+                            <Link to='/login'>
+                                <Button className='btn-blue btn-sm !rounded-full'>Sign in</Button>
+                            </Link>
                         )
                 }
 

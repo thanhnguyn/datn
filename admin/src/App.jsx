@@ -17,6 +17,9 @@ import AddProduct from './Pages/Products/addProduct';
 import AddHomeSlide from './Pages/HomeSliderBanners/AddHomeSlide';
 import AddCategory from './Pages/Category/addCategory';
 import AddSubCategory from './Pages/Category/addSubCategory';
+import ForgotPassword from './Pages/ForgotPassword';
+import VerifyAccount from './Pages/VerifyAccount';
+import ChangePassword from './Pages/ChangePassword';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -119,6 +122,33 @@ function App() {
       element: (
         <>
           <Layout page={'Orders'} />
+        </>
+      ),
+    },
+    {
+      path: '/forgot-password',
+      exact: true,
+      element: (
+        <>
+          <ForgotPassword />
+        </>
+      ),
+    },
+    {
+      path: '/verify-account',
+      exact: true,
+      element: (
+        <>
+          <VerifyAccount />
+        </>
+      ),
+    },
+    {
+      path: '/change-password',
+      exact: true,
+      element: (
+        <>
+          <ChangePassword />
         </>
       ),
     },
