@@ -66,9 +66,9 @@ export const Header = () => {
 
             <div className='header py-4 border-b-[1px] border-gray-250'>
                 <div className='container flex items-center justify-between'>
-                    <div className='col1 w-[25%]'>
-                        <Link to="/">
-                            <img src="/1741660733567_logo.jpg" />
+                    <div className='col1 w-[25%] flex items-center justify-center'>
+                        <Link to="/" >
+                            <img src="/vite.svg" />
                         </Link>
                     </div>
                     <div className='col2 w-[40%]'>
@@ -171,7 +171,7 @@ export const Header = () => {
                                 <Tooltip title="Wishlist">
                                     <IconButton aria-label="cart">
                                         <StyledBadge badgeContent={4} color="secondary">
-                                            <FaRegHeart />
+                                            <Link to='/my-list'><FaRegHeart /></Link>
                                         </StyledBadge>
                                     </IconButton>
                                 </Tooltip>
