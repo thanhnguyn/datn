@@ -81,7 +81,7 @@ const SignUp = () => {
 
                 <div className='w-full flex items-center justify-center gap-3'>
                     <span className='flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]'></span>
-                    <span className='text-[14px] font-[500]'>Or, sign in with your email</span>
+                    <span className='text-[14px] font-[500]'>Or, sign up with your email</span>
                     <span className='flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]'></span>
                 </div>
                 <br />

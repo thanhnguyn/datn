@@ -27,7 +27,7 @@ const Sidebar = () => {
             <div className={`sidebar fixed top-0 left-0 bg-[#fff] ${context.isSidebarOpened === true ? 'w-[18%]' : 'w-0 opacity-0'} h-full border-r border-[rgba(0,0,0,0.1)] py-2 px-4 transition-all`}>
                 <div className='py-2 w-full'>
                     <Link to='/'>
-                        <img src="https://th.bing.com/th/id/OIP.E_y1nVTS6sl3NzrAHzXeowHaEK?w=303&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7" className='w-[120px]' alt="" />
+                        <img src="/vite.svg" className='w-[120px]' alt="" />
                     </Link>
                 </div>
                 <ul className='mt-4'>
