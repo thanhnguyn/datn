@@ -71,18 +71,10 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ['ADMIN', 'USER'],
         default: "USER"
-    },
-    createdAt: {
-        type: Date,
-        default: ''
-    },
-    updatedDate: {
-        type: Date,
-        default: ''
     }
 },
     {
-        timestamp: true
+        timestamps: true
     })
 
 const UserModel = mongoose.model("User", userSchema);

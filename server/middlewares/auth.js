@@ -1,4 +1,3 @@
-import { response } from 'express';
 import jwt from 'jsonwebtoken';
 
 const auth = async (request, response, next) => {

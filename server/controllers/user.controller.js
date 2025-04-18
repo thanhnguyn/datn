@@ -7,8 +7,7 @@ import generatedAccessToken from '../utils/generatedAccessToken.js';
 import generatedRefreshToken from '../utils/generatedRefreshToken.js';
 
 import { v2 as cloudinary } from 'cloudinary';
-import fs, { access } from 'fs';
-import { error } from 'console';
+import fs from 'fs';
 
 cloudinary.config({
     cloud_name: process.env.cloudinary_Config_Cloud_Name,
@@ -50,9 +49,7 @@ export async function registerUserController(request, response) {
             password: hashPassword,
             name: name,
             otp: verifyCode,
-            otpExpires: Date.now() + 600000,
-            createdAt: Date.now(),
-            updatedAt: Date.now()
+            otpExpires: Date.now() + 600000
         });
 
         await user.save();
@@ -253,7 +250,13 @@ export async function userAvatarController(request, response) {
         const image = request.files;
 
         const user = await UserModel.findOne({ _id: userId });
-
+        if (!user) {
+            response.status(500).json({
+                message: "User not found",
+                error: true,
+                success: false
+            })
+        }
         //First remove image from cloudinary
         const imgUrl = user.avatar;
         const urlArr = imgUrl.split("/");
