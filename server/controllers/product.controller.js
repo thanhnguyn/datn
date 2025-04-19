@@ -1,7 +1,6 @@
 import ProductModel from "../models/product.model.js";
 
 import { v2 as cloudinary } from 'cloudinary';
-import { count, error } from "console";
 import fs from 'fs';
 
 cloudinary.config({
