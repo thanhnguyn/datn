@@ -28,8 +28,8 @@ const MyContext = createContext();
 function App() {
   const [openProductDetailsModal, setOpenProductDetailsModal] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
-  const [maxWidth, setMaxWidth] = useState('md');
-  const [isLogin, setIsLogin] = useState(true);
+  const [maxWidth, setMaxWidth] = useState('lg');
+  const [isLogin, setIsLogin] = useState(false);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
@@ -57,7 +57,7 @@ function App() {
     openAlertBox,
     isLogin,
     setIsLogin
-  }
+  };
 
   return (
     <>
