@@ -18,6 +18,7 @@ import Divider from '@mui/material/Divider';
 import { IoBagCheckOutline } from 'react-icons/io5';
 import { IoMdHeartEmpty } from 'react-icons/io';
 import { IoIosLogOut } from 'react-icons/io';
+import { fetchDataFromApi } from '../../utils/api';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -32,6 +33,9 @@ export const Header = () => {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
+    const context = useContext(MyContext);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -39,7 +43,19 @@ export const Header = () => {
         setAnchorEl(null);
     };
 
-    const context = useContext(MyContext);
+    const logout = () => {
+        setAnchorEl(null);
+
+        fetchDataFromApi(`/api/user/logout?token=${localStorage.getItem('accessToken')}`, { withCredentials: true }).then((res) => {
+            console.log(res);
+            if (res?.error === false) {
+                context.setIsLogin(false);
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                context.openAlertBox("success", res?.message);
+            }
+        });
+    };
 
     return (
         <header className='bg-white'>
@@ -93,8 +109,8 @@ export const Header = () => {
                                             <Button className='!text-[#000] myAccountWrap flex items-center gap-3 cursor-pointer' onClick={handleClick}>
                                                 <Button className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !bg-[#f1f1f1]'><FaRegUser className='text-[16px] text-[rgba(0,0,0,0.7)]' /></Button>
                                                 <div className='info flex flex-col'>
-                                                    <h4 className='leading-3 text-[14px] text-[rgba(0,0,0,0.6)] font-[500] mb-0 capitalize text-left justify-start'>Nguyen Cong Thanh</h4>
-                                                    <span className='text-[13px] text-[rgba(0,0,0,0.6)] font-[400] capitalize text-left justify-start'>Thanh.NC27012003@gmail.com</span>
+                                                    <h4 className='leading-3 text-[14px] text-[rgba(0,0,0,0.6)] font-[500] mb-0 capitalize text-left justify-start'>{context?.userData?.name}</h4>
+                                                    <span className='text-[13px] text-[rgba(0,0,0,0.6)] font-[400] lowercase text-left justify-start'>{context?.userData?.email}</span>
                                                 </div>
                                             </Button>
                                             <Menu
@@ -149,7 +165,7 @@ export const Header = () => {
                                                         <IoMdHeartEmpty className='text-[18px]' /> <span className='text-[14px]'>My list</span>
                                                     </MenuItem>
                                                 </Link>
-                                                <MenuItem onClick={handleClose} className='flex gap-2 !py-2'>
+                                                <MenuItem onClick={logout} className='flex gap-2 !py-2'>
                                                     <IoIosLogOut className='text-[18px]' /> <span className='text-[14px]'>Log out</span>
                                                 </MenuItem>
                                                 <Divider />
