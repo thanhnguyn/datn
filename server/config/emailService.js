@@ -1,4 +1,3 @@
-import http from 'http';
 import nodemailer from 'nodemailer';
 
 //Configure the SMTP transporter

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, CircularProgress, TextField } from '@mui/material';
 import { IoMdEye } from "react-icons/io";
 import { IoMdEyeOff } from "react-icons/io";
@@ -19,8 +19,25 @@ const Login = () => {
     const history = useNavigate();
 
     const forgotPassword = () => {
-        context.openAlertBox('success', 'OTP Sent');
-        history('/verify');
+        if (formFields.email === "") {
+            context.openAlertBox("error", "Please enter email.");
+            return false;
+        } else {
+            context.openAlertBox("success", "OTP sent.");
+            localStorage.setItem("userEmail", formFields.email);
+            localStorage.setItem("actionType", "forgot-password");
+
+            postData("/api/user/forgot-password", {
+                email: formFields.email
+            }).then((res) => {
+                if (res?.error === false) {
+                    context.openAlertBox("success", res?.message);
+                    history("/verify");
+                } else {
+                    context.openAlertBox("error", res?.message);
+                }
+            });
+        }
     }
 
     const onChangeInput = (e) => {
