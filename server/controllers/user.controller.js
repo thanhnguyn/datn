@@ -357,7 +357,7 @@ export async function updateUserDetails(request, response) {
                 name: name,
                 mobile: mobile,
                 email: email,
-                verify_email: userExit.email ? false : true,
+                verify_email: email !== userExit.email ? false : true,
                 password: hashPassword,
                 otp: verifyCode !== "" ? verifyCode : null,
                 otpExpires: verifyCode !== "" ? Date.now() + 600000 : ''
@@ -382,7 +382,13 @@ export async function updateUserDetails(request, response) {
             message: "User updated successfully.",
             error: false,
             success: true,
-            user: updateUser
+            user: {
+                name: updateUser?.name,
+                _id: updateUser?._id,
+                email: updateUser?.email,
+                mobile: updateUser?.mobile,
+                avatar: updateUser?.avatar
+            }
         })
 
 

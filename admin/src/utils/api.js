@@ -6,7 +6,7 @@ export const postData = async (url, formData) => {
         const response = await fetch(apiUrl + url, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${localStorage.getItem('accessToken')}`,//Include your API key in the Authorization
+                "Authorization": `Bearer ${localStorage.getItem('token')}`,//Include your API key in the Authorization
                 "Content-Type": 'application/json' //Adjust the content type as needed
             },
             body: JSON.stringify(formData)
@@ -43,38 +43,4 @@ export const fetchDataFromApi = async (url) => {
         console.log(error);
         return error;
     }
-}
-
-
-export const uploadImage = async (url, updatedData) => {
-    const params = {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
-            'Content-Type': 'multipart/form-data'
-        }
-    };
-
-    var response;
-    await axios.put(apiUrl + url, updatedData, params).then((res) => {
-        response = res;
-    });
-
-    return response;
-}
-
-
-export const editData = async (url, updatedData) => {
-    const params = {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem("accessToken")}`,
-            'Content-Type': 'application/json'
-        }
-    };
-
-    var response;
-    await axios.put(apiUrl + url, updatedData, params).then((res) => {
-        response = res;
-    });
-
-    return response;
 }

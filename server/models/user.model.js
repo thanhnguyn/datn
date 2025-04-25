@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
         default: ""
     },
     mobile: {
-        type: Number,
+        type: String,
         default: null
     },
     verify_email: {
