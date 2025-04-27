@@ -1,6 +1,6 @@
-import { Button, FormControlLabel } from '@mui/material';
-import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom';
+import { Button, CircularProgress, FormControlLabel } from '@mui/material';
+import React, { useContext, useState } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { CgLogIn } from "react-icons/cg";
 import { FaRegUser } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
@@ -8,12 +8,76 @@ import { BsFacebook } from "react-icons/bs";
 import Checkbox from '@mui/material/Checkbox';
 import { FaRegEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { postData } from '../../utils/api.js';
+import { MyContext } from '../../App';
 
 const SignUp = () => {
 
     const [loadingGoogle, setLoadingGoogle] = useState(false);
     const [loadingFacebook, setLoadingFacebook] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(false);
+
     const [isPasswordShow, setIsPasswordShow] = useState(false);
+
+    const [formFields, setFormFields] = useState({
+        name: "",
+        email: "",
+        password: ""
+    });
+
+    const context = useContext(MyContext);
+    const history = useNavigate();
+
+    const onChangeInput = (e) => {
+        const { name, value } = e.target;
+        setFormFields(() => {
+            return {
+                ...formFields,
+                [name]: value
+            }
+        });
+    }
+
+    const valideValue = Object.values(formFields).every(el => el);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setIsLoading(true);
+
+        if (formFields.name === "") {
+            context.openAlertBox("error", "Please enter full name.");
+            return false;
+        }
+
+        if (formFields.email === "") {
+            context.openAlertBox("error", "Please enter email.");
+            return false;
+        }
+
+        if (formFields.password === "") {
+            context.openAlertBox("error", "Please enter password.");
+            return false;
+        }
+
+        postData("/api/user/register", formFields).then((res) => {
+            if (res?.error !== true) {
+                context.openAlertBox("success", res?.message);
+                localStorage.setItem("userEmail", formFields.email);
+                setFormFields({
+                    name: "",
+                    email: "",
+                    password: ""
+                });
+                history("/verify-account");
+            } else {
+                context.openAlertBox("error", res?.message);
+            }
+            setIsLoading(false);
+        });
+    }
+
 
     function handleClickGoogle() {
         setLoadingGoogle(true);
@@ -85,19 +149,40 @@ const SignUp = () => {
                     <span className='flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]'></span>
                 </div>
                 <br />
-                <form className='w-full px-8 mt-3'>
+                <form className='w-full px-8 mt-3' onSubmit={handleSubmit}>
                     <div className='form-group mb-4 w-full'>
                         <h4 className='text-[14px] font-[500] mb-1'>Full name</h4>
-                        <input type="text" className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3' />
+                        <input
+                            type="text"
+                            className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
+                            name="name"
+                            value={formFields.name}
+                            disabled={isLoading === true ? true : false}
+                            onChange={onChangeInput}
+                        />
                     </div>
                     <div className='form-group mb-4 w-full'>
                         <h4 className='text-[14px] font-[500] mb-1'>Email</h4>
-                        <input type="email" className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3' />
+                        <input
+                            type="email"
+                            className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
+                            name="email"
+                            value={formFields.email}
+                            disabled={isLoading === true ? true : false}
+                            onChange={onChangeInput}
+                        />
                     </div>
                     <div className='form-group mb-4 w-full'>
                         <h4 className='text-[14px] font-[500] mb-1'>Password</h4>
                         <div className='relative w-full'>
-                            <input type={`${isPasswordShow === true ? 'text' : 'password'}`} className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3' />
+                            <input
+                                type={`${isPasswordShow === true ? 'text' : 'password'}`}
+                                className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
+                                name="password"
+                                value={formFields.password}
+                                disabled={isLoading === true ? true : false}
+                                onChange={onChangeInput}
+                            />
                             <Button onClick={() => setIsPasswordShow(!isPasswordShow)} className='!absolute top-[7px] right-[10px] z-50 !rounded-full !w-[35px] !h-[35px] !min-w-[35px] !text-gray-600'>
                                 {
                                     isPasswordShow === true ? <>
@@ -115,7 +200,11 @@ const SignUp = () => {
 
                         <Link to='/forgot-password' className='text-primary font-[700] text-[15px] hover:underline hover:text-gray-700'>Forgot password?</Link>
                     </div>
-                    <Button className='btn-blue btn-lg w-full'>Sign up</Button>
+                    <Button type='submit' disabled={!valideValue} className='btn-blue btn-lg w-full'>
+                        {
+                            isLoading === true ? <CircularProgress color="inherit" /> : 'Sign up'
+                        }
+                    </Button>
                 </form>
             </div>
         </section>

@@ -1,5 +1,5 @@
 import './App.css'
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { createContext, useState } from 'react';
 import Login from './Pages/Login';
@@ -20,6 +20,8 @@ import AddSubCategory from './Pages/Category/addSubCategory';
 import ForgotPassword from './Pages/ForgotPassword';
 import VerifyAccount from './Pages/VerifyAccount';
 import ChangePassword from './Pages/ChangePassword';
+import toast, { Toaster } from 'react-hot-toast';
+import { fetchDataFromApi } from './utils/api';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -29,11 +31,45 @@ const MyContext = createContext();
 function App() {
   const [isSidebarOpened, setIsSidebarOpened] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const [isOpenFullScreenPanel, setIsOpenFullScreenPanel] = useState({
     open: false,
     model: ''
   });
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token !== undefined && token !== null && token !== "") {
+      setIsLogin(true);
+
+      fetchDataFromApi(`/api/user/user-details`).then((res) => {
+        setUserData(res.data);
+        if (res?.response?.data?.error === true) {
+          if (res?.response?.data?.message == "You have not login.") {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+
+            openAlertBox("error", "Your session is closed.");
+
+            setIsLogin(false);
+          }
+        }
+      });
+
+    } else {
+      setIsLogin(false);
+    }
+  }, [isLogin]);
+
+  const openAlertBox = (status, msg) => {
+    if (status === 'success') {
+      toast.success(msg);
+    } else if (status === 'error') {
+      toast.error(msg);
+    }
+  }
 
   const values = {
     isSidebarOpened,
@@ -41,7 +77,10 @@ function App() {
     isLogin,
     setIsLogin,
     isOpenFullScreenPanel,
-    setIsOpenFullScreenPanel
+    setIsOpenFullScreenPanel,
+    openAlertBox,
+    userData,
+    setUserData
   };
   const router = createBrowserRouter([
     {
@@ -193,6 +232,8 @@ function App() {
             isOpenFullScreenPanel?.model === "Add new sub category" && <AddSubCategory />
           }
         </Dialog>
+
+        <Toaster />
 
       </MyContext.Provider>
     </>

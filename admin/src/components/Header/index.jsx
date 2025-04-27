@@ -11,7 +11,8 @@ import Divider from '@mui/material/Divider';
 import { FaRegUser } from "react-icons/fa6";
 import { IoMdLogOut } from "react-icons/io";
 import { MyContext } from '../../App';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { fetchDataFromApi } from '../../utils/api';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
@@ -24,13 +25,32 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const Header = () => {
     const [anchorMyAcc, setAnchorMyAcc] = useState(null);
     const openMyAcc = Boolean(anchorMyAcc);
+
     const handleClickMyAcc = (event) => {
         setAnchorMyAcc(event.currentTarget);
     };
+
     const handleCloseMyAcc = () => {
         setAnchorMyAcc(null);
     };
+
     const context = useContext(MyContext);
+    const history = useNavigate();
+
+    const logout = () => {
+        setAnchorMyAcc(null);
+
+        fetchDataFromApi(`/api/user/logout?token=${localStorage.getItem('accessToken')}`, { withCredentials: true }).then((res) => {
+            if (res?.error === false) {
+                context.setIsLogin(false);
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                context.openAlertBox("success", res?.message);
+                history("/");
+            }
+        });
+    };
+
     return (
         <header className={`w-full h-auto py-2 ${context.isSidebarOpened === true ? 'pl-64' : 'pl-5'} shadow-md pr-7 bg-[#fff] flex items-center justify-between transition-all`}>
             <div className='part1'>
@@ -49,7 +69,7 @@ const Header = () => {
                     context.isLogin === true ? (
                         <div className='relative'>
                             <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer' onClick={handleClickMyAcc}>
-                                <img src="https://th.bing.com/th/id/OIP.4Q7-yMnrlnqwR4ORH7c06AHaHa?w=200&h=200&c=7&r=0&o=5&dpr=1.5&pid=1.7" className='w-full h-full object-cover' />
+                                <img src={context?.userData?.avatar} className='w-full h-full object-cover' />
                             </div>
                             <Menu
                                 anchorEl={anchorMyAcc}
@@ -94,8 +114,8 @@ const Header = () => {
                                             <img src="https://th.bing.com/th/id/OIP.4Q7-yMnrlnqwR4ORH7c06AHaHa?w=200&h=200&c=7&r=0&o=5&dpr=1.5&pid=1.7" className='w-full h-full object-cover' />
                                         </div>
                                         <div className='info'>
-                                            <h3 className='text-[15px] font-[500] leading-5'>Nguyen Cong Thanh</h3>
-                                            <p className='text-[12px] font-[400] opacity-70'>Thanh.NC2701@gmail.com</p>
+                                            <h3 className='text-[15px] font-[500] leading-5'>{context?.userData?.name}</h3>
+                                            <p className='text-[12px] font-[400] opacity-70'>{context?.userData?.email}</p>
                                         </div>
                                     </div>
                                 </MenuItem>
@@ -104,7 +124,7 @@ const Header = () => {
                                     <FaRegUser className='text-[16px]' />
                                     <span className='text-[14px]'>Profile</span>
                                 </MenuItem>
-                                <MenuItem onClick={handleCloseMyAcc} className='flex items-center gap-3'>
+                                <MenuItem onClick={logout} className='flex items-center gap-3'>
                                     <IoMdLogOut className='text-[18px]' />
                                     <span className='text-[14px]'>Sign out</span>
                                 </MenuItem>

@@ -95,3 +95,8 @@ a.active button{
 .MuiTableBody-root tr:nth-child(even) {
   @apply bg-gray-50
 }
+
+button .MuiCircularProgress-root{
+  width: 30px !important;
+  height: 30px !important;
+}

@@ -1,6 +1,6 @@
-import { Button, FormControlLabel } from '@mui/material';
-import React, { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom';
+import { Button, CircularProgress, FormControlLabel } from '@mui/material';
+import React, { useContext, useState } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { CgLogIn } from "react-icons/cg";
 import { FaRegUser } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
@@ -8,12 +8,24 @@ import { BsFacebook } from "react-icons/bs";
 import Checkbox from '@mui/material/Checkbox';
 import { FaRegEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { MyContext } from '../../App';
+import { postData } from '../../utils/api';
 
 const Login = () => {
 
     const [loadingGoogle, setLoadingGoogle] = useState(false);
     const [loadingFacebook, setLoadingFacebook] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
     const [isPasswordShow, setIsPasswordShow] = useState(false);
+
+    const [formFields, setFormFields] = useState({
+        email: '',
+        password: ''
+    });
+
+    const context = useContext(MyContext);
+    const history = useNavigate();
 
     function handleClickGoogle() {
         setLoadingGoogle(true);
@@ -21,6 +33,75 @@ const Login = () => {
     function handleClickFacebook() {
         setLoadingFacebook(true);
     }
+
+    const onChangeInput = (e) => {
+        const { name, value } = e.target;
+        setFormFields(() => {
+            return {
+                ...formFields,
+                [name]: value
+            }
+        });
+    }
+
+    const valideValue = Object.values(formFields).every(el => el);
+
+
+    const forgotPassword = () => {
+        if (formFields.email === "") {
+            context.openAlertBox("error", "Please enter email.");
+            return false;
+        } else {
+            context.openAlertBox("success", "OTP sent.");
+            localStorage.setItem("userEmail", formFields.email);
+            localStorage.setItem("actionType", "forgot-password");
+
+            postData("/api/user/forgot-password", {
+                email: formFields.email
+            }).then((res) => {
+                if (res?.error === false) {
+                    context.openAlertBox("success", res?.message);
+                    history("/verify-account");
+                } else {
+                    context.openAlertBox("error", res?.message);
+                }
+            });
+        }
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setIsLoading(true);
+
+        if (formFields.email === "") {
+            context.openAlertBox("error", "Please enter email.");
+            return false;
+        }
+
+        if (formFields.password === "") {
+            context.openAlertBox("error", "Please enter password.");
+            return false;
+        }
+
+        postData("/api/user/login", formFields, { withCredentials: true }).then((res) => {
+            if (res?.error !== true) {
+                context.setIsLogin(true);
+                context.openAlertBox("success", res?.message);
+                setFormFields({
+                    email: "",
+                    password: ""
+                });
+                localStorage.setItem("accessToken", res?.data?.accessToken);
+                localStorage.setItem("refreshToken", res?.data?.refreshToken);
+                history("/");
+            } else {
+                context.openAlertBox("error", res?.message);
+            }
+            setIsLoading(false);
+        });
+    }
+
     return (
         <section className='bg-white w-full'>
             <header className='w-full fixed top-0 left-0 px-4 py-3 flex items-center justify-between z-50'>
@@ -85,15 +166,29 @@ const Login = () => {
                     <span className='flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]'></span>
                 </div>
                 <br />
-                <form className='w-full px-8 mt-3'>
+                <form className='w-full px-8 mt-3' onSubmit={handleSubmit}>
                     <div className='form-group mb-4 w-full'>
                         <h4 className='text-[14px] font-[500] mb-1'>Email</h4>
-                        <input type="email" className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3' />
+                        <input
+                            type="email"
+                            className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
+                            name="email"
+                            value={formFields.email}
+                            disabled={isLoading === true ? true : false}
+                            onChange={onChangeInput}
+                        />
                     </div>
                     <div className='form-group mb-4 w-full'>
                         <h4 className='text-[14px] font-[500] mb-1'>Password</h4>
                         <div className='relative w-full'>
-                            <input type={`${isPasswordShow === true ? 'text' : 'password'}`} className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3' />
+                            <input
+                                type={`${isPasswordShow === true ? 'text' : 'password'}`}
+                                className='w-full h-[50px] border-2 border-[rgba(0,0,0,0.1)] rounded-md focus:border-[rgba(0,0,0,0.7)] focus:outline-none px-3'
+                                name="password"
+                                value={formFields.password}
+                                disabled={isLoading === true ? true : false}
+                                onChange={onChangeInput}
+                            />
                             <Button onClick={() => setIsPasswordShow(!isPasswordShow)} className='!absolute top-[7px] right-[10px] z-50 !rounded-full !w-[35px] !h-[35px] !min-w-[35px] !text-gray-600'>
                                 {
                                     isPasswordShow === true ? <>
@@ -109,9 +204,18 @@ const Login = () => {
                     <div className='form-group mb-4 w-full flex items-center justify-between'>
                         <FormControlLabel control={<Checkbox defaultChecked />} label="Remember me" />
 
-                        <Link to='/forgot-password' className='text-primary font-[700] text-[15px] hover:underline hover:text-gray-700'>Forgot password?</Link>
+                        <a
+                            onClick={forgotPassword}
+                            className='text-primary font-[700] text-[15px] hover:underline hover:text-gray-700 cursor-pointer'
+                        >
+                            Forgot password?
+                        </a>
                     </div>
-                    <Button className='btn-blue btn-lg w-full'>Sign in</Button>
+                    <Button type='submit' disabled={!valideValue} className='btn-blue btn-lg w-full'>
+                        {
+                            isLoading === true ? <CircularProgress color="inherit" /> : 'Sign in'
+                        }
+                    </Button>
                 </form>
             </div>
         </section>
