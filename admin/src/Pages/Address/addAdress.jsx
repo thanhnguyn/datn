@@ -6,7 +6,7 @@ import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { postData } from '../../utils/api';
+import { fetchDataFromApi, postData } from '../../utils/api';
 import { MyContext } from '../../App';
 
 const AddAddress = () => {
@@ -24,19 +24,23 @@ const AddAddress = () => {
     country: "",
     mobile: "",
     status: "",
-    userId: context?.userData?._id
+    userId: "",
+    isSelected: false
   });
 
   useEffect(() => {
-    formFields.userId = context?.userData?._id;
+    setFormFields((prevState) => ({
+      ...prevState,
+      userId: context?.userData?._id
+    }));
   }, [context?.userData]);
-
 
   const handleChangeStatus = (event) => {
     setStatus(event.target.value);
-    setFormFields({
+    setFormFields((prevState) => ({
+      ...prevState,
       status: event.target.value
-    })
+    }));
   };
 
 
@@ -87,9 +91,18 @@ const AddAddress = () => {
     postData(`/api/address/add`, formFields, { withCredentials: true }).then((res) => {
       if (res?.error !== true) {
         setIsLoading(false);
-        context.openAlertBox("success", res?.data?.message);
+        context.openAlertBox("success", res?.message);
+        context?.setIsOpenFullScreenPanel({
+          open: false
+        });
+
+        fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
+          context?.setAddress(res.data);
+        });
+
+
       } else {
-        context.openAlertBox("error", res?.data?.message);
+        context.openAlertBox("error", res?.message);
         setIsLoading(false);
       }
     });
@@ -133,9 +146,10 @@ const AddAddress = () => {
                 disabled={isLoading === true ? true : false}
                 onChange={(phone) => {
                   setPhone(phone);
-                  setFormFields({
+                  setFormFields((prevState) => ({
+                    ...prevState,
                     mobile: phone
-                  });
+                  }));
                 }}
               />
             </div>

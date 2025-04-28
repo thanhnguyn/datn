@@ -1,16 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { MyContext } from '../../App';
-import { editData, postData, uploadImage } from '../../utils/api';
+import { editData, fetchDataFromApi, postData, uploadImage } from '../../utils/api';
 import { Button, CircularProgress, TextField } from '@mui/material';
 import { FaCloudUploadAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { Collapse } from 'react-collapse';
+import Radio from '@mui/material/Radio';
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 const Profile = () => {
     const [previews, setPreviews] = useState([]);
     const [uploading, setUploading] = useState(false);
+    const [address, setAddress] = useState([]);
 
     const [isLoading, setIsLoading] = useState(false);
     const [isLoading2, setIsLoading2] = useState(false);
@@ -31,9 +35,14 @@ const Profile = () => {
         confirmPassword: ""
     });
 
-
     const context = useContext(MyContext);
     const history = useNavigate();
+
+    const [selectedValue, setSelectedValue] = useState('');
+
+    const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
@@ -45,8 +54,12 @@ const Profile = () => {
 
     useEffect(() => {
         if (context?.userData?._id !== "" && context?.userData?._id !== undefined) {
-            setUserId(context?.userData?._id);
+            fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
+                setAddress(res.data);
+                context?.setAddress(res.data);
+            });
 
+            setUserId(context?.userData?._id);
             setFormFields({
                 name: context?.userData?.name,
                 email: context?.userData?.email,
@@ -142,7 +155,6 @@ const Profile = () => {
             if (res?.error !== true) {
                 setIsLoading2(false);
                 context.openAlertBox("success", res?.message);
-                context.setIsOpenFullScreenPanel({ open: false });
             } else {
                 context.openAlertBox("error", res?.message);
                 setIsLoading2(false);
@@ -285,13 +297,42 @@ const Profile = () => {
                         </div>
                     </div>
                     <br />
-                    <div className='flex items-center justify-center p-5 border border-dashed border-[rgba(0,0,0,0.2)] bg-[#f1faff] hover:bg-[#e7f3f9]  cursor-pointer'
+                    <div className='flex items-center justify-center p-5 rounded-md border border-dashed border-[rgba(0,0,0,0.2)] bg-[#f1faff] hover:bg-[#e7f3f9]  cursor-pointer'
                         onClick={() => context.setIsOpenFullScreenPanel({
                             open: true,
                             model: "Add new address"
                         })}
                     >
                         <span className='text-[14px] font-[500]'>Add address</span>
+                    </div>
+
+                    <div className='flex gap-2 flex-col mt-4'>
+                        {
+                            address?.length > 0 && address?.map((address, index) => {
+                                return (
+                                    <>
+                                        <label className='border border-dashed border-[rgba(0,0,0,0.2)] addressBox w-full flex items-center justify-center bg-[#f1f1f1] p-3 rounded-md cursor-pointer'>
+                                            <Radio {...label} name='address'
+                                                checked={selectedValue === (
+                                                    address?._id
+                                                )}
+                                                value={(address?._id)}
+                                                onClick={handleChange}
+                                            />
+                                            <span className='text-[12px]'>
+                                                {
+                                                    address?.address_line1 + " " +
+                                                    address?.city + " " +
+                                                    address?.state + " " +
+                                                    address?.country + " " +
+                                                    address?.pincode
+                                                }
+                                            </span>
+                                        </label>
+                                    </>
+                                )
+                            })
+                        }
                     </div>
 
 

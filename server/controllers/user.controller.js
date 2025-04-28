@@ -389,7 +389,7 @@ export async function updateUserDetailsController(request, response) {
                 mobile: updateUser?.mobile,
                 avatar: updateUser?.avatar
             }
-        })
+        });
 
 
 
@@ -660,7 +660,7 @@ export async function refreshTokenController(request, response) {
 export async function userDetailsController(request, response) {
     try {
         const userId = request.userId;
-        const user = await UserModel.findById(userId).select('-password -refresh_token');
+        const user = await UserModel.findById(userId).select('-password -refresh_token').populate('address_details');
 
         return response.json({
             message: "User details",
