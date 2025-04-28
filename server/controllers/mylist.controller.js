@@ -1,6 +1,6 @@
 import MyListModel from "../models/myList.model.js";
 
-export async function addToMyList(request, response) {
+export async function addToMyListController(request, response) {
     try {
         const userId = request.userId;
         const {
@@ -54,7 +54,7 @@ export async function addToMyList(request, response) {
 }
 
 
-export async function deleteFromMyList(request, response) {
+export async function deleteFromMyListController(request, response) {
     try {
         const myListItem = await MyListModel.findById(request.params.id);
         if (!myListItem) {
@@ -92,7 +92,7 @@ export async function deleteFromMyList(request, response) {
 }
 
 
-export async function getMyList(request, response) {
+export async function getMyListController(request, response) {
     try {
         const userId = request.userId;
 

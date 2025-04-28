@@ -111,7 +111,7 @@ const Header = () => {
                                 <MenuItem onClick={handleCloseMyAcc} className='!bg-white'>
                                     <div className='flex items-center gap-3'>
                                         <div className='rounded-full w-[35px] h-[35px] overflow-hidden cursor-pointer'>
-                                            <img src="https://th.bing.com/th/id/OIP.4Q7-yMnrlnqwR4ORH7c06AHaHa?w=200&h=200&c=7&r=0&o=5&dpr=1.5&pid=1.7" className='w-full h-full object-cover' />
+                                            <img src={context?.userData?.avatar} className='w-full h-full object-cover' />
                                         </div>
                                         <div className='info'>
                                             <h3 className='text-[15px] font-[500] leading-5'>{context?.userData?.name}</h3>
@@ -120,10 +120,12 @@ const Header = () => {
                                     </div>
                                 </MenuItem>
                                 <Divider />
-                                <MenuItem onClick={handleCloseMyAcc} className='flex items-center gap-3'>
-                                    <FaRegUser className='text-[16px]' />
-                                    <span className='text-[14px]'>Profile</span>
-                                </MenuItem>
+                                <Link to='/profile'>
+                                    <MenuItem onClick={handleCloseMyAcc} className='flex items-center gap-3'>
+                                        <FaRegUser className='text-[16px]' />
+                                        <span className='text-[14px]'>Profile</span>
+                                    </MenuItem>
+                                </Link>
                                 <MenuItem onClick={logout} className='flex items-center gap-3'>
                                     <IoMdLogOut className='text-[18px]' />
                                     <span className='text-[14px]'>Sign out</span>

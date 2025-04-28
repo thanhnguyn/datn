@@ -1,26 +1,26 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
 import upload from '../middlewares/multer.js';
-import { createProduct, deleteProduct, getAllFeaturedProducts, getAllProducts, getAllProductsByCatId, getAllProductsByCatName, getAllProductsByPrice, getAllProductsByRating, getAllProductsBySubCatId, getAllProductsBySubCatName, getAllProductsByThirdLevelCatId, getAllProductsByThirdLevelCatName, getProduct, getProductsCount, removeImageFromCloudinary, updateProduct, uploadImages } from '../controllers/product.controller.js';
+import { createProductController, deleteProductController, getAllFeaturedProductsController, getAllProductsController, getAllProductsByCatIdController, getAllProductsByCatNameController, getAllProductsByPriceController, getAllProductsByRatingController, getAllProductsBySubCatIdController, getAllProductsBySubCatNameController, getAllProductsByThirdLevelCatIdController, getAllProductsByThirdLevelCatNameController, getProductController, getProductsCountController, removeImageFromCloudinaryController, updateProductController, uploadImagesController } from '../controllers/product.controller.js';
 
 const productRouter = Router();
 
-productRouter.post('/uploadImages', auth, upload.array('images'), uploadImages);
-productRouter.post('/create', auth, createProduct);
-productRouter.get('/getAllProducts', getAllProducts);
-productRouter.get('/getAllProductsByCatId/:id', getAllProductsByCatId);
-productRouter.get('/getAllProductsByCatName', getAllProductsByCatName);
-productRouter.get('/getAllProductsBySubCatId/:id', getAllProductsBySubCatId);
-productRouter.get('/getAllProductsBySubCatName', getAllProductsBySubCatName);
-productRouter.get('/getAllProductsByThirdLevelCatId/:id', getAllProductsByThirdLevelCatId);
-productRouter.get('/getAllProductsByThirdLevelCatName', getAllProductsByThirdLevelCatName);
-productRouter.get('/getAllProductsByPrice', getAllProductsByPrice);
-productRouter.get('/getAllProductsByRating', getAllProductsByRating);
-productRouter.get('/getAllProductsCount', getProductsCount);
-productRouter.get('/getAllFeaturedProducts', getAllFeaturedProducts);
-productRouter.delete('/:id', deleteProduct);
-productRouter.get('/:id', getProduct);
-productRouter.delete('/deleteImage', auth, removeImageFromCloudinary);
-productRouter.put('/updateProduct/:id', auth, updateProduct);
+productRouter.post('/uploadImages', auth, upload.array('images'), uploadImagesController);
+productRouter.post('/create', auth, createProductController);
+productRouter.get('/getAllProducts', getAllProductsController);
+productRouter.get('/getAllProductsByCatId/:id', getAllProductsByCatIdController);
+productRouter.get('/getAllProductsByCatName', getAllProductsByCatNameController);
+productRouter.get('/getAllProductsBySubCatId/:id', getAllProductsBySubCatIdController);
+productRouter.get('/getAllProductsBySubCatName', getAllProductsBySubCatNameController);
+productRouter.get('/getAllProductsByThirdLevelCatId/:id', getAllProductsByThirdLevelCatIdController);
+productRouter.get('/getAllProductsByThirdLevelCatName', getAllProductsByThirdLevelCatNameController);
+productRouter.get('/getAllProductsByPrice', getAllProductsByPriceController);
+productRouter.get('/getAllProductsByRating', getAllProductsByRatingController);
+productRouter.get('/getAllProductsCount', getProductsCountController);
+productRouter.get('/getAllFeaturedProducts', getAllFeaturedProductsController);
+productRouter.delete('/:id', deleteProductController);
+productRouter.get('/:id', getProductController);
+productRouter.delete('/deleteImage', auth, removeImageFromCloudinaryController);
+productRouter.put('/updateProduct/:id', auth, updateProductController);
 
 export default productRouter;

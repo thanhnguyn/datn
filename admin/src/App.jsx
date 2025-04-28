@@ -22,6 +22,7 @@ import VerifyAccount from './Pages/VerifyAccount';
 import ChangePassword from './Pages/ChangePassword';
 import toast, { Toaster } from 'react-hot-toast';
 import { fetchDataFromApi } from './utils/api';
+import AddAddress from './Pages/Address/addAdress';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -38,7 +39,6 @@ function App() {
     model: ''
   });
 
-
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token !== undefined && token !== null && token !== "") {
@@ -46,15 +46,14 @@ function App() {
 
       fetchDataFromApi(`/api/user/user-details`).then((res) => {
         setUserData(res.data);
-        if (res?.response?.data?.error === true) {
-          if (res?.response?.data?.message == "You have not login.") {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
 
-            openAlertBox("error", "Your session is closed.");
+        if (res?.response?.data?.message == "You have not login.") {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
 
-            setIsLogin(false);
-          }
+          openAlertBox("error", "Your session is closed.");
+
+          setIsLogin(false);
         }
       });
 
@@ -191,6 +190,15 @@ function App() {
         </>
       ),
     },
+    {
+      path: '/profile',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'Profile'} />
+        </>
+      ),
+    },
   ]);
 
   return (
@@ -230,6 +238,9 @@ function App() {
           }
           {
             isOpenFullScreenPanel?.model === "Add new sub category" && <AddSubCategory />
+          }
+          {
+            isOpenFullScreenPanel?.model === "Add new address" && <AddAddress />
           }
         </Dialog>
 

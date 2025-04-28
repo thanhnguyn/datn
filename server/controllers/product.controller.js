@@ -11,7 +11,7 @@ cloudinary.config({
 });
 
 var imagesArr = [];
-export async function uploadImages(request, response) {
+export async function uploadImagesController(request, response) {
     try {
         imagesArr = [];
 
@@ -48,7 +48,7 @@ export async function uploadImages(request, response) {
 }
 
 
-export async function createProduct(request, response) {
+export async function createProductController(request, response) {
     try {
         let product = new ProductModel({
             name: request.body.name,
@@ -99,7 +99,7 @@ export async function createProduct(request, response) {
 }
 
 
-export async function getAllProducts(request, response) {
+export async function getAllProductsController(request, response) {
     try {
         const page = parseInt(request.query.page) || 1;
         const perPage = parseInt(request.query.perPage);
@@ -142,7 +142,7 @@ export async function getAllProducts(request, response) {
 }
 
 
-export async function getAllProductsByCatId(request, response) {
+export async function getAllProductsByCatIdController(request, response) {
     try {
         const page = parseInt(request.query.page) || 1;
         const perPage = parseInt(request.query.perPage) || 10000;
@@ -188,7 +188,7 @@ export async function getAllProductsByCatId(request, response) {
 }
 
 
-export async function getAllProductsByCatName(request, response) {
+export async function getAllProductsByCatNameController(request, response) {
     try {
         const page = parseInt(request.query.page) || 1;
         const perPage = parseInt(request.query.perPage) || 10000;
@@ -234,7 +234,7 @@ export async function getAllProductsByCatName(request, response) {
 }
 
 
-export async function getAllProductsBySubCatId(request, response) {
+export async function getAllProductsBySubCatIdController(request, response) {
     try {
         const page = parseInt(request.query.page) || 1;
         const perPage = parseInt(request.query.perPage) || 10000;
@@ -280,7 +280,7 @@ export async function getAllProductsBySubCatId(request, response) {
 }
 
 
-export async function getAllProductsBySubCatName(request, response) {
+export async function getAllProductsBySubCatNameController(request, response) {
     try {
         const page = parseInt(request.query.page) || 1;
         const perPage = parseInt(request.query.perPage) || 10000;
@@ -326,7 +326,7 @@ export async function getAllProductsBySubCatName(request, response) {
 }
 
 
-export async function getAllProductsByThirdLevelCatId(request, response) {
+export async function getAllProductsByThirdLevelCatIdController(request, response) {
     try {
         const page = parseInt(request.query.page) || 1;
         const perPage = parseInt(request.query.perPage) || 10000;
@@ -371,7 +371,7 @@ export async function getAllProductsByThirdLevelCatId(request, response) {
     }
 }
 
-export async function getAllProductsByThirdLevelCatName(request, response) {
+export async function getAllProductsByThirdLevelCatNameController(request, response) {
     try {
         const page = parseInt(request.query.page) || 1;
         const perPage = parseInt(request.query.perPage) || 10000;
@@ -417,7 +417,7 @@ export async function getAllProductsByThirdLevelCatName(request, response) {
 }
 
 
-export async function getAllProductsByPrice(request, response) {
+export async function getAllProductsByPriceController(request, response) {
     let productList = [];
 
     if (request.query.catId !== "" && request.query.catId !== undefined) {
@@ -462,7 +462,7 @@ export async function getAllProductsByPrice(request, response) {
 }
 
 
-export async function getAllProductsByRating(request, response) {
+export async function getAllProductsByRatingController(request, response) {
     try {
         const page = parseInt(request.query.page) || 1;
         const perPage = parseInt(request.query.perPage) || 10000;
@@ -533,7 +533,7 @@ export async function getAllProductsByRating(request, response) {
 }
 
 
-export async function getProductsCount(request, response) {
+export async function getProductsCountController(request, response) {
     try {
         const productsCount = await ProductModel.countDocuments();
 
@@ -559,7 +559,7 @@ export async function getProductsCount(request, response) {
 }
 
 
-export async function getAllFeaturedProducts(request, response) {
+export async function getAllFeaturedProductsController(request, response) {
     try {
         const products = await ProductModel.find({
             isfeatured: true
@@ -588,7 +588,7 @@ export async function getAllFeaturedProducts(request, response) {
 }
 
 
-export async function deleteProduct(request, response) {
+export async function deleteProductController(request, response) {
     const product = await ProductModel.findById(request.params.id).populate('category');
     if (!product) {
         return response.status(404).json({
@@ -630,7 +630,7 @@ export async function deleteProduct(request, response) {
 }
 
 
-export async function getProduct(request, response) {
+export async function getProductController(request, response) {
     try {
         const product = await ProductModel.findById(request.params.id).populate('category');
         if (!product) {
@@ -656,7 +656,7 @@ export async function getProduct(request, response) {
 }
 
 
-export async function removeImageFromCloudinary(request, response) {
+export async function removeImageFromCloudinaryController(request, response) {
     const imgUrl = request.query.img;
     const urlArr = imgUrl.split("/");
     const image = urlArr[urlArr.length - 1];
@@ -678,7 +678,7 @@ export async function removeImageFromCloudinary(request, response) {
 }
 
 
-export async function updateProduct(request, response) {
+export async function updateProductController(request, response) {
     try {
         const product = await ProductModel.findByIdAndUpdate(
             request.params.id,

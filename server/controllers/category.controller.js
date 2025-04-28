@@ -11,7 +11,7 @@ cloudinary.config({
 });
 
 var imagesArr = [];
-export async function uploadImages(request, response) {
+export async function uploadImagesController(request, response) {
     try {
         imagesArr = [];
 
@@ -47,7 +47,7 @@ export async function uploadImages(request, response) {
     }
 }
 
-export async function createCategory(request, response) {
+export async function createCategoryController(request, response) {
     try {
         let category = new CategoryModel({
             name: request.body.name,
@@ -83,7 +83,7 @@ export async function createCategory(request, response) {
     }
 }
 
-export async function getCategories(request, response) {
+export async function getCategoriesController(request, response) {
     try {
         const categories = await CategoryModel.find();
         const categoryMap = {};
@@ -116,7 +116,7 @@ export async function getCategories(request, response) {
     }
 }
 
-export async function getCategoriesCount(request, response) {
+export async function getCategoriesCountController(request, response) {
     try {
         const categoryCount = await CategoryModel.countDocuments({ parentId: undefined });
         if (!categoryCount) {
@@ -138,7 +138,7 @@ export async function getCategoriesCount(request, response) {
     }
 }
 
-export async function getSubCategoriesCount(request, response) {
+export async function getSubCategoriesCountController(request, response) {
     try {
         const categories = await CategoryModel.find();
         if (!categories) {
@@ -167,7 +167,7 @@ export async function getSubCategoriesCount(request, response) {
     }
 }
 
-export async function getCategory(request, response) {
+export async function getCategoryController(request, response) {
     try {
         const category = await CategoryModel.findById(request.params.id);
         if (!category) {
@@ -192,7 +192,7 @@ export async function getCategory(request, response) {
     }
 }
 
-export async function removeImageFromCloudinary(request, response) {
+export async function removeImageFromCloudinaryController(request, response) {
     const imgUrl = request.query.img;
     const urlArr = imgUrl.split("/");
     const image = urlArr[urlArr.length - 1];
@@ -213,7 +213,7 @@ export async function removeImageFromCloudinary(request, response) {
 
 }
 
-export async function deleteCategory(request, response) {
+export async function deleteCategoryController(request, response) {
     const category = await CategoryModel.findById(request.params.id);
     const images = category.images;
 
@@ -263,7 +263,7 @@ export async function deleteCategory(request, response) {
     });
 }
 
-export async function updateCategory(request, response) {
+export async function updateCategoryController(request, response) {
     const category = await CategoryModel.findByIdAndUpdate(
         request.params.id,
         {

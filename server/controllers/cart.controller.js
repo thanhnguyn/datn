@@ -1,7 +1,7 @@
 import CartProductModel from '../models/cartproduct.model.js';
 import UserModel from "../models/user.model.js";
 
-export async function addItemToCart(request, response) {
+export async function addItemToCartController(request, response) {
     try {
         const userId = request.userId;
         const { productId } = request.body;
@@ -58,7 +58,7 @@ export async function addItemToCart(request, response) {
 }
 
 
-export async function getCartItem(request, response) {
+export async function getCartItemController(request, response) {
     try {
         const userId = request.userId;
 
@@ -83,7 +83,7 @@ export async function getCartItem(request, response) {
 }
 
 
-export async function updateCartItemQty(request, response) {
+export async function updateCartItemQtyController(request, response) {
     try {
         const userId = request.userId;
         const { _id, qty } = request.body;
@@ -123,7 +123,7 @@ export async function updateCartItemQty(request, response) {
     }
 }
 
-export async function deleteCartItem(request, response) {
+export async function deleteCartItemController(request, response) {
     try {
         const userId = request.userId;
         const { _id, productId } = request.body;

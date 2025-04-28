@@ -307,7 +307,7 @@ export async function userAvatarController(request, response) {
     }
 }
 
-export async function removeImageFromCloudinary(request, response) {
+export async function removeImageFromCloudinaryController(request, response) {
     const imgUrl = request.query.img;
     const urlArr = imgUrl.split("/");
     const image = urlArr[urlArr.length - 1];
@@ -328,7 +328,7 @@ export async function removeImageFromCloudinary(request, response) {
 
 }
 
-export async function updateUserDetails(request, response) {
+export async function updateUserDetailsController(request, response) {
     try {
         const userId = request.userId;
         const { name, email, mobile, password } = request.body;
@@ -446,7 +446,7 @@ export async function forgotPasswordController(request, response) {
     }
 }
 
-export async function verifyForgotPasswordOtp(request, response) {
+export async function verifyForgotPasswordOtpController(request, response) {
     try {
         const { email, otp } = request.body;
 
@@ -505,7 +505,7 @@ export async function verifyForgotPasswordOtp(request, response) {
     }
 }
 
-export async function resetPassword(request, response) {
+export async function resetPasswordController(request, response) {
     try {
         const { email, oldPassword, newPassword, confirmPassword } = request.body;
         if (!email || !oldPassword || !newPassword || !confirmPassword) {
@@ -561,7 +561,7 @@ export async function resetPassword(request, response) {
     }
 }
 
-export async function resetPassword2(request, response) {
+export async function resetPasswordController2(request, response) {
     try {
         const { email, newPassword, confirmPassword } = request.body;
         if (!email || !newPassword || !confirmPassword) {
@@ -609,7 +609,7 @@ export async function resetPassword2(request, response) {
 }
 
 //refresh token
-export async function refreshToken(request, response) {
+export async function refreshTokenController(request, response) {
     try {
         const refreshToken = request.cookies.refreshToken || request?.headers?.authorization?.split(" ")[1]; // [Bearer token]
         if (!refreshToken) {
@@ -657,7 +657,7 @@ export async function refreshToken(request, response) {
 }
 
 //get login user details
-export async function userDetails(request, response) {
+export async function userDetailsController(request, response) {
     try {
         const userId = request.userId;
         const user = await UserModel.findById(userId).select('-password -refresh_token');
