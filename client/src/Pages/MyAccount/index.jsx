@@ -6,6 +6,8 @@ import { MyContext } from '../../App';
 import { useNavigate } from 'react-router-dom';
 import { editData, postData } from '../../utils/api';
 import { Collapse } from 'react-collapse';
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
 
 const MyAccount = () => {
 
@@ -13,6 +15,7 @@ const MyAccount = () => {
     const [isLoading2, setIsLoading2] = useState(false);
     const [userId, setUserId] = useState("");
     const [isChangePasswordFormShow, setIsChangePasswordFormShow] = useState(false);
+    const [phone, setPhone] = useState('');
 
     const [formFields, setFormFields] = useState({
         name: "",
@@ -32,6 +35,15 @@ const MyAccount = () => {
     const history = useNavigate();
 
     useEffect(() => {
+        if (context?.userData?._id !== undefined) {
+            setFormFields((prevState) => ({
+                ...prevState,
+                userId: context?.userData?._id
+            }));
+        }
+    }, [context?.userData]);
+
+    useEffect(() => {
         const token = localStorage.getItem('accessToken');
 
         if (token === null) {
@@ -49,9 +61,11 @@ const MyAccount = () => {
                 mobile: context?.userData?.mobile
             });
 
+            setPhone(context?.userData?.mobile);
+
             setChangePassword({
                 email: context?.userData?.email
-            })
+            });
         }
     }, [context?.userData]);
 
@@ -188,15 +202,16 @@ const MyAccount = () => {
                             </div>
                             <div className='flex items-center mt-4 gap-5'>
                                 <div className='w-[50%]'>
-                                    <TextField
-                                        label="Phone number"
-                                        variant="outlined"
-                                        size='small'
-                                        className='w-full'
-                                        name='mobile'
-                                        value={formFields.mobile}
+                                    <PhoneInput
+                                        defaultCountry='vn'
+                                        value={phone}
                                         disabled={isLoading === true ? true : false}
-                                        onChange={onChangeInput}
+                                        onChange={(phone) => {
+                                            setPhone(phone);
+                                            setFormFields({
+                                                mobile: phone
+                                            });
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -210,6 +225,7 @@ const MyAccount = () => {
                             </div>
                         </form>
                     </div>
+
                     <Collapse isOpened={isChangePasswordFormShow}>
                         <div className='card bg-white p-5 shadow-md rounded-md'>
                             <div className='flex items-center pb-3'>
