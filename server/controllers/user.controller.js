@@ -508,6 +508,13 @@ export async function verifyForgotPasswordOtpController(request, response) {
 export async function resetPasswordController(request, response) {
     try {
         const { email, oldPassword, newPassword, confirmPassword } = request.body;
+        // if (!email || !oldPassword || !newPassword || !confirmPassword) {
+        //     return response.status(400).json({
+        //         message: "Provide required fields email, oldPassword, newPassword, confirmPassword",
+        //         error: true,
+        //         success: false
+        //     })
+        // }
         if (!email || !oldPassword || !newPassword || !confirmPassword) {
             return response.status(400).json({
                 message: "Provide required fields email, oldPassword, newPassword, confirmPassword",

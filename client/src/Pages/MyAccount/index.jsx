@@ -82,7 +82,7 @@ const MyAccount = () => {
 
         setChangePassword(() => {
             return {
-                ...formFields,
+                ...changePassword,
                 [name]: value
             }
         });
@@ -128,21 +128,25 @@ const MyAccount = () => {
 
         if (changePassword.oldPassword === "") {
             context.openAlertBox("error", "Please enter old password.");
+            setIsLoading2(false);
             return false;
         }
 
         if (changePassword.newPassword === "") {
             context.openAlertBox("error", "Please enter new password.");
+            setIsLoading2(false);
             return false;
         }
 
         if (changePassword.confirmPassword === "") {
             context.openAlertBox("error", "Please enter confirm password.");
+            setIsLoading2(false);
             return false;
         }
 
         if (changePassword.confirmPassword !== changePassword.newPassword) {
             context.openAlertBox("error", "Confirm password and new password must be same.");
+            setIsLoading2(false);
             return false;
         }
 
@@ -276,7 +280,7 @@ const MyAccount = () => {
                                 <div className='flex items-center gap-4'>
                                     <Button type='submit' disabled={!valideValue2} className='btn-org btn-lg w-[200px]'>
                                         {
-                                            isLoading === true ? <CircularProgress color="inherit" /> : 'Change password'
+                                            isLoading2 === true ? <CircularProgress color="inherit" /> : 'Change password'
                                         }
                                     </Button>
                                 </div>

@@ -54,7 +54,7 @@ const ForgotPassword = () => {
             return false;
         }
 
-        postData('/api/user/reset-password', formFields).then((res) => {
+        postData('/api/user/reset-password2', formFields).then((res) => {
             if (res?.error === false) {
                 localStorage.removeItem("userEmail");
                 localStorage.removeItem("actionType");

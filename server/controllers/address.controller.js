@@ -1,12 +1,11 @@
-import { trusted } from "mongoose";
 import AddressModel from "../models/address.model.js"
 import UserModel from "../models/user.model.js";
 
 export async function addAddressController(request, response) {
     try {
-        const { address_line1, city, state, pincode, country, mobile, status, userId, isSelected } = request.body;
+        const { address_line1, city, state, pincode, country, mobile, status, userId } = request.body;
 
-        if (!address_line1 || !city || !state || !pincode || !country || !mobile || !userId || !isSelected) {
+        if (!address_line1 || !city || !state || !pincode || !country || !mobile || !userId) {
 
             return response.status(500).json({
                 message: "Please provide all the fields.",
@@ -16,7 +15,7 @@ export async function addAddressController(request, response) {
         }
 
         const address = new AddressModel({
-            address_line1, city, state, pincode, country, mobile, status, userId, isSelected
+            address_line1, city, state, pincode, country, mobile, status, userId
         });
 
         const saveAddress = await address.save();
