@@ -1,12 +1,12 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, CircularProgress } from '@mui/material';
 import UploadBox from '../../components/UploadBox';
 import { IoMdClose } from 'react-icons/io';
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { deleteImages, postData } from '../../utils/api';
+import { deleteImages, editData, fetchDataFromApi } from '../../utils/api';
 import { MyContext } from '../../App';
 
-const AddCategory = () => {
+const EditCategory = () => {
 
     const [formFields, setFormFields] = useState({
         name: '',
@@ -18,6 +18,15 @@ const AddCategory = () => {
 
     const context = useContext(MyContext);
 
+    useEffect(() => {
+        const id = context?.isOpenFullScreenPanel?.id;
+        fetchDataFromApi(`/api/category/${id}`).then((res) => {
+            formFields.name = res?.category?.name;
+            setPreviews(res?.category?.images);
+        });
+
+    }, [context?.isOpenFullScreenPanel]);
+
     const onChangeInput = (e) => {
         const { name, value } = e.target;
 
@@ -27,6 +36,7 @@ const AddCategory = () => {
                 [name]: value
             }
         });
+        formFields.images = previews;
     }
 
     const setPreviewsFun = (previewsArr) => {
@@ -65,8 +75,8 @@ const AddCategory = () => {
             return false;
         }
 
-        postData("/api/category/create", formFields).then((res) => {
-            context.openAlertBox('success', res.message);
+        editData(`/api/category/${context?.isOpenFullScreenPanel?.id}`, formFields).then((res) => {
+            context.openAlertBox('success', res?.data?.message);
             setTimeout(() => {
                 setIsLoading(false);
                 context.setIsOpenFullScreenPanel({ open: false });
@@ -127,4 +137,4 @@ const AddCategory = () => {
         </section>
     )
 }
-export default AddCategory;
+export default EditCategory;

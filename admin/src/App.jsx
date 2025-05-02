@@ -23,6 +23,7 @@ import ChangePassword from './Pages/ChangePassword';
 import toast, { Toaster } from 'react-hot-toast';
 import { fetchDataFromApi } from './utils/api';
 import AddAddress from './Pages/Address/addAdress';
+import EditCategory from './Pages/Category/editCategory';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -37,7 +38,7 @@ function App() {
 
   const [isOpenFullScreenPanel, setIsOpenFullScreenPanel] = useState({
     open: false,
-    model: ''
+    id: ''
   });
 
   useEffect(() => {
@@ -244,6 +245,9 @@ function App() {
           }
           {
             isOpenFullScreenPanel?.model === "Add new address" && <AddAddress />
+          }
+          {
+            isOpenFullScreenPanel?.model === "Edit category" && <EditCategory />
           }
         </Dialog>
 

@@ -207,7 +207,11 @@ export async function removeImageFromCloudinaryController(request, response) {
         );
 
         if (res) {
-            response.status(200).send(res);
+            return response.status(200).json({
+                error: false,
+                success: true,
+                message: "Image deleted successfully."
+            });
         }
     }
 
@@ -217,7 +221,7 @@ export async function deleteCategoryController(request, response) {
     const category = await CategoryModel.findById(request.params.id);
     const images = category.images;
 
-    for (img of images) {
+    for (let img of images) {
         const imgUrl = img;
         const urlArr = imgUrl.split("/");
         const image = urlArr[urlArr.length - 1];
@@ -288,7 +292,8 @@ export async function updateCategoryController(request, response) {
 
     response.status(200).json({
         error: false,
-        succes: true,
-        category: category
+        success: true,
+        category: category,
+        message: "Category updated successfully."
     });
 }
