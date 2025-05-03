@@ -29,15 +29,13 @@ const CategoryList = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [catData, setCatData] = useState([]);
-
     const context = useContext(MyContext);
 
     useEffect(() => {
         fetchDataFromApi('/api/category').then((res) => {
-            setCatData(res?.data);
+            context?.setCatData(res?.data);
         });
-    }, [context?.isOpenFullScreenPanel]);
+    }, [context?.isOpenFullScreenPanel])
 
     const handleChangeCatFilter = (event) => {
         setCategoryFilterVal(event.target.value);
@@ -56,7 +54,7 @@ const CategoryList = () => {
         deleteData(`/api/category/${id}`).then((res) => {
             context.openAlertBox('success', res?.data?.message);
             fetchDataFromApi('/api/category').then((res) => {
-                setCatData(res?.data);
+                context?.setCatData(res?.data);
             });
         });
     }
@@ -96,9 +94,9 @@ const CategoryList = () => {
                         </TableHead>
                         <TableBody>
                             {
-                                catData?.length !== 0 && catData?.map((item, index) => {
+                                context?.catData?.length !== 0 && context?.catData?.map((item, index) => {
                                     return (
-                                        <TableRow>
+                                        <TableRow key={index}>
                                             <TableCell>
                                                 <Checkbox {...label} size='small' />
                                             </TableCell>

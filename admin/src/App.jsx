@@ -35,6 +35,7 @@ function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
   const [address, setAddress] = useState([]);
+  const [catData, setCatData] = useState([]);
 
   const [isOpenFullScreenPanel, setIsOpenFullScreenPanel] = useState({
     open: false,
@@ -64,6 +65,12 @@ function App() {
     }
   }, [isLogin]);
 
+  useEffect(() => {
+    fetchDataFromApi('/api/category').then((res) => {
+      setCatData(res?.data);
+    });
+  }, []);
+
   const openAlertBox = (status, msg) => {
     if (status === 'success') {
       toast.success(msg);
@@ -83,7 +90,9 @@ function App() {
     userData,
     setUserData,
     setAddress,
-    address
+    address,
+    catData,
+    setCatData
   };
   const router = createBrowserRouter([
     {
