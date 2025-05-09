@@ -16,7 +16,7 @@ import TableRow from '@mui/material/TableRow';
 import Select from '@mui/material/Select';
 import SearchBox from "../../components/SearchBox";
 import { MyContext } from "../../App";
-import { deleteData, fetchDataFromApi } from '../../utils/api';
+import { deleteData, fetchDataFromApi, deleteMultipleData } from '../../utils/api';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
@@ -88,6 +88,27 @@ const Products = () => {
         });
     }
 
+    const deleteMultipleProduct = () => {
+        if (sortedIds.length === 0) {
+            context.openAlertBox('error', 'Please select items to be deleted.');
+            return;
+        }
+
+        console.log(sortedIds);
+
+        try {
+            deleteMultipleData(`/api/product/deleteMultiple`, {
+                data: { ids: sortedIds },
+            }).then((res) => {
+                console.log(res);
+                getProducts();
+                context.openAlertBox("success", "Products deleted.")
+            })
+        } catch (error) {
+            context.openAlertBox('error', 'Error')
+        }
+    };
+
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -96,10 +117,14 @@ const Products = () => {
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
                 <h2 className='text-[18px] font-[600]'>
                     Products
-                    <span className='font-[400] text-[14px]'>(Material UI Table)</span>
+                    <span className='font-[400] text-[14px]'></span>
                 </h2>
 
                 <div className='col w-[25%] ml-auto flex items-center justify-end gap-3'>
+                    {
+                        sortedIds.length !== 0 &&
+                        <Button variant='contained' className='btn-sm' onClick={deleteMultipleProduct}>Delete</Button>
+                    }
                     <Button className='btn !bg-green-600 !text-white btn-sm'>Export</Button>
                     <Button className='btn-blue  !text-white btn-sm' onClick={() => context.setIsOpenFullScreenPanel({ open: true, model: 'Add product' })}>Add product</Button>
                 </div>

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
 import upload from '../middlewares/multer.js';
-import { createProductController, deleteProductController, getAllFeaturedProductsController, getAllProductsController, getAllProductsByCatIdController, getAllProductsByCatNameController, getAllProductsByPriceController, getAllProductsByRatingController, getAllProductsBySubCatIdController, getAllProductsBySubCatNameController, getAllProductsByThirdLevelCatIdController, getAllProductsByThirdLevelCatNameController, getProductController, getProductsCountController, removeImageFromCloudinaryController, updateProductController, uploadImagesController } from '../controllers/product.controller.js';
+import { createProductController, deleteProductController, getAllFeaturedProductsController, getAllProductsController, getAllProductsByCatIdController, getAllProductsByCatNameController, getAllProductsByPriceController, getAllProductsByRatingController, getAllProductsBySubCatIdController, getAllProductsBySubCatNameController, getAllProductsByThirdLevelCatIdController, getAllProductsByThirdLevelCatNameController, getProductController, getProductsCountController, removeImageFromCloudinaryController, updateProductController, uploadImagesController, deleteMultipleProductController } from '../controllers/product.controller.js';
 
 const productRouter = Router();
 
@@ -19,6 +19,7 @@ productRouter.get('/getAllProductsByRating', getAllProductsByRatingController);
 productRouter.get('/getAllProductsCount', getProductsCountController);
 productRouter.get('/getAllFeaturedProducts', getAllFeaturedProductsController);
 productRouter.delete('/:id', deleteProductController);
+productRouter.delete('/deleteMultiple', deleteMultipleProductController);
 productRouter.get('/:id', getProductController);
 productRouter.delete('/deleteImage', auth, removeImageFromCloudinaryController);
 productRouter.put('/updateProduct/:id', auth, updateProductController);
