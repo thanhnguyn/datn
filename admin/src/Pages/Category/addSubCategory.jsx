@@ -5,6 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { MyContext } from '../../App';
 import { fetchDataFromApi, postData } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 const AddSubCategory = () => {
     const [productCat, setProductCat] = useState('');
     const [productCat2, setProductCat2] = useState('');
@@ -24,6 +25,7 @@ const AddSubCategory = () => {
     });
 
     const context = useContext(MyContext);
+    const history = useNavigate();
 
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
@@ -96,6 +98,7 @@ const AddSubCategory = () => {
                 fetchDataFromApi('/api/category').then((res) => {
                     context?.setCatData(res?.data);
                 });
+                history('/subCategory/list');
             }, 1500);
         });
     }

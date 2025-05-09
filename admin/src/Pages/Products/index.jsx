@@ -1,8 +1,7 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, MenuItem } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
-import Progress from '../../components/ProgressBar';
 import { AiOutlineEdit } from "react-icons/ai";
 import { FaRegEye } from 'react-icons/fa6';
 import { GoTrash } from "react-icons/go";
@@ -17,6 +16,9 @@ import TableRow from '@mui/material/TableRow';
 import Select from '@mui/material/Select';
 import SearchBox from "../../components/SearchBox";
 import { MyContext } from "../../App";
+import { deleteData, fetchDataFromApi } from '../../utils/api';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -49,8 +51,22 @@ const Products = () => {
     const [page, setPage] = useState(0);
     const [categoryFilterVal, setCategoryFilterVal] = useState('');
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [productData, setProductData] = useState([]);
 
     const context = useContext(MyContext);
+
+    useEffect(() => {
+        getProducts();
+    }, [context?.isOpenFullScreenPanel]);
+
+    const getProducts = async () => {
+        fetchDataFromApi("/api/product/getAllProducts").then((res) => {
+            if (res?.error === false) {
+                setProductData(res?.products);
+            }
+        });
+    };
+
     const handleChangeCatFilter = (event) => {
         setCategoryFilterVal(event.target.value);
     };
@@ -59,6 +75,18 @@ const Products = () => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
+
+    const deleteProduct = (id) => {
+        deleteData(`/api/product/${id}`).then((res) => {
+            if (res?.data?.error === false) {
+                getProducts();
+                context.openAlertBox('success', res?.data?.message);
+            } else {
+                context.openAlertBox('error', res?.data?.message);
+            }
+
+        });
+    }
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -122,360 +150,91 @@ const Products = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            <TableRow>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex items-center gap-4 w-[300px]'>
-                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                                            <Link to="/product/1234" data-discover='true'>
-                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
-                                            </Link>
-                                        </div>
-                                        <div className='info w-[75%]'>
-                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
-                                                <Link to="/product/123" data-discover='true'>Men Opaque Casual Shirt</Link>
-                                            </h3>
-                                            <span className='text-[12px]'>Fashion</span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Fashion
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Men
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex gap-1 flex-col'>
-                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                                            $58.00
-                                        </span>
-                                        <span className='price text-primary text-[14px] font-[600]'>
-                                            $58.00
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sales</p>
-                                    <Progress value={40} type='error' />
-                                </TableCell>
-                                <TableCell>
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="View product details" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="Remove product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex items-center gap-4 w-[300px]'>
-                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                                            <Link to="/product/1234" data-discover='true'>
-                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
-                                            </Link>
-                                        </div>
-                                        <div className='info w-[75%]'>
-                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
-                                                <Link to="/product/123" data-discover='true'>Men Opaque Casual Shirt</Link>
-                                            </h3>
-                                            <span className='text-[12px]'>Fashion</span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Fashion
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Men
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex gap-1 flex-col'>
-                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                                            $58.00
-                                        </span>
-                                        <span className='price text-primary text-[14px] font-[600]'>
-                                            $58.00
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sales</p>
-                                    <Progress value={40} type='error' />
-                                </TableCell>
-                                <TableCell>
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="View product details" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="Remove product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex items-center gap-4 w-[300px]'>
-                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                                            <Link to="/product/1234" data-discover='true'>
-                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
-                                            </Link>
-                                        </div>
-                                        <div className='info w-[75%]'>
-                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
-                                                <Link to="/product/123" data-discover='true'>Men Opaque Casual Shirt</Link>
-                                            </h3>
-                                            <span className='text-[12px]'>Fashion</span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Fashion
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Men
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex gap-1 flex-col'>
-                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                                            $58.00
-                                        </span>
-                                        <span className='price text-primary text-[14px] font-[600]'>
-                                            $58.00
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sales</p>
-                                    <Progress value={40} type='error' />
-                                </TableCell>
-                                <TableCell>
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="View product details" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="Remove product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex items-center gap-4 w-[300px]'>
-                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                                            <Link to="/product/1234" data-discover='true'>
-                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
-                                            </Link>
-                                        </div>
-                                        <div className='info w-[75%]'>
-                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
-                                                <Link to="/product/123" data-discover='true'>Men Opaque Casual Shirt</Link>
-                                            </h3>
-                                            <span className='text-[12px]'>Fashion</span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Fashion
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Men
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex gap-1 flex-col'>
-                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                                            $58.00
-                                        </span>
-                                        <span className='price text-primary text-[14px] font-[600]'>
-                                            $58.00
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sales</p>
-                                    <Progress value={40} type='error' />
-                                </TableCell>
-                                <TableCell>
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="View product details" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="Remove product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex items-center gap-4 w-[300px]'>
-                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                                            <Link to="/product/1234" data-discover='true'>
-                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
-                                            </Link>
-                                        </div>
-                                        <div className='info w-[75%]'>
-                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
-                                                <Link to="/product/123" data-discover='true'>Men Opaque Casual Shirt</Link>
-                                            </h3>
-                                            <span className='text-[12px]'>Fashion</span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Fashion
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Men
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex gap-1 flex-col'>
-                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                                            $58.00
-                                        </span>
-                                        <span className='price text-primary text-[14px] font-[600]'>
-                                            $58.00
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sales</p>
-                                    <Progress value={40} type='error' />
-                                </TableCell>
-                                <TableCell>
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="View product details" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="Remove product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex items-center gap-4 w-[300px]'>
-                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
-                                            <Link to="/product/1234" data-discover='true'>
-                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105 transition-all' alt="" />
-                                            </Link>
-                                        </div>
-                                        <div className='info w-[75%]'>
-                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
-                                                <Link to="/product/123" data-discover='true'>Men Opaque Casual Shirt</Link>
-                                            </h3>
-                                            <span className='text-[12px]'>Fashion</span>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Fashion
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    Men
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <div className='flex gap-1 flex-col'>
-                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                                            $58.00
-                                        </span>
-                                        <span className='price text-primary text-[14px] font-[600]'>
-                                            $58.00
-                                        </span>
-                                    </div>
-                                </TableCell>
-                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                    <p className='text-[14px] w-[100px]'><span className='font-[600]'>234</span> sales</p>
-                                    <Progress value={40} type='error' />
-                                </TableCell>
-                                <TableCell>
-                                    <div className='flex items-center gap-1'>
-                                        <TooltipMUI title="Edit product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="View product details" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                        <TooltipMUI title="Remove product" placement="top">
-                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                            </Button>
-                                        </TooltipMUI>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
+                            {
+                                productData?.length !== 0 &&
+                                productData
+                                    ?.slice(
+                                        page * rowsPerPage,
+                                        page * rowsPerPage + rowsPerPage
+                                    )
+                                    ?.reverse()
+                                    ?.map((product, index) => {
+                                        return (
+                                            <TableRow key={index}>
+                                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                                    <Checkbox {...label} size='small' />
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                                    <div className='flex items-center gap-4 w-[300px]'>
+                                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
+                                                            <Link to={`/product/${product?._id}`} data-discover='true'>
+                                                                <LazyLoadImage
+                                                                    alt={'image'}
+                                                                    effect='blur'
+                                                                    className='w-full group-hover:scale-105 transition-all'
+                                                                    src={product?.images[0]}
+                                                                />
+                                                            </Link>
+                                                        </div>
+                                                        <div className='info w-[75%]'>
+                                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
+                                                                <Link to={`/product/${product?._id}`} data-discover='true'>
+                                                                    {product?.name}
+                                                                </Link>
+                                                            </h3>
+                                                            <span className='text-[12px]'>{product?.brand}</span>
+                                                        </div>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                                    {product?.catName}
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                                    {product?.subCat}
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                                    <div className='flex gap-1 flex-col'>
+                                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
+                                                            {product?.price}đ
+                                                        </span>
+                                                        <span className='price text-primary text-[14px] font-[600]'>
+                                                            {product?.oldPrice}đ
+                                                        </span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell style={{ minWidth: columns.minWidth }}>
+                                                    <p className='text-[14px] w-[100px]'><span className='font-[600]'>{product?.sale}</span> sales</p>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className='flex items-center gap-1'>
+                                                        <TooltipMUI title="Edit product" placement="top">
+                                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' onClick={() => {
+                                                                context.setIsOpenFullScreenPanel({
+                                                                    open: true,
+                                                                    model: 'Edit product',
+                                                                    id: product?._id
+                                                                })
+                                                            }}
+                                                            >
+                                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                                            </Button>
+                                                        </TooltipMUI>
+                                                        <TooltipMUI title="View product details" placement="top">
+                                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
+                                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                                            </Button>
+                                                        </TooltipMUI>
+                                                        <TooltipMUI title="Remove product" placement="top">
+                                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' onClick={() => deleteProduct(product?._id)}>
+                                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                                            </Button>
+                                                        </TooltipMUI>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })
+                            }
                         </TableBody>
                     </Table>
                 </TableContainer>

@@ -58,6 +58,7 @@ export async function createProductController(request, response) {
             price: request.body.price,
             oldPrice: request.body.oldPrice,
             catName: request.body.catName,
+            category: request.body.category,
             catId: request.body.catId,
             subCatId: request.body.subCatId,
             subCat: request.body.subCat,

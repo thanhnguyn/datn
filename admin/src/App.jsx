@@ -5,29 +5,11 @@ import { createContext, useState } from 'react';
 import Login from './Pages/Login';
 import Layout from './Layout'
 import SignUp from './Pages/SignUp';
-
-import Dialog from '@mui/material/Dialog';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import { IoMdClose } from 'react-icons/io';
-import Slide from '@mui/material/Slide';
-import AddProduct from './Pages/Products/addProduct';
-import AddHomeSlide from './Pages/HomeSliderBanners/AddHomeSlide';
-import AddCategory from './Pages/Category/addCategory';
-import AddSubCategory from './Pages/Category/addSubCategory';
 import ForgotPassword from './Pages/ForgotPassword';
 import VerifyAccount from './Pages/VerifyAccount';
 import ChangePassword from './Pages/ChangePassword';
 import toast, { Toaster } from 'react-hot-toast';
 import { fetchDataFromApi } from './utils/api';
-import AddAddress from './Pages/Address/addAdress';
-import EditCategory from './Pages/Category/editCategory';
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 const MyContext = createContext();
 function App() {
@@ -218,47 +200,6 @@ function App() {
     <>
       <MyContext.Provider value={values}>
         <RouterProvider router={router} />
-
-        <Dialog
-          fullScreen
-          open={isOpenFullScreenPanel.open}
-          onClose={() => setIsOpenFullScreenPanel({ open: false })}
-          TransitionComponent={Transition}
-        >
-          <AppBar sx={{ position: 'relative' }}>
-            <Toolbar>
-              <IconButton
-                edge="start"
-                color="inherit"
-                onClick={() => setIsOpenFullScreenPanel({ open: false })}
-                aria-label="close"
-              >
-                <IoMdClose className='text-gray-800' />
-              </IconButton>
-              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                <span className='text-gray-800'>{isOpenFullScreenPanel?.model}</span>
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          {
-            isOpenFullScreenPanel?.model === "Add product" && <AddProduct />
-          }
-          {
-            isOpenFullScreenPanel?.model === "Add home slide" && <AddHomeSlide />
-          }
-          {
-            isOpenFullScreenPanel?.model === "Add new category" && <AddCategory />
-          }
-          {
-            isOpenFullScreenPanel?.model === "Add new sub category" && <AddSubCategory />
-          }
-          {
-            isOpenFullScreenPanel?.model === "Add new address" && <AddAddress />
-          }
-          {
-            isOpenFullScreenPanel?.model === "Edit category" && <EditCategory />
-          }
-        </Dialog>
 
         <Toaster />
 

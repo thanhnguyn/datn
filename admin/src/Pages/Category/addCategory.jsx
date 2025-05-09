@@ -5,6 +5,7 @@ import { IoMdClose } from 'react-icons/io';
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { deleteImages, postData } from '../../utils/api';
 import { MyContext } from '../../App';
+import { useNavigate } from 'react-router-dom';
 
 const AddCategory = () => {
 
@@ -15,6 +16,7 @@ const AddCategory = () => {
 
     const [previews, setPreviews] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const history = useNavigate();
 
     const context = useContext(MyContext);
 
@@ -70,6 +72,10 @@ const AddCategory = () => {
             setTimeout(() => {
                 setIsLoading(false);
                 context.setIsOpenFullScreenPanel({ open: false });
+                fetchDataFromApi('/api/category').then((res) => {
+                    context?.setCatData(res?.data);
+                });
+                history('/category/list');
             }, 1500);
         });
     }
