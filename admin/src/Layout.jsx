@@ -10,6 +10,7 @@ import SubCategoryList from './Pages/Category/subCatList';
 import Users from './Pages/Users';
 import Orders from './Pages/Orders';
 import Profile from './Pages/Profile';
+import ProductDetails from './Pages/Products/productDetails';
 
 const Layout = (props) => {
     const { isSidebarOpened } = useContext(MyContext);
@@ -40,6 +41,8 @@ const Layout = (props) => {
                             <Orders />
                         ) : props.page === "Profile" ? (
                             <Profile />
+                        ) : props.page === "ProductDetails" ? (
+                            <ProductDetails />
                         ) : (
                             <></>
                         )

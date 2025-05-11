@@ -194,6 +194,15 @@ function App() {
         </>
       ),
     },
+    {
+      path: '/product/:id',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'ProductDetails'} />
+        </>
+      ),
+    },
   ]);
 
   return (

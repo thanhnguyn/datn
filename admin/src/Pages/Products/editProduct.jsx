@@ -6,8 +6,8 @@ import UploadBox from '../../components/UploadBox';
 import { IoMdClose } from 'react-icons/io';
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MyContext } from '../../App';
-import { deleteImages, fetchDataFromApi, postData } from '../../utils/api';
-import { useNavigate, useParams } from 'react-router-dom';
+import { deleteImages, editData, fetchDataFromApi } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
 
 const EditProduct = () => {
 
@@ -50,7 +50,38 @@ const EditProduct = () => {
 
     useEffect(() => {
         fetchDataFromApi(`/api/product/${context?.isOpenFullScreenPanel?.id}`).then((res) => {
-            console.log(context?.isOpenFullScreenPanel?.id);
+            setFormFields({
+                name: res?.product?.name,
+                description: res?.product?.description,
+                images: res?.product?.images,
+                brand: res?.product?.brand,
+                price: res?.product?.price,
+                oldPrice: res?.product?.oldPrice,
+                category: res?.product?.category,
+                catName: res?.product?.catName,
+                catId: res?.product?.catId,
+                subCatId: res?.product?.subCatId,
+                subCat: res?.product?.subCat,
+                thirdSubCat: res?.product?.thirdSubCat,
+                thirdSubCatId: res?.product?.thirdSubCatId,
+                countInStock: res?.product?.countInStock,
+                rating: res?.product?.rating,
+                isFeatured: res?.product?.isFeatured,
+                discount: res?.product?.discount,
+                productRam: res?.product?.productRam,
+                size: res?.product?.size,
+                productWeight: res?.product?.productWeight
+            });
+
+            setProductCat(res?.product?.catId);
+            setProductSubCat(res?.product?.subCatId);
+            setProductThirdLevelCat(res?.product?.thirdSubCatId);
+            setProductFeature(res?.product?.isFeatured);
+            setProductRams(res?.product?.productRam);
+            setProductSize(res?.product?.size);
+            setProductWeight(res?.product?.productWeight);
+
+            setPreviews(res?.product?.images);
         });
     }, []);
 
@@ -128,8 +159,12 @@ const EditProduct = () => {
 
     const setPreviewsFun = (previewsArr) => {
         setPreviews(previewsArr);
-        setFormFields.images = previewsArr;
-    }
+        setFormFields(prev => ({
+            ...prev,
+            images: previewsArr
+        }));
+    };
+
 
     const removeImg = (image, index) => {
         var imageArr = [];
@@ -140,7 +175,11 @@ const EditProduct = () => {
 
             setTimeout(() => {
                 setPreviews(imageArr);
-                setFormFields.images = imageArr;
+                setFormFields(prev => ({
+                    ...prev,
+                    images: imageArr
+                }));
+
             }, 100);
         })
     }
@@ -209,16 +248,16 @@ const EditProduct = () => {
             return false;
         }
 
-        postData('/api/product/create', formFields).then((res) => {
-            if (res?.error === false) {
-                context?.openAlertBox('success', res?.message);
+        editData(`/api/product/updateProduct/${context?.isOpenFullScreenPanel?.id}`, formFields).then((res) => {
+            if (res?.data?.error === false) {
+                context?.openAlertBox('success', res?.data?.message);
                 setTimeout(() => {
                     setIsLoading(false);
                     context.setIsOpenFullScreenPanel({ open: false });
                     history('/products')
                 }, 1000);
             } else {
-                context?.openAlertBox('error', res?.message);
+                context?.openAlertBox('error', res?.data?.message);
                 setIsLoading(false);
             }
         });
@@ -270,7 +309,7 @@ const EditProduct = () => {
                                     {
                                         context?.catData?.map((cat, index) => {
                                             return (
-                                                <MenuItem value={cat?._id} onClick={() => selectCatByName(cat?.name)}>{cat?.name}</MenuItem>
+                                                <MenuItem value={cat?._id} key={index} onClick={() => selectCatByName(cat?.name)}>{cat?.name}</MenuItem>
                                             );
                                         })
                                     }
@@ -296,7 +335,7 @@ const EditProduct = () => {
                                             return (
                                                 cat?.children?.length !== 0 && cat?.children?.map((subCat, index_) => {
                                                     return (
-                                                        <MenuItem value={subCat?._id} onClick={() => selectSubCatByName(subCat?.name)}>{subCat?.name}</MenuItem>
+                                                        <MenuItem value={subCat?._id} key={index} onClick={() => selectSubCatByName(subCat?.name)}>{subCat?.name}</MenuItem>
                                                     );
                                                 })
                                             );
@@ -456,9 +495,8 @@ const EditProduct = () => {
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product rating</h3>
                             <Rating
-                                name="half-rating"
-                                defaultValue={0}
-                                precision={0.5}
+                                name="rating"
+                                value={formFields.rating}
                                 onChange={(event, newValue) => onChangeRating(newValue)}
                             />
                         </div>

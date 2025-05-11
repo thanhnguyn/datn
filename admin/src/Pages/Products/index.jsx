@@ -16,7 +16,8 @@ import TableRow from '@mui/material/TableRow';
 import Select from '@mui/material/Select';
 import SearchBox from "../../components/SearchBox";
 import { MyContext } from "../../App";
-import { deleteData, fetchDataFromApi, deleteMultipleData } from '../../utils/api';
+import { deleteData, fetchDataFromApi } from '../../utils/api';
+// import {  deleteMultipleData } from '../../utils/api';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
@@ -48,8 +49,10 @@ const columns = [
 ];
 
 const Products = () => {
+    const [productCat, setProductCat] = useState('');
+    const [productSubCat, setProductSubCat] = useState('');
+    const [productThirdLevelCat, setProductThirdLevelCat] = useState('');
     const [page, setPage] = useState(0);
-    const [categoryFilterVal, setCategoryFilterVal] = useState('');
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [productData, setProductData] = useState([]);
 
@@ -67,8 +70,31 @@ const Products = () => {
         });
     };
 
-    const handleChangeCatFilter = (event) => {
-        setCategoryFilterVal(event.target.value);
+    const handleChangeProductCat = (event) => {
+        setProductCat(event.target.value);
+        fetchDataFromApi(`/api/product/getAllProductsByCatId/${event.target.value}`).then((res) => {
+            if (res?.error === false) {
+                setProductData(res?.products);
+            }
+        });
+    };
+
+    const handleChangeProductSubCat = (event) => {
+        setProductSubCat(event.target.value);
+        fetchDataFromApi(`/api/product/getAllProductsBySubCatId/${event.target.value}`).then((res) => {
+            if (res?.error === false) {
+                setProductData(res?.products);
+            }
+        });
+    };
+
+    const handleChangeProductThirdLevelCat = (event) => {
+        setProductThirdLevelCat(event.target.value);
+        fetchDataFromApi(`/api/product/getAllProductsByThirdLevelCatId/${event.target.value}`).then((res) => {
+            if (res?.error === false) {
+                setProductData(res?.products);
+            }
+        });
     };
 
     const handleChangeRowsPerPage = (event) => {
@@ -88,26 +114,26 @@ const Products = () => {
         });
     }
 
-    const deleteMultipleProduct = () => {
-        if (sortedIds.length === 0) {
-            context.openAlertBox('error', 'Please select items to be deleted.');
-            return;
-        }
+    // const deleteMultipleProduct = () => {
+    //     if (sortedIds.length === 0) {
+    //         context.openAlertBox('error', 'Please select items to be deleted.');
+    //         return;
+    //     }
 
-        console.log(sortedIds);
+    //     console.log(sortedIds);
 
-        try {
-            deleteMultipleData(`/api/product/deleteMultiple`, {
-                data: { ids: sortedIds },
-            }).then((res) => {
-                console.log(res);
-                getProducts();
-                context.openAlertBox("success", "Products deleted.")
-            })
-        } catch (error) {
-            context.openAlertBox('error', 'Error')
-        }
-    };
+    //     try {
+    //         deleteMultipleData(`/api/product/deleteMultiple`, {
+    //             data: { ids: sortedIds },
+    //         }).then((res) => {
+    //             console.log(res);
+    //             getProducts();
+    //             context.openAlertBox("success", "Products deleted.")
+    //         })
+    //     } catch (error) {
+    //         context.openAlertBox('error', 'Error')
+    //     }
+    // };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -121,36 +147,107 @@ const Products = () => {
                 </h2>
 
                 <div className='col w-[25%] ml-auto flex items-center justify-end gap-3'>
-                    {
+                    {/* {
                         sortedIds.length !== 0 &&
                         <Button variant='contained' className='btn-sm' onClick={deleteMultipleProduct}>Delete</Button>
-                    }
+                    } */}
                     <Button className='btn !bg-green-600 !text-white btn-sm'>Export</Button>
                     <Button className='btn-blue  !text-white btn-sm' onClick={() => context.setIsOpenFullScreenPanel({ open: true, model: 'Add product' })}>Add product</Button>
                 </div>
             </div>
             <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
 
-                <div className='flex items-center w-full px-5 justify-between'>
-                    <div className='col w-[20%]'>
+                <div className='flex items-center w-full px-5 justify-between gap-4'>
+                    <div className='col w-[15%]'>
                         <h4 className='font-[600] text-[13px] mb-2'>Category by</h4>
-                        <Select
-                            className='w-full'
-                            size='small'
-                            labelId="demo-simple-select-standard-label"
-                            id="demo-simple-select-standard"
-                            value={categoryFilterVal}
-                            onChange={handleChangeCatFilter}
-                            label="Category"
-                        >
-                            <MenuItem value="">
-                                <em>None</em>
-                            </MenuItem>
-                            <MenuItem value={10}>Men</MenuItem>
-                            <MenuItem value={20}>Women</MenuItem>
-                            <MenuItem value={30}>Kids</MenuItem>
-                        </Select>
+                        {
+                            context?.catData?.length !== 0
+                            &&
+                            <Select
+                                style={{ zoom: '80%' }}
+                                labelId="demo-simple-select-label"
+                                id="productCatDrop"
+                                size='small'
+                                className='w-full'
+                                value={productCat}
+                                label="Category"
+                                onChange={handleChangeProductCat}
+                            >
+                                {
+                                    context?.catData?.map((cat, index) => {
+                                        return (
+                                            <MenuItem value={cat?._id} >{cat?.name}</MenuItem>
+                                        );
+                                    })
+                                }
+                            </Select>
+                        }
                     </div>
+
+                    <div className='col w-[15%]'>
+                        <h4 className='font-[600] text-[13px] mb-2'>Sub category by</h4>
+                        {
+                            context?.catData?.length !== 0
+                            &&
+                            <Select
+                                style={{ zoom: '80%' }}
+                                labelId="demo-simple-select-label"
+                                id="productCatDrop"
+                                size='small'
+                                className='w-full'
+                                value={productSubCat}
+                                label="Sub Category"
+                                onChange={handleChangeProductSubCat}
+                            >
+                                {
+                                    context?.catData?.map((cat, index) => {
+                                        return (
+                                            cat?.children?.length !== 0 && cat?.children?.map((subCat, index_) => {
+                                                return (
+                                                    <MenuItem value={subCat?._id}>{subCat?.name}</MenuItem>
+                                                );
+                                            })
+                                        );
+                                    })
+                                }
+                            </Select>
+                        }
+                    </div>
+
+                    <div className='col w-[20%]'>
+                        <h4 className='font-[600] text-[13px] mb-2'>Third level category by</h4>
+                        {
+                            context?.catData?.length !== 0
+                            &&
+                            <Select
+                                style={{ zoom: '80%' }}
+                                labelId="demo-simple-select-label"
+                                id="productCatDrop"
+                                size='small'
+                                className='w-full'
+                                value={productThirdLevelCat}
+                                label="Third level Category"
+                                onChange={handleChangeProductThirdLevelCat}
+                            >
+                                {
+                                    context?.catData?.map((cat) => {
+                                        return (
+                                            cat?.children?.length !== 0 && cat?.children?.map((subCat) => {
+                                                return (
+                                                    subCat?.children?.length !== 0 && subCat?.children?.map((thirdSubCat, index) => {
+                                                        return (
+                                                            <MenuItem value={thirdSubCat?._id} key={index} >{thirdSubCat?.name}</MenuItem>
+                                                        );
+                                                    })
+                                                );
+                                            })
+                                        );
+                                    })
+                                }
+                            </Select>
+                        }
+                    </div>
+
                     <div className='col w-[20%] ml-auto'>
                         <SearchBox />
                     </div>
@@ -245,9 +342,11 @@ const Products = () => {
                                                             </Button>
                                                         </TooltipMUI>
                                                         <TooltipMUI title="View product details" placement="top">
-                                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                                            </Button>
+                                                            <Link to={`/product/${product?._id}`}>
+                                                                <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
+                                                                    <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                                                </Button>
+                                                            </Link>
                                                         </TooltipMUI>
                                                         <TooltipMUI title="Remove product" placement="top">
                                                             <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' onClick={() => deleteProduct(product?._id)}>
