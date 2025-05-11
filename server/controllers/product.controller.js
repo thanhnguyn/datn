@@ -660,26 +660,25 @@ export async function deleteMultipleProductController(request, response) {
                 })
             }
         }
+    }
+    try {
+        await ProductModel.deleteMany({
+            _id: {
+                $in: ids
+            }
+        });
 
-        try {
-            await ProductModel.deleteMany({
-                _id: {
-                    $in: ids
-                }
-            });
-
-            return response.status(200).json({
-                message: 'Product deleted successfully',
-                error: false,
-                success: true
-            });
-        } catch (error) {
-            return response.status(500).json({
-                message: error.message || error,
-                error: true,
-                success: false
-            });
-        }
+        return response.status(200).json({
+            message: 'Product deleted successfully',
+            error: false,
+            success: true
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
 

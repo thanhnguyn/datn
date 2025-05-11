@@ -17,7 +17,7 @@ import Select from '@mui/material/Select';
 import SearchBox from "../../components/SearchBox";
 import { MyContext } from "../../App";
 import { deleteData, fetchDataFromApi } from '../../utils/api';
-// import {  deleteMultipleData } from '../../utils/api';
+import { deleteMultipleData } from '../../utils/api';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 
@@ -55,6 +55,7 @@ const Products = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [productData, setProductData] = useState([]);
+    const [sortedIds, setSortedIds] = useState([]);
 
     const context = useContext(MyContext);
 
@@ -62,10 +63,50 @@ const Products = () => {
         getProducts();
     }, [context?.isOpenFullScreenPanel]);
 
+    const handleSelectAll = (e) => {
+        const isChecked = e.target.checked;
+
+        //Update all items checked status
+        const updatedItems = productData.map((item) => ({
+            ...item,
+            checked: isChecked
+        }));
+        setProductData(updatedItems);
+
+        //Update sorted IDS State
+        if (isChecked) {
+            const ids = updatedItems.map((item) => item._id).sort((a, b) => a - b);
+            console.log(ids);
+            setSortedIds(ids);
+        } else {
+            setSortedIds([]);
+        }
+    }
+
+    const handleCheckboxChange = (e, id, index) => {
+        const updatedItems = productData.map((item) =>
+            item._id === id ? { ...item, checked: !item.checked } : item
+        )
+        setProductData(updatedItems);
+
+        const selectedIds = updatedItems
+            .filter((item) => item.checked)
+            .map((item) => item._id)
+            .sort((a, b) => a - b);
+        setSortedIds(selectedIds);
+    };
+
+
+
     const getProducts = async () => {
         fetchDataFromApi("/api/product/getAllProducts").then((res) => {
+            let productArr = [];
             if (res?.error === false) {
-                setProductData(res?.products);
+                for (let i = 0; i < res?.products?.length; i++) {
+                    productArr[i] = res?.products[i];
+                    productArr[i].checked = false;
+                }
+                setProductData(productArr);
             }
         });
     };
@@ -114,26 +155,23 @@ const Products = () => {
         });
     }
 
-    // const deleteMultipleProduct = () => {
-    //     if (sortedIds.length === 0) {
-    //         context.openAlertBox('error', 'Please select items to be deleted.');
-    //         return;
-    //     }
-
-    //     console.log(sortedIds);
-
-    //     try {
-    //         deleteMultipleData(`/api/product/deleteMultiple`, {
-    //             data: { ids: sortedIds },
-    //         }).then((res) => {
-    //             console.log(res);
-    //             getProducts();
-    //             context.openAlertBox("success", "Products deleted.")
-    //         })
-    //     } catch (error) {
-    //         context.openAlertBox('error', 'Error')
-    //     }
-    // };
+    const deleteMultipleProduct = () => {
+        if (sortedIds.length === 0) {
+            context.openAlertBox('error', 'Please select items to be deleted.');
+            return;
+        }
+        try {
+            deleteMultipleData('/api/product/deleteMultiple', { ids: sortedIds })
+            if (res?.data?.error === false) {
+                getProducts();
+                context.openAlertBox('success', res?.data?.message);
+            } else {
+                context.openAlertBox('error', res?.data?.message);
+            }
+        } catch (error) {
+            context.openAlertBox('error', 'Error in deleting products.');
+        }
+    };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -146,11 +184,11 @@ const Products = () => {
                     <span className='font-[400] text-[14px]'></span>
                 </h2>
 
-                <div className='col w-[25%] ml-auto flex items-center justify-end gap-3'>
-                    {/* {
+                <div className='col w-[35%] ml-auto flex items-center justify-end gap-3'>
+                    {
                         sortedIds.length !== 0 &&
-                        <Button variant='contained' className='btn-sm' onClick={deleteMultipleProduct}>Delete</Button>
-                    } */}
+                        <Button variant='contained' className='btn-sm' size='small' color='error' onClick={deleteMultipleProduct}>Delete</Button>
+                    }
                     <Button className='btn !bg-green-600 !text-white btn-sm'>Export</Button>
                     <Button className='btn-blue  !text-white btn-sm' onClick={() => context.setIsOpenFullScreenPanel({ open: true, model: 'Add product' })}>Add product</Button>
                 </div>
@@ -258,7 +296,10 @@ const Products = () => {
                         <TableHead >
                             <TableRow>
                                 <TableCell>
-                                    <Checkbox {...label} size='small' />
+                                    <Checkbox {...label} size='small'
+                                        onChange={handleSelectAll}
+                                        checked={productData?.length > 0 ? productData?.every((item) => item.checked) : false}
+                                    />
                                 </TableCell>
                                 {columns.map((column) => (
                                     <TableCell
@@ -274,17 +315,18 @@ const Products = () => {
                         <TableBody>
                             {
                                 productData?.length !== 0 &&
-                                productData
-                                    ?.slice(
-                                        page * rowsPerPage,
-                                        page * rowsPerPage + rowsPerPage
-                                    )
-                                    ?.reverse()
+                                productData?.slice(
+                                    page * rowsPerPage,
+                                    page * rowsPerPage + rowsPerPage
+                                )
                                     ?.map((product, index) => {
                                         return (
                                             <TableRow key={index}>
                                                 <TableCell style={{ minWidth: columns.minWidth }}>
-                                                    <Checkbox {...label} size='small' />
+                                                    <Checkbox {...label} size='small'
+                                                        checked={product.checked === true ? true : false}
+                                                        onChange={(e) => handleCheckboxChange(e, product._id, index)}
+                                                    />
                                                 </TableCell>
                                                 <TableCell style={{ minWidth: columns.minWidth }}>
                                                     <div className='flex items-center gap-4 w-[300px]'>
