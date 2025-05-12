@@ -203,6 +203,15 @@ function App() {
         </>
       ),
     },
+    {
+      path: '/product/addRams',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'AddRAMS'} />
+        </>
+      ),
+    },
   ]);
 
   return (

@@ -11,6 +11,7 @@ import Users from './Pages/Users';
 import Orders from './Pages/Orders';
 import Profile from './Pages/Profile';
 import ProductDetails from './Pages/Products/productDetails';
+import AddRAMS from './Pages/Products/addRAMS';
 
 const Layout = (props) => {
     const { isSidebarOpened } = useContext(MyContext);
@@ -43,6 +44,8 @@ const Layout = (props) => {
                             <Profile />
                         ) : props.page === "ProductDetails" ? (
                             <ProductDetails />
+                        ) : props.page === "AddRAMS" ? (
+                            <AddRAMS />
                         ) : (
                             <></>
                         )

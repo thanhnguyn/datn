@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, MenuItem } from '@mui/material';
+import { Button, CircularProgress, MenuItem } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
 import { AiOutlineEdit } from "react-icons/ai";
@@ -56,6 +56,7 @@ const Products = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [productData, setProductData] = useState([]);
     const [sortedIds, setSortedIds] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const context = useContext(MyContext);
 
@@ -99,6 +100,7 @@ const Products = () => {
 
 
     const getProducts = async () => {
+        setIsLoading(true);
         fetchDataFromApi("/api/product/getAllProducts").then((res) => {
             let productArr = [];
             if (res?.error === false) {
@@ -106,34 +108,55 @@ const Products = () => {
                     productArr[i] = res?.products[i];
                     productArr[i].checked = false;
                 }
-                setProductData(productArr);
+                setTimeout(() => {
+                    setProductData(productArr);
+                    setIsLoading(false);
+                }, 300);
             }
         });
     };
 
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
+        setProductSubCat('');
+        setProductThirdLevelCat('');
+        setIsLoading(true);
         fetchDataFromApi(`/api/product/getAllProductsByCatId/${event.target.value}`).then((res) => {
             if (res?.error === false) {
                 setProductData(res?.products);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 300);
             }
         });
     };
 
     const handleChangeProductSubCat = (event) => {
+        setProductCat('');
         setProductSubCat(event.target.value);
+        setProductThirdLevelCat('');
+        setIsLoading(true);
         fetchDataFromApi(`/api/product/getAllProductsBySubCatId/${event.target.value}`).then((res) => {
             if (res?.error === false) {
                 setProductData(res?.products);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 300);
             }
         });
     };
 
     const handleChangeProductThirdLevelCat = (event) => {
+        setProductCat('');
+        setProductSubCat('');
         setProductThirdLevelCat(event.target.value);
+        setIsLoading(true);
         fetchDataFromApi(`/api/product/getAllProductsByThirdLevelCatId/${event.target.value}`).then((res) => {
             if (res?.error === false) {
                 setProductData(res?.products);
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 300);
             }
         });
     };
@@ -313,93 +336,102 @@ const Products = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
+
                             {
-                                productData?.length !== 0 &&
-                                productData?.slice(
+                                isLoading === false ? productData?.length !== 0 && productData?.slice(
                                     page * rowsPerPage,
                                     page * rowsPerPage + rowsPerPage
-                                )
-                                    ?.map((product, index) => {
-                                        return (
-                                            <TableRow key={index}>
-                                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                                    <Checkbox {...label} size='small'
-                                                        checked={product.checked === true ? true : false}
-                                                        onChange={(e) => handleCheckboxChange(e, product._id, index)}
-                                                    />
-                                                </TableCell>
-                                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                                    <div className='flex items-center gap-4 w-[300px]'>
-                                                        <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
+                                )?.reverse()?.map((product, index) => {
+                                    return (
+                                        <TableRow key={index}>
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                <Checkbox {...label} size='small'
+                                                    checked={product.checked === true ? true : false}
+                                                    onChange={(e) => handleCheckboxChange(e, product._id, index)}
+                                                />
+                                            </TableCell>
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                <div className='flex items-center gap-4 w-[300px]'>
+                                                    <div className='img w-[65px] h-[65px] rounded-md overflow-hidden group'>
+                                                        <Link to={`/product/${product?._id}`} data-discover='true'>
+                                                            <LazyLoadImage
+                                                                alt={'image'}
+                                                                effect='blur'
+                                                                className='w-full group-hover:scale-105 transition-all'
+                                                                src={product?.images[0]}
+                                                            />
+                                                        </Link>
+                                                    </div>
+                                                    <div className='info w-[75%]'>
+                                                        <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
                                                             <Link to={`/product/${product?._id}`} data-discover='true'>
-                                                                <LazyLoadImage
-                                                                    alt={'image'}
-                                                                    effect='blur'
-                                                                    className='w-full group-hover:scale-105 transition-all'
-                                                                    src={product?.images[0]}
-                                                                />
+                                                                {product?.name}
                                                             </Link>
-                                                        </div>
-                                                        <div className='info w-[75%]'>
-                                                            <h3 className='font-[600] text-[12px] leading-4 hover:text-primary'>
-                                                                <Link to={`/product/${product?._id}`} data-discover='true'>
-                                                                    {product?.name}
-                                                                </Link>
-                                                            </h3>
-                                                            <span className='text-[12px]'>{product?.brand}</span>
-                                                        </div>
+                                                        </h3>
+                                                        <span className='text-[12px]'>{product?.brand}</span>
                                                     </div>
-                                                </TableCell>
-                                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                                    {product?.catName}
-                                                </TableCell>
-                                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                                    {product?.subCat}
-                                                </TableCell>
-                                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                                    <div className='flex gap-1 flex-col'>
-                                                        <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
-                                                            {product?.price}đ
-                                                        </span>
-                                                        <span className='price text-primary text-[14px] font-[600]'>
-                                                            {product?.oldPrice}đ
-                                                        </span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell style={{ minWidth: columns.minWidth }}>
-                                                    <p className='text-[14px] w-[100px]'><span className='font-[600]'>{product?.sale}</span> sales</p>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className='flex items-center gap-1'>
-                                                        <TooltipMUI title="Edit product" placement="top">
-                                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' onClick={() => {
-                                                                context.setIsOpenFullScreenPanel({
-                                                                    open: true,
-                                                                    model: 'Edit product',
-                                                                    id: product?._id
-                                                                })
-                                                            }}
-                                                            >
-                                                                <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                                </div>
+                                            </TableCell>
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                {product?.catName}
+                                            </TableCell>
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                {product?.subCat}
+                                            </TableCell>
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                <div className='flex gap-1 flex-col'>
+                                                    <span className='oldPrice line-through leading-3 text-gray-500 text-[14px] font-[500]'>
+                                                        {product?.price}đ
+                                                    </span>
+                                                    <span className='price text-primary text-[14px] font-[600]'>
+                                                        {product?.oldPrice}đ
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                <p className='text-[14px] w-[100px]'><span className='font-[600]'>{product?.sale}</span> sales</p>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className='flex items-center gap-1'>
+                                                    <TooltipMUI title="Edit product" placement="top">
+                                                        <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' onClick={() => {
+                                                            context.setIsOpenFullScreenPanel({
+                                                                open: true,
+                                                                model: 'Edit product',
+                                                                id: product?._id
+                                                            })
+                                                        }}
+                                                        >
+                                                            <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                                        </Button>
+                                                    </TooltipMUI>
+                                                    <TooltipMUI title="View product details" placement="top">
+                                                        <Link to={`/product/${product?._id}`}>
+                                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
+                                                                <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
                                                             </Button>
-                                                        </TooltipMUI>
-                                                        <TooltipMUI title="View product details" placement="top">
-                                                            <Link to={`/product/${product?._id}`}>
-                                                                <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' >
-                                                                    <FaRegEye className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                                                </Button>
-                                                            </Link>
-                                                        </TooltipMUI>
-                                                        <TooltipMUI title="Remove product" placement="top">
-                                                            <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' onClick={() => deleteProduct(product?._id)}>
-                                                                <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
-                                                            </Button>
-                                                        </TooltipMUI>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })
+                                                        </Link>
+                                                    </TooltipMUI>
+                                                    <TooltipMUI title="Remove product" placement="top">
+                                                        <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' onClick={() => deleteProduct(product?._id)}>
+                                                            <GoTrash className='text-[rgba(0,0,0,0.7)] text-[20px]' />
+                                                        </Button>
+                                                    </TooltipMUI>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                                    :
+                                    <>
+                                        <TableRow>
+                                            <TableCell colSpan={8}>
+                                                <div className='flex items-center justify-center w-full min-h-[400px]'>
+                                                    <CircularProgress color='inherit' />
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    </>
                             }
                         </TableBody>
                     </Table>
