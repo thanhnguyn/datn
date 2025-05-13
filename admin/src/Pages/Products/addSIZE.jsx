@@ -6,7 +6,7 @@ import { GoTrash } from 'react-icons/go';
 import { MyContext } from '../../App';
 import { deleteData, editData, fetchDataFromApi, postData } from '../../utils/api';
 
-const AddRAMS = () => {
+const AddSIZE = () => {
     const [name, setName] = useState();
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +18,7 @@ const AddRAMS = () => {
     }, []);
 
     const getData = () => {
-        fetchDataFromApi('/api/product/productRAMS/get').then((res) => {
+        fetchDataFromApi('/api/product/productSIZE/get').then((res) => {
             if (res?.error === false) {
                 setData(res?.data);
             }
@@ -31,13 +31,13 @@ const AddRAMS = () => {
         setIsLoading(true);
 
         if (name === '' || name === undefined || name === null) {
-            context.openAlertBox('error', 'Please enter product RAM');
+            context.openAlertBox('error', 'Please enter product SIZE');
             setIsLoading(false);
             return false;
         }
 
         if (editId === "") {
-            postData('/api/product/productRAMS/create', {
+            postData('/api/product/productSIZE/create', {
                 name: name
             }).then((res) => {
                 if (res?.error === false) {
@@ -55,7 +55,7 @@ const AddRAMS = () => {
         }
 
         if (editId !== "") {
-            editData(`/api/product/productRAMS/${editId}`, {
+            editData(`/api/product/productSIZE/${editId}`, {
                 name: name
             }).then((res) => {
                 if (res?.data?.error === false) {
@@ -77,14 +77,14 @@ const AddRAMS = () => {
     };
 
     const deleteItem = (id) => {
-        deleteData(`/api/product/productRAMS/${id}`).then((res) => {
+        deleteData(`/api/product/productSIZE/${id}`).then((res) => {
             getData();
             context.openAlertBox('success', 'Item deleted.');
         });
     };
 
     const editItem = (id) => {
-        fetchDataFromApi(`/api/product/productRAMS/${id}`).then((res) => {
+        fetchDataFromApi(`/api/product/productSIZE/${id}`).then((res) => {
             setName(res?.data?.name);
             setEditId(res?.data?._id);
         });
@@ -94,13 +94,13 @@ const AddRAMS = () => {
         <>
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
                 <h2 className='text-[18px] font-[600]'>
-                    Add product RAMS
+                    Add product SIZE
                 </h2>
             </div>
             <div className='card my-4 pt-5 pb-5 shadow-md sm:rounded-lg bg-white w-[65%]'>
                 <form className='form py-3 p-6' onSubmit={handleSubmit}>
                     <div className='col mb-4'>
-                        <h3 className='text-[14px] font-[500] mb-1 text-black'>Product RAM</h3>
+                        <h3 className='text-[14px] font-[500] mb-1 text-black'>Product SIZE</h3>
                         <input type="text" className='w-full h-[40px] border borer-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name='name' onChange={(e) => setName(e.target.value)} value={name} />
                     </div>
                     <Button type='submit' className='btn-blue btn-lg w-full flex gap-2'>
@@ -121,7 +121,7 @@ const AddRAMS = () => {
                             <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                     <th scope="col" className="px-6 py-3 whitespace-nowrap" width='60%'>
-                                        Product RAM
+                                        Product SIZE
                                     </th>
                                     <th scope="col" className="px-6 py-3 whitespace-nowrap" width='30%'>
                                         Action
@@ -159,4 +159,4 @@ const AddRAMS = () => {
         </>
     )
 }
-export default AddRAMS;
+export default AddSIZE;

@@ -12,6 +12,8 @@ import Orders from './Pages/Orders';
 import Profile from './Pages/Profile';
 import ProductDetails from './Pages/Products/productDetails';
 import AddRAMS from './Pages/Products/addRAMS';
+import AddWEIGHT from './Pages/Products/addWEIGHT';
+import AddSIZE from './Pages/Products/addSIZE';
 
 const Layout = (props) => {
     const { isSidebarOpened } = useContext(MyContext);
@@ -20,7 +22,7 @@ const Layout = (props) => {
         <section className='main'>
             <Header />
             <div className='contentMain flex'>
-                <div className={`overflow-hidden sidebarWrapper ${isSidebarOpened ? 'w-[18%]' : 'w-0'} transition-all`}>
+                <div className={`overflow-hidden sidebarWrapper ${isSidebarOpened ? 'w-[18%]' : 'w-[0px] opacity-0'} transition-all`}>
                     <Sidebar />
                 </div>
                 <div className={`contentRight py-4 px-5 ${isSidebarOpened ? 'w-[82%]' : 'w-[100%]'} transition-all`}>
@@ -46,6 +48,10 @@ const Layout = (props) => {
                             <ProductDetails />
                         ) : props.page === "AddRAMS" ? (
                             <AddRAMS />
+                        ) : props.page === "AddWEIGHT" ? (
+                            <AddWEIGHT />
+                        ) : props.page === "AddSIZE" ? (
+                            <AddSIZE />
                         ) : (
                             <></>
                         )

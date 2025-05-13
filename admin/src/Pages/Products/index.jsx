@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, CircularProgress, MenuItem } from '@mui/material';
+import { Button, CircularProgress, MenuItem, Rating } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import { Link } from 'react-router-dom';
 import { AiOutlineEdit } from "react-icons/ai";
@@ -39,6 +39,11 @@ const columns = [
     {
         id: 'sales',
         label: 'SALES',
+        minWidth: 100,
+    },
+    {
+        id: 'rating',
+        label: 'RATING',
         minWidth: 100,
     },
     {
@@ -390,6 +395,11 @@ const Products = () => {
                                             </TableCell>
                                             <TableCell style={{ minWidth: columns.minWidth }}>
                                                 <p className='text-[14px] w-[100px]'><span className='font-[600]'>{product?.sale}</span> sales</p>
+                                            </TableCell>
+                                            <TableCell style={{ minWidth: columns.minWidth }}>
+                                                <p className='text-[14px] w-[100px]'>
+                                                    <Rating name='half-rating' size='small' defaultValue={product?.rating} readOnly />
+                                                </p>
                                             </TableCell>
                                             <TableCell>
                                                 <div className='flex items-center gap-1'>

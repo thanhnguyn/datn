@@ -212,6 +212,24 @@ function App() {
         </>
       ),
     },
+    {
+      path: '/product/addWeight',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'AddWEIGHT'} />
+        </>
+      ),
+    },
+    {
+      path: '/product/addSize',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'AddSIZE'} />
+        </>
+      ),
+    },
   ]);
 
   return (

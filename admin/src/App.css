@@ -199,3 +199,7 @@ input[type='text']:disabled,input[type='email']:disabled  {
   font-size: 18px !important;
   color: #000;
 }
+
+.contentRight {
+  /* padding-top: 80px !important; */
+}
