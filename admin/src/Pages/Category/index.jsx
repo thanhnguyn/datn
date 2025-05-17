@@ -65,7 +65,6 @@ const CategoryList = () => {
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
                 <h2 className='text-[18px] font-[600]'>
                     Category List
-                    <span className='font-[400] text-[14px]'>(Material UI Table)</span>
                 </h2>
 
                 <div className='col w-[30%] ml-auto flex items-center justify-end gap-3'>
@@ -78,9 +77,6 @@ const CategoryList = () => {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead >
                             <TableRow>
-                                <TableCell width={60}>
-                                    <Checkbox {...label} size='small' />
-                                </TableCell>
                                 {columns.map((column) => (
                                     <TableCell
                                         width={column.minWidth}
@@ -97,15 +93,15 @@ const CategoryList = () => {
                                 context?.catData?.length !== 0 && context?.catData?.map((item, index) => {
                                     return (
                                         <TableRow key={index}>
-                                            <TableCell>
-                                                <Checkbox {...label} size='small' />
-                                            </TableCell>
                                             <TableCell width={100}>
-                                                <div className='flex items-center gap-4 w-[80px]'>
+                                                <div className='flex items-center gap-4 w-[50px]'>
                                                     <div className='img w-full rounded-md overflow-hidden group'>
-                                                        <Link to="/product/1234" data-discover='true'>
-                                                            <LazyLoadImage className='w-full group-hover:scale-105 transition-all' alt={"image"} effect='blur' wrapperProps={{ style: { transitionDelay: "1s" } }} src={item?.images[0]} />
-                                                        </Link>
+                                                        <LazyLoadImage
+                                                            className='w-full group-hover:scale-105 transition-all'
+                                                            alt={"image"}
+                                                            effect='blur'
+                                                            wrapperProps={{ style: { transitionDelay: "1s" } }}
+                                                            src={item?.images[0]} />
                                                     </div>
                                                 </div>
                                             </TableCell>

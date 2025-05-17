@@ -19,7 +19,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { IoMdClose } from 'react-icons/io';
 import AddProduct from '../../Pages/Products/addProduct';
-import AddHomeSlide from '../../Pages/HomeSliderBanners/AddHomeSlide';
+import AddHomeSlide from '../../Pages/HomeSliderBanners/addHomeSlide';
 import AddCategory from '../../Pages/Category/addCategory';
 import AddSubCategory from '../../Pages/Category/addSubCategory';
 import AddAddress from '../../Pages/Address/addAdress';
@@ -62,7 +62,7 @@ const Header = () => {
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
                 context.openAlertBox("success", res?.message);
-                history("/");
+                history("/login");
             }
         });
     };

@@ -26,9 +26,9 @@ const AddProduct = () => {
         thirdSubCat: '',
         thirdSubCatId: '',
         countInStock: '',
-        rating: '',
+        rating: '0',
         isFeatured: false,
-        discount: '',
+        discount: '0',
         productRam: [],
         size: [],
         productWeight: []
@@ -54,17 +54,17 @@ const AddProduct = () => {
     useEffect(() => {
         fetchDataFromApi('/api/product/productRAMS/get').then((res) => {
             if (res?.error === false) {
-                setProductRamsData(res?.data)
+                setProductRamsData(res?.data);
             }
         });
         fetchDataFromApi('/api/product/productWEIGHT/get').then((res) => {
             if (res?.error === false) {
-                setProductWeightData(res?.data)
+                setProductWeightData(res?.data);
             }
         });
         fetchDataFromApi('/api/product/productSIZE/get').then((res) => {
             if (res?.error === false) {
-                setProductSizeData(res?.data)
+                setProductSizeData(res?.data);
             }
         });
     }, []);
@@ -136,9 +136,9 @@ const AddProduct = () => {
         });
     }
 
-    const onChangeRating = (value) => {
-        formFields.rating = value;
-    }
+    // const onChangeRating = (value) => {
+    //     formFields.rating = value;
+    // }
 
 
     const setPreviewsFun = (previewsArr) => {
@@ -206,17 +206,17 @@ const AddProduct = () => {
             return false;
         }
 
-        if (formFields.discount === "") {
-            context.openAlertBox("error", "Please enter product discount.");
-            setIsLoading(false);
-            return false;
-        }
+        // if (formFields.discount === "") {
+        //     context.openAlertBox("error", "Please enter product discount.");
+        //     setIsLoading(false);
+        //     return false;
+        // }
 
-        if (formFields.rating === "") {
-            context.openAlertBox("error", "Please enter product rating.");
-            setIsLoading(false);
-            return false;
-        }
+        // if (formFields.rating === "") {
+        //     context.openAlertBox("error", "Please enter product rating.");
+        //     setIsLoading(false);
+        //     return false;
+        // }
 
         if (previews?.length === 0) {
             context.openAlertBox("error", "Please select images for product.");
@@ -407,7 +407,7 @@ const AddProduct = () => {
                                 onChange={onChangeInput}
                             />
                         </div>
-                        <div className='col'>
+                        {/* <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product discount</h3>
                             <input
                                 type="number"
@@ -416,7 +416,7 @@ const AddProduct = () => {
                                 value={formFields.discount}
                                 onChange={onChangeInput}
                             />
-                        </div>
+                        </div> */}
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product RAMS</h3>
                             {
@@ -492,7 +492,7 @@ const AddProduct = () => {
                                 </Select>
                             }
                         </div>
-                        <div className='col'>
+                        {/* <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product rating</h3>
                             <Rating
                                 name="half-rating"
@@ -500,7 +500,7 @@ const AddProduct = () => {
                                 precision={0.5}
                                 onChange={(event, newValue) => onChangeRating(newValue)}
                             />
-                        </div>
+                        </div> */}
                     </div>
                     <div className='col w-full p-5 px-0'>
                         <h3 className='font-[700] text-[18px] mb-3'>Media & Image</h3>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import HomeSlider from '../../components/HomeSlider';
 import HomeCatSlider from '../../components/HomeCatSlider';
 import { LiaShippingFastSolid } from "react-icons/lia";
@@ -21,19 +21,58 @@ import BlogItem from '../../components/BlogItem';
 import HomeBannerV2 from '../../components/HomeSliderV2';
 import BannerBoxV2 from '../../components/bannerBoxV2';
 import AdsBannerSliderV2 from '../../components/AdsBannerSliderV2';
+import { fetchDataFromApi } from '../../utils/api.js';
+import { MyContext } from '../../App';
 
 const Home = () => {
 
     const [value, setValue] = React.useState(0);
+    const [homeSlidesData, setHomeSlidesData] = useState([]);
+    const [popularProductsData, setPopularProductsData] = useState([]);
+    const [allProductsData, setAllProductsData] = useState([]);
+    const [allFeaturedProductsData, setAllFeaturedProductsData] = useState([]);
+
+    const context = useContext(MyContext);
+
+    useEffect(() => {
+        fetchDataFromApi(('/api/homeSlides')).then((res) => {
+            setHomeSlidesData(res?.data);
+        });
+        fetchDataFromApi(('/api/product/getAllProducts')).then((res) => {
+            setAllProductsData(res?.products);
+        });
+        fetchDataFromApi(('/api/product/getAllFeaturedProducts')).then((res) => {
+            setAllFeaturedProductsData(res?.products);
+        });
+    }, []);
+
+    useEffect(() => {
+        fetchDataFromApi(`/api/product/getAllProductsByCatId/${context?.catData[0]?._id}`).then((res) => {
+            console.log(res);
+            if (res?.error === false) {
+                setPopularProductsData(res?.products);
+            }
+        });
+    }, [context?.catData]);
+
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
+    const filterByCatId = (id) => {
+        fetchDataFromApi(`/api/product/getAllProductsByCatId/${id}`).then((res) => {
+            if (res?.error === false) {
+                setPopularProductsData(res?.products);
+            }
+        });
+    };
+
     return (
         <>
-            <HomeSlider />
-
+            {
+                homeSlidesData?.length !== 0 && <HomeSlider data={homeSlidesData} />
+            }
             <section className='py-6 '>
                 <div className='container flex gap-5'>
                     <div className='part1 w-[70%]'>
@@ -47,13 +86,16 @@ const Home = () => {
                 </div>
             </section>
 
-            <HomeCatSlider />
+            {
+                context?.catData?.length !== 0 && <HomeCatSlider data={context?.catData} />
+            }
+
             <section className='bg-white py-8'>
                 <div className='container'>
                     <div className='flex items-center justify-between'>
                         <div className='leftSec'>
                             <h2 className='text-[20px] font-[600]'>Popular Products</h2>
-                            <p className='text-[14px] font-[400]'>Do not miss the current offers until the end of month</p>
+                            <p className='text-[14px] font-[400] mt-0 mb-0'>Do not miss the current offers until the end of month</p>
                         </div>
                         <div className='rightSec w-[60%]'>
                             <Tabs
@@ -63,19 +105,19 @@ const Home = () => {
                                 scrollButtons="auto"
                                 aria-label="scrollable auto tabs example"
                             >
-                                <Tab label="Fashion" />
-                                <Tab label="Electronics" />
-                                <Tab label="Bags" />
-                                <Tab label="Footwear" />
-                                <Tab label="Groceries" />
-                                <Tab label="Beauty" />
-                                <Tab label="Wellness" />
-                                <Tab label="Jewellery" />
+                                {
+                                    context?.catData?.length !== 0 && context?.catData?.map((cat, index) => {
+                                        return (
+                                            <Tab key={index} label={cat?.name} onClick={() => filterByCatId(cat?._id)} />
+                                        );
+                                    })
+                                }
                             </Tabs>
                         </div>
                     </div>
-
-                    <ProductsSlider items={6} />
+                    {
+                        popularProductsData?.length !== 0 && <ProductsSlider items={5} data={popularProductsData} />
+                    }
                 </div>
             </section>
             <section className='py-4 pt-2 bg-white'>
@@ -101,7 +143,9 @@ const Home = () => {
                 <div className='container'>
                     <h2 className='text-[20px] font-[600]'>
                         Latest Products</h2>
-                    <ProductsSlider items={6} />
+                    {
+                        allProductsData?.length !== 0 && <ProductsSlider items={5} data={allProductsData} />
+                    }
                     <AdsBannerSlider items={3} />
                 </div>
             </section>
@@ -109,7 +153,9 @@ const Home = () => {
                 <div className='container'>
                     <h2 className='text-[20px] font-[600]'>
                         Featured Products</h2>
-                    <ProductsSlider items={6} />
+                    {
+                        allFeaturedProductsData?.length !== 0 && <ProductsSlider items={5} data={allFeaturedProductsData} />
+                    }
                     <AdsBannerSlider items={3} />
 
                 </div>

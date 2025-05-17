@@ -49,8 +49,8 @@ const SubCategoryList = () => {
                                                 {firstLevelCat?.name}
                                             </span>
 
-                                            <Button className='!min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black !ml-auto' onClick={() => expend(index)}>
-                                                <FaAngleDown />
+                                            <Button className='!min-w-[35px] !w-[35px] !h-[35px] !rounded-full !text-black !ml-auto' onClick={() => expend(index)} >
+                                                <FaAngleDown className={`transition-transform duration-300 ${isOpen === index ? 'rotate-180' : 'rotate-0'}`} />
                                             </Button>
                                         </div>
 

@@ -12,6 +12,7 @@ import productRouter from './route/product.route.js';
 import cartRouter from './route/cart.route.js';
 import myListRouter from './route/mylist.route.js';
 import addressRouter from './route/address.route.js';
+import homeSlidesRouter from './route/homeSlide.route.js';
 
 const app = express();
 app.use(cors());
@@ -37,9 +38,10 @@ app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/myList', myListRouter);
 app.use('/api/address', addressRouter);
+app.use('/api/homeSlides', homeSlidesRouter);
 
 connectDB().then(() => {
     app.listen(process.env.PORT, () => {
         console.log("Server is running on PORT ", process.env.PORT);
     })
-})
+});

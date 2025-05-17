@@ -28,16 +28,30 @@ import Address from './Pages/MyAccount/address'
 const MyContext = createContext();
 
 function App() {
-  const [openProductDetailsModal, setOpenProductDetailsModal] = useState(false);
+  const [openProductDetailsModal, setOpenProductDetailsModal] = useState({
+    open: false,
+    item: {}
+  });
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState('lg');
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [catData, setCatData] = useState([]);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
+  const handleOpenProductDetailsModal = (status, item) => {
+    setOpenProductDetailsModal({
+      open: status,
+      item: item
+    });
+  };
+
   const handleCloseProductDetailsModal = () => {
-    setOpenProductDetailsModal(false);
+    setOpenProductDetailsModal({
+      open: false,
+      item: {}
+    });
   };
 
   const toggleCartPanel = (newOpen) => () => {
@@ -68,6 +82,14 @@ function App() {
     }
   }, [isLogin]);
 
+  useEffect(() => {
+    fetchDataFromApi('/api/category').then((res) => {
+      if (res?.error === false) {
+        setCatData(res?.data);
+      }
+    });
+  }, []);
+
   const openAlertBox = (status, msg) => {
     if (status === 'success') {
       toast.success(msg);
@@ -78,13 +100,16 @@ function App() {
 
   const values = {
     setOpenProductDetailsModal,
+    handleOpenProductDetailsModal,
     setOpenCartPanel,
     toggleCartPanel,
     openCartPanel,
     openAlertBox,
     isLogin,
     setIsLogin,
-    userData
+    userData,
+    catData,
+    setCatData
   };
 
   return (
@@ -114,7 +139,7 @@ function App() {
       <Toaster />
 
       <Dialog
-        open={openProductDetailsModal}
+        open={openProductDetailsModal.open}
         fullWidth={fullWidth}
         maxWidth={maxWidth}
         onClose={handleCloseProductDetailsModal}
@@ -127,14 +152,19 @@ function App() {
             <Button className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] !absolute top-[15px] right-[15px] bg-[#f1f1f1]' onClick={handleCloseProductDetailsModal}>
               <IoCloseSharp className='text-[20px]' />
             </Button>
-            <div className='col1 w-[40%] px-3'>
-              <ProductZoom />
-            </div>
+            {
+              openProductDetailsModal?.item?.length !== 0 &&
+              <>
+                <div className='col1 w-[40%] px-3 py-8'>
+                  <ProductZoom images={openProductDetailsModal?.item?.images} />
+                </div>
 
-            <div className='col2 w-[60%] py-8 px-8 pr-16 productContent'>
-              <ProductDetailsComponent />
-            </div>
+                <div className='col2 w-[60%] py-8 px-8 pr-16 productContent'>
+                  <ProductDetailsComponent item={openProductDetailsModal?.item} />
+                </div>
 
+              </>
+            }
           </div>
         </DialogContent>
       </Dialog>
