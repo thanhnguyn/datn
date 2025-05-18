@@ -46,7 +46,7 @@ const UploadBox = (props) => {
             props.setPreviewsFun(res?.data?.images || []);
             setUploading(false);
         } catch (error) {
-            console.error(error);
+            console.log(error);
             setUploading(false);
         }
     };
@@ -72,7 +72,7 @@ const UploadBox = (props) => {
                             onChange={(e) => {
                                 onChangeFile(e, props?.url)
                             }}
-                            name='images'
+                            name={props?.name}
                         />
                     </>
             }

@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
 import upload from '../middlewares/multer.js';
-import { createProductController, deleteProductController, getAllFeaturedProductsController, getAllProductsController, getAllProductsByCatIdController, getAllProductsByCatNameController, getAllProductsByPriceController, getAllProductsByRatingController, getAllProductsBySubCatIdController, getAllProductsBySubCatNameController, getAllProductsByThirdLevelCatIdController, getAllProductsByThirdLevelCatNameController, getProductController, getProductsCountController, removeImageFromCloudinaryController, updateProductController, uploadImagesController, deleteMultipleProductController, createProductRAMSController, deleteProductRAMSController, updateProductRAMSController, getProductRAMSController, getProductRAMSByIdController, createProductWEIGHTController, deleteProductWEIGHTController, updateProductWEIGHTController, getProductWEIGHTController, getProductWEIGHTByIdController, createProductSIZEController, deleteProductSIZEController, updateProductSIZEController, getProductSIZEController, getProductSIZEByIdController } from '../controllers/product.controller.js';
+import { createProductController, deleteProductController, getAllFeaturedProductsController, getAllProductsController, getAllProductsByCatIdController, getAllProductsByCatNameController, getAllProductsByPriceController, getAllProductsByRatingController, getAllProductsBySubCatIdController, getAllProductsBySubCatNameController, getAllProductsByThirdLevelCatIdController, getAllProductsByThirdLevelCatNameController, getProductController, getProductsCountController, removeImageFromCloudinaryController, updateProductController, uploadImagesController, deleteMultipleProductController, createProductRAMSController, deleteProductRAMSController, updateProductRAMSController, getProductRAMSController, getProductRAMSByIdController, createProductWEIGHTController, deleteProductWEIGHTController, updateProductWEIGHTController, getProductWEIGHTController, getProductWEIGHTByIdController, createProductSIZEController, deleteProductSIZEController, updateProductSIZEController, getProductSIZEController, getProductSIZEByIdController, uploadBannerImagesController } from '../controllers/product.controller.js';
 
 const productRouter = Router();
 
 productRouter.post('/uploadImages', auth, upload.array('images'), uploadImagesController);
+productRouter.post('/uploadBannerImage', auth, upload.array('images'), uploadBannerImagesController);
 productRouter.post('/create', auth, createProductController);
 productRouter.get('/getAllProducts', getAllProductsController);
 productRouter.get('/getAllProductsByCatId/:id', getAllProductsByCatIdController);
@@ -19,9 +20,9 @@ productRouter.get('/getAllProductsByRating', getAllProductsByRatingController);
 productRouter.get('/getAllProductsCount', getProductsCountController);
 productRouter.get('/getAllFeaturedProducts', getAllFeaturedProductsController);
 productRouter.delete('/deleteMultiple', deleteMultipleProductController);
+productRouter.delete('/deleteImage', auth, removeImageFromCloudinaryController);
 productRouter.delete('/:id', deleteProductController);
 productRouter.get('/:id', getProductController);
-productRouter.delete('/deleteImage', auth, removeImageFromCloudinaryController);
 productRouter.put('/updateProduct/:id', auth, updateProductController);
 
 productRouter.post('/productRAMS/create', auth, createProductRAMSController);

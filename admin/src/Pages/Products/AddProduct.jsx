@@ -8,6 +8,9 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import { MyContext } from '../../App';
 import { deleteImages, fetchDataFromApi, postData } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
+import Switch from '@mui/material/Switch';
+
+const label = { inputProps: { 'aria-label': 'Switch demo' } };
 
 const AddProduct = () => {
 
@@ -31,7 +34,10 @@ const AddProduct = () => {
         discount: '0',
         productRam: [],
         size: [],
-        productWeight: []
+        productWeight: [],
+        bannerTitleName: '',
+        bannerImage: [],
+        isDisplayOnHomeBanner: false
     });
 
     const [productCat, setProductCat] = useState('');
@@ -44,9 +50,12 @@ const AddProduct = () => {
     const [productWeightData, setProductWeightData] = useState([]);
     const [productSize, setProductSize] = useState([]);
     const [productSizeData, setProductSizeData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [previews, setPreviews] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [bannerPreviews, setBannerPreviews] = useState([]);
+
+    const [checkedSwitch, setCheckedSwitch] = useState(false);
 
     const history = useNavigate();
     const context = useContext(MyContext);
@@ -142,22 +151,58 @@ const AddProduct = () => {
 
 
     const setPreviewsFun = (previewsArr) => {
-        setPreviews(previewsArr);
-        setFormFields.images = previewsArr;
+        const imgArr = previews;
+        for (let i = 0; i < previewsArr.length; i++) {
+            imgArr.push(previewsArr[i]);
+        }
+
+        setPreviews([]);
+        setTimeout(() => {
+            setPreviews(imgArr);
+            formFields.image = imgArr;
+        }, 10);
     }
 
-    const removeImg = (image, index) => {
-        var imageArr = [];
-        imageArr = previews;
-        deleteImages(`/api/category/deleteImage?img=${image}`).then((res) => {
+    const setBannerPreviewsFun = (previewsArr) => {
+        const imgArr = bannerPreviews;
+        for (let i = 0; i < previewsArr.length; i++) {
+            imgArr.push(previewsArr[i]);
+        }
+
+        setBannerPreviews([]);
+        setTimeout(() => {
+            setBannerPreviews(imgArr);
+            formFields.bannerImage = imgArr;
+        }, 10);
+    }
+
+    const removeProductImg = (image, index) => {
+        const imageArr = [...previews];
+        deleteImages(`/api/product/deleteImage?img=${image}`).then(() => {
             imageArr.splice(index, 1);
             setPreviews([]);
-
             setTimeout(() => {
                 setPreviews(imageArr);
-                setFormFields.images = imageArr;
+                setFormFields(prev => ({ ...prev, image: imageArr }));
             }, 100);
-        })
+        });
+    };
+
+    const removeBannerImg = (image, index) => {
+        const imageArr = [...bannerPreviews];
+        deleteImages(`/api/product/deleteImage?img=${image}`).then(() => {
+            imageArr.splice(index, 1);
+            setBannerPreviews([]);
+            setTimeout(() => {
+                setBannerPreviews(imageArr);
+                setFormFields(prev => ({ ...prev, bannerImage: imageArr }));
+            }, 100);
+        });
+    };
+
+    const handleChangeSwitch = (event) => {
+        setCheckedSwitch(event.target.checked);
+        setFormFields.isDisplayOnHomeBanner = event.target.checked;
     }
 
     const handleSubmit = (e) => {
@@ -383,8 +428,8 @@ const AddProduct = () => {
                                 label="isFeatured"
                                 onChange={handleChangeProductFeature}
                             >
-                                <MenuItem value={10}>True</MenuItem>
-                                <MenuItem value={20}>False</MenuItem>
+                                <MenuItem value={true}>True</MenuItem>
+                                <MenuItem value={false}>False</MenuItem>
                             </Select>
                         </div>
                         <div className='col'>
@@ -509,7 +554,7 @@ const AddProduct = () => {
                                 previews?.length !== 0 && previews?.map((image, index) => {
                                     return (
                                         <div className='uploadBoxWrapper relative' key={index}>
-                                            <span className='absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer' onClick={() => removeImg(image, index)}><IoMdClose className='text-white text-[17px]' /></span>
+                                            <span className='absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer' onClick={() => removeProductImg(image, index)}><IoMdClose className='text-white text-[17px]' /></span>
                                             <div className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
                                                 <img src={image} alt={"image"} className='w-[100px]' />
                                             </div>
@@ -519,6 +564,39 @@ const AddProduct = () => {
                             }
                             <UploadBox multiple={true} name='images' url='/api/product/uploadImages' setPreviewsFun={setPreviewsFun} />
                         </div>
+                    </div>
+                    <div className='col w-full p-5 px-0'>
+                        <div className='shadow-mg bg-white p-4 w-full'>
+                            <div className='flex items-center gap-8'>
+                                <h3 className='font-[700] text-[18px] mb-3'>Banner image</h3>
+                                <Switch {...label} onChange={handleChangeSwitch} checked={checkedSwitch} />
+                            </div>
+                            <div className='grid grid-cols-7 gap-4'>
+                                {
+                                    bannerPreviews?.length !== 0 && bannerPreviews?.map((image, index) => {
+                                        return (
+                                            <div className='uploadBoxWrapper relative' key={index}>
+                                                <span className='absolute w-[20px] h-[20px] rounded-full overflow-hidden bg-red-700 -top-[5px] -right-[5px] flex items-center justify-center z-50 cursor-pointer' onClick={() => removeBannerImg(image, index)}><IoMdClose className='text-white text-[17px]' /></span>
+                                                <div className='uploadBox p-0 rounded-md overflow-hidden border border-dashed border-[rgba(0,0,0,0.3)] h-[150px] w-[100%] bg-gray-100 cursor-pointer hover:bg-gray-200 flex items-center justify-center flex-col relative'>
+                                                    <img src={image} alt={"image"} className='w-[100px]' />
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                                }
+                                <UploadBox multiple={false} name='images' url='/api/product/uploadBannerImage' setPreviewsFun={setBannerPreviewsFun} />
+                            </div>
+                            <br />
+                            <h3 className='font-[700] text-[18px] mb-3'>Banner Title</h3>
+                            <input
+                                type="text"
+                                className='w-full h-[40x] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm'
+                                name='bannerTitleName'
+                                onChange={onChangeInput}
+                            />
+
+                        </div>
+
                     </div>
                 </div>
                 <hr />
@@ -530,7 +608,7 @@ const AddProduct = () => {
                     }
                 </Button>
             </form>
-        </section>
+        </section >
     )
 }
 export default AddProduct;

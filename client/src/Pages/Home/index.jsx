@@ -23,6 +23,7 @@ import BannerBoxV2 from '../../components/bannerBoxV2';
 import AdsBannerSliderV2 from '../../components/AdsBannerSliderV2';
 import { fetchDataFromApi } from '../../utils/api.js';
 import { MyContext } from '../../App';
+import ProductLoading from '../../components/ProductLoading/index.jsx';
 
 const Home = () => {
 
@@ -61,6 +62,7 @@ const Home = () => {
     };
 
     const filterByCatId = (id) => {
+        setPopularProductsData([]);
         fetchDataFromApi(`/api/product/getAllProductsByCatId/${id}`).then((res) => {
             if (res?.error === false) {
                 setPopularProductsData(res?.products);
@@ -73,18 +75,6 @@ const Home = () => {
             {
                 homeSlidesData?.length !== 0 && <HomeSlider data={homeSlidesData} />
             }
-            <section className='py-6 '>
-                <div className='container flex gap-5'>
-                    <div className='part1 w-[70%]'>
-                        <HomeBannerV2 />
-                    </div>
-
-                    <div className='part2 w-[30%] gap-5 flex items-center justify-between flex-col'>
-                        <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"} />
-                        <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"} />
-                    </div>
-                </div>
-            </section>
 
             {
                 context?.catData?.length !== 0 && <HomeCatSlider data={context?.catData} />
@@ -116,10 +106,29 @@ const Home = () => {
                         </div>
                     </div>
                     {
+                        popularProductsData?.length === 0 && <ProductLoading />
+                    }
+                    {
                         popularProductsData?.length !== 0 && <ProductsSlider items={5} data={popularProductsData} />
                     }
                 </div>
             </section>
+
+            <section className='py-6 '>
+                <div className='container flex gap-5'>
+                    <div className='part1 w-[70%]'>
+                        {
+                            allProductsData?.length !== 0 && <HomeBannerV2 data={allProductsData} />
+                        }
+                    </div>
+
+                    <div className='part2 w-[30%] gap-5 flex items-center justify-between flex-col'>
+                        <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"} />
+                        <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"} />
+                    </div>
+                </div>
+            </section>
+
             <section className='py-4 pt-2 bg-white'>
                 <div className='container'>
                     <div className='freeShipping w-[80%] m-auto py-4 p-4 border-2 border-[#ff5252] flex items-center 
@@ -141,8 +150,10 @@ const Home = () => {
 
             <section className='py-5 pt-0 bg-white'>
                 <div className='container'>
-                    <h2 className='text-[20px] font-[600]'>
-                        Latest Products</h2>
+                    <h2 className='text-[20px] font-[600]'>Latest Products</h2>
+                    {
+                        allProductsData?.length === 0 && <ProductLoading />
+                    }
                     {
                         allProductsData?.length !== 0 && <ProductsSlider items={5} data={allProductsData} />
                     }
@@ -151,8 +162,10 @@ const Home = () => {
             </section>
             <section className='py-5 pt-0 bg-white'>
                 <div className='container'>
-                    <h2 className='text-[20px] font-[600]'>
-                        Featured Products</h2>
+                    <h2 className='text-[20px] font-[600]'>Featured Products</h2>
+                    {
+                        allFeaturedProductsData?.length === 0 && <ProductLoading />
+                    }
                     {
                         allFeaturedProductsData?.length !== 0 && <ProductsSlider items={5} data={allFeaturedProductsData} />
                     }

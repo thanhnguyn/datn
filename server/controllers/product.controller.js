@@ -50,6 +50,42 @@ export async function uploadImagesController(request, response) {
     }
 }
 
+var bannerImage = [];
+export async function uploadBannerImagesController(request, response) {
+    try {
+        bannerImage = [];
+
+        const image = request.files;
+
+        const options = {
+            use_filename: true,
+            unique_filename: false,
+            overwrite: false
+        };
+
+        for (let i = 0; i < image?.length; i++) {
+            const img = await cloudinary.uploader.upload(
+                image[i].path,
+                options,
+                function (error, result) {
+                    bannerImage.push(result.secure_url);
+                    fs.unlinkSync(`uploads/${request.files[i].filename}`);
+                }
+            );
+        }
+
+        return response.status(200).json({
+            images: bannerImage
+        });
+
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+}
 
 export async function createProductController(request, response) {
     try {
@@ -57,6 +93,8 @@ export async function createProductController(request, response) {
             name: request.body.name,
             description: request.body.description,
             images: imagesArr,
+            bannerImage: bannerImage,
+            bannerTitleName: request.body.bannerTitleName,
             brand: request.body.brand,
             price: request.body.price,
             oldPrice: request.body.oldPrice,
@@ -726,7 +764,11 @@ export async function removeImageFromCloudinaryController(request, response) {
         );
 
         if (res) {
-            response.status(200).send(res);
+            return response.status(200).json({
+                error: false,
+                success: true,
+                message: "Image deleted successfully."
+            });
         }
     }
 
@@ -741,6 +783,9 @@ export async function updateProductController(request, response) {
                 name: request.body.name,
                 description: request.body.description,
                 images: request.body.images,
+                bannerImage: request.body.bannerImage,
+                bannerTitleName: request.body.bannerTitleName,
+                isDisplayOnHomeBanner: request.body.isDisplayOnHomeBanner,
                 brand: request.body.brand,
                 price: request.body.price,
                 oldPrice: request.body.oldPrice,

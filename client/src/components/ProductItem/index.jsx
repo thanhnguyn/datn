@@ -41,7 +41,7 @@ const ProductItem = (props) => {
                     <span className="link transition-all">{props?.item?.brand}</span>
                 </h6>
                 <h3 className='text-[13px] title mt-1 font-[500] mb-1 text-[rgba(0,0,0,0.9)]'>
-                    <Link to={`/product/${props?.item?._id}`} className="link transition-all">{props?.item?.name}</Link>
+                    <Link to={`/product/${props?.item?._id}`} className="link transition-all">{props?.item?.name?.substr(0, 40) + '...'}</Link>
                 </h3>
                 <Rating name="size-small" defaultValue={props?.item?.rating} size="small" readOnly />
                 <div className='flex items-center gap-4'>
