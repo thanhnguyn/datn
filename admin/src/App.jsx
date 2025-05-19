@@ -222,6 +222,15 @@ function App() {
       ),
     },
     {
+      path: '/bannerV1/list',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'BannerV1List'} />
+        </>
+      ),
+    },
+    {
       path: '/product/addSize',
       exact: true,
       element: (

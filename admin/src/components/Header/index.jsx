@@ -25,6 +25,8 @@ import AddSubCategory from '../../Pages/Category/addSubCategory';
 import AddAddress from '../../Pages/Address/addAdress';
 import EditCategory from '../../Pages/Category/editCategory';
 import EditProduct from '../../Pages/Products/editProduct';
+import AddBannerV1 from '../../Pages/Banners/addBannerV1';
+import EditBannerV1 from '../../Pages/Banners/editBannerV1';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -202,6 +204,12 @@ const Header = () => {
                 }
                 {
                     context?.isOpenFullScreenPanel?.model === "Edit product" && <EditProduct />
+                }
+                {
+                    context?.isOpenFullScreenPanel?.model === "Add banner 1" && <AddBannerV1 />
+                }
+                {
+                    context?.isOpenFullScreenPanel?.model === "Edit banner 1" && <EditBannerV1 />
                 }
             </Dialog>
         </>

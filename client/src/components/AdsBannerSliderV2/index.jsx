@@ -8,7 +8,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 
 // import required modules
-import { Autoplay, Navigation } from 'swiper/modules';
+import { Navigation } from 'swiper/modules';
 import BannerBoxV2 from '../bannerBoxV2';
 
 const AdsBannerSliderV2 = (props) => {
@@ -21,30 +21,15 @@ const AdsBannerSliderV2 = (props) => {
                 modules={[Navigation]}
                 className="smlBtn"
             >
-                <SwiperSlide>
-                    <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"}
-                        link={"/"} />
-                </SwiperSlide>
-                <SwiperSlide>
-                    <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"}
-                        link={"/"} />
-                </SwiperSlide>
-                <SwiperSlide>
-                    <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"}
-                        link={"/"} />
-                </SwiperSlide>
-                <SwiperSlide>
-                    <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"}
-                        link={"/"} />
-                </SwiperSlide>
-                <SwiperSlide>
-                    <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"}
-                        link={"/"} />
-                </SwiperSlide>
-                <SwiperSlide>
-                    <BannerBoxV2 info="left" image={"https://serviceapi.spicezgold.com/download/1741664496923_1737020250515_New_Project_47.jpg"}
-                        link={"/"} />
-                </SwiperSlide>
+                {
+                    props?.data?.map((item, index) => {
+                        return (
+                            <SwiperSlide key={index}>
+                                <BannerBoxV2 info={item?.alignInfo} item={item} image={item?.images[0]} link={"/"} />
+                            </SwiperSlide>
+                        );
+                    })
+                }
             </Swiper>
         </div>
     )
