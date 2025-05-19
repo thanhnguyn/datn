@@ -1,7 +1,10 @@
-import React, { useContext, useState } from 'react'
+import React from 'react';
+import { useContext } from 'react';
+import { useState } from 'react';
+import { MyContext } from '../../App';
+import { useEffect } from 'react';
+import { deleteData, fetchDataFromApi } from '../../utils/api';
 import { Button } from '@mui/material';
-import { AiOutlineEdit } from "react-icons/ai";
-import { GoTrash } from "react-icons/go";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,22 +12,22 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import { MyContext } from "../../App";
-import { useEffect } from 'react';
-import { deleteData, fetchDataFromApi } from '../../utils/api';
+import { AiOutlineEdit } from "react-icons/ai";
+import { GoTrash } from "react-icons/go";
 
-const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
 const columns = [
-    { id: 'image', label: 'IMAGE', minWidth: 250 },
-    { id: 'action', label: 'ACTION', minWidth: 100 },
+    { id: 'image', label: 'IMAGE', minWidth: 100 },
+    { id: 'title', label: 'TITLE', minWidth: 200 },
+    { id: 'description', label: 'DESCRIPTION', minWidth: 200 },
+    { id: 'action', label: 'Action', minWidth: 100 }
 ];
-
-const BannerV1List = () => {
+const BlogList = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
-    const [slidesData, setSlidesData] = useState([]);
+    const [blogData, setBlogData] = useState([]);
 
     const [sortedIds, setSortedIds] = useState([]);
 
@@ -35,10 +38,11 @@ const BannerV1List = () => {
     }, [context?.isOpenFullScreenPanel]);
 
     const getData = (e) => {
-        fetchDataFromApi('/api/bannerV1').then((res) => {
-            setSlidesData(res?.data);
+        fetchDataFromApi('/api/blog').then((res) => {
+            setBlogData(res?.blogs);
         });
     };
+
 
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
@@ -50,8 +54,8 @@ const BannerV1List = () => {
     };
 
     const deleteSlide = (id) => {
-        deleteData(`/api/bannerV1/${id}`).then((res) => {
-            context.openAlertBox('success', 'Banner deleted.');
+        deleteData(`/api/blog/${id}`).then((res) => {
+            context.openAlertBox('success', 'Blog deleted.');
             getData();
         });
     };
@@ -60,11 +64,11 @@ const BannerV1List = () => {
         <>
             <div className='flex items-center justify-between px-2 py-0 mt-3'>
                 <h2 className='text-[18px] font-[600]'>
-                    Banners List
+                    Blog List
                 </h2>
 
                 <div className='col w-[25%] ml-auto flex items-center justify-end gap-3'>
-                    <Button className='btn-blue  !text-white btn-sm' onClick={() => context.setIsOpenFullScreenPanel({ open: true, model: 'Add banner 1' })}>Add banner</Button>
+                    <Button className='btn-blue  !text-white btn-sm' onClick={() => context.setIsOpenFullScreenPanel({ open: true, model: 'Add blog' })}>Add blog</Button>
                 </div>
             </div>
             <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
@@ -85,21 +89,27 @@ const BannerV1List = () => {
                         </TableHead>
                         <TableBody>
                             {
-                                slidesData?.length !== 0 && slidesData?.map((item, index) => {
+                                blogData?.length !== 0 && blogData?.map((item, index) => {
                                     return (
                                         <TableRow key={index}>
-                                            <TableCell width={300}>
+                                            <TableCell width={100}>
                                                 <div className='flex items-center gap-4 w-[300px]'>
                                                     <div className='img w-full rounded-md overflow-hidden group'>
                                                         <img src={item.images[0]} className='w-full group-hover:scale-105 transition-all' />
                                                     </div>
                                                 </div>
                                             </TableCell>
+                                            <TableCell width={200}>
+                                                <span className='text-[15px] font-[500]'>{item?.title}</span>
+                                            </TableCell>
+                                            <TableCell width={300}>
+                                                <div dangerouslySetInnerHTML={{ __html: item?.description?.length > 600 ? item?.description?.substr(0, 600) + '...' : item?.description }} />
+                                            </TableCell>
                                             <TableCell width={100}>
                                                 <div className='flex items-center gap-1'>
                                                     <Button className='!w-[35px] !h-[35px] bg-[#f1f1f1] !min-w-[35px] !border !border-[rgba(0,0,0,0.4)] !rounded-full hover:!bg-[#f1f1f1]' onClick={() => context.setIsOpenFullScreenPanel({
                                                         open: true,
-                                                        model: 'Edit banner 1',
+                                                        model: 'Edit blog',
                                                         id: item?._id
                                                     })}>
                                                         <AiOutlineEdit className='text-[rgba(0,0,0,0.7)] text-[20px]' />
@@ -130,4 +140,5 @@ const BannerV1List = () => {
         </>
     )
 }
-export default BannerV1List;
+
+export default BlogList;

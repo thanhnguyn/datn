@@ -222,6 +222,15 @@ function App() {
       ),
     },
     {
+      path: '/product/addSize',
+      exact: true,
+      element: (
+        <>
+          <Layout page={'AddSIZE'} />
+        </>
+      ),
+    },
+    {
       path: '/bannerV1/list',
       exact: true,
       element: (
@@ -231,11 +240,11 @@ function App() {
       ),
     },
     {
-      path: '/product/addSize',
+      path: '/blog/list',
       exact: true,
       element: (
         <>
-          <Layout page={'AddSIZE'} />
+          <Layout page={'BlogList'} />
         </>
       ),
     },

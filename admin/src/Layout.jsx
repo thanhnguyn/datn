@@ -15,6 +15,7 @@ import AddRAMS from './Pages/Products/addRAMS';
 import AddWEIGHT from './Pages/Products/addWEIGHT';
 import AddSIZE from './Pages/Products/addSIZE';
 import BannerV1List from './Pages/Banners/bannerV1List';
+import BlogList from './Pages/Blog';
 
 const Layout = (props) => {
     const { isSidebarOpened } = useContext(MyContext);
@@ -55,6 +56,8 @@ const Layout = (props) => {
                             <AddSIZE />
                         ) : props.page === "BannerV1List" ? (
                             <BannerV1List />
+                        ) : props.page === "BlogList" ? (
+                            <BlogList />
                         ) : (
                             <></>
                         )
