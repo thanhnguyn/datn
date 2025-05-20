@@ -120,6 +120,7 @@ function App() {
           <Routes>
             <Route path={"/"} exact={true} element={<Home />} />
             <Route path={"/productListing"} exact={true} element={<ProductListing />} />
+            <Route path={"/products"} exact={true} element={<ProductListing />} />
             <Route path={"/product/:id"} exact={true} element={<ProductDetails />} />
             <Route path={"/login"} exact={true} element={<Login />} />
             <Route path={"/verify"} exact={true} element={<Verify />} />

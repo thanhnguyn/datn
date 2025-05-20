@@ -251,11 +251,7 @@ const AddProduct = () => {
             return false;
         }
 
-        // if (formFields.discount === "") {
-        //     context.openAlertBox("error", "Please enter product discount.");
-        //     setIsLoading(false);
-        //     return false;
-        // }
+        formFields.discount = Math.floor((formFields.oldPrice - formFields.price) * 100 / formFields.oldPrice);
 
         // if (formFields.rating === "") {
         //     context.openAlertBox("error", "Please enter product rating.");
@@ -452,16 +448,6 @@ const AddProduct = () => {
                                 onChange={onChangeInput}
                             />
                         </div>
-                        {/* <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product discount</h3>
-                            <input
-                                type="number"
-                                className='w-full h-[40x] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-[10px] text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'
-                                name='discount'
-                                value={formFields.discount}
-                                onChange={onChangeInput}
-                            />
-                        </div> */}
                         <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product RAMS</h3>
                             {

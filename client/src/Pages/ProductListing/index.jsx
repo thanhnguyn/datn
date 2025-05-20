@@ -10,17 +10,39 @@ import { LuMenu } from "react-icons/lu";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Pagination from '@mui/material/Pagination';
+import ProductLoadingGrid from '../../components/ProductLoading/productLoadingGrid';
+import { postData } from '../../utils/api';
 
 const ProductListing = () => {
     const [itemView, setItemView] = useState('grid');
+    const [anchorEl, setAnchorEl] = useState(null);
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [productsData, setProductsData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const [selectedSortVal, setSelectedSortVal] = useState('Name, A to Z');
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleSortBy = (name, order, products, value) => {
+        setSelectedSortVal(value);
+        postData(`/api/product/sortBy`, {
+            products: products,
+            sortBy: name,
+            order: order
+        }).then((res) => {
+            setProductsData(res);
+            setAnchorEl(null);
+        });
     };
 
     return (
@@ -42,12 +64,19 @@ const ProductListing = () => {
             </div>
             <div className='bg-white p-2 mt-4'>
                 <div className='container flex gap-3'>
-                    <div className='sidebarWrapper w-[20%] h-full bg-white'>
-                        <Sidebar />
+                    <div className='sidebarWrapper w-[20%] bg-white'>
+                        <Sidebar
+                            productsData={productsData}
+                            setProductsData={setProductsData}
+                            isLoading={isLoading}
+                            setIsLoading={setIsLoading}
+                            page={page}
+                            setTotalPages={setTotalPages}
+                        />
                     </div>
 
                     <div className='rightContent w-[80%] py-3'>
-                        <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between'>
+                        <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between sticky top-[130px] z-99'>
                             <div className='col1 flex items-center itemViewActions'>
                                 <Button className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${itemView === 'list' && 'active'}`} onClick={() => setItemView('list')}>
                                     <LuMenu className='text-[rgba(0,0,0,0.7)]' />
@@ -55,7 +84,7 @@ const ProductListing = () => {
                                 <Button className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${itemView === 'grid' && 'active'}`} onClick={() => setItemView('grid')}>
                                     <IoGridSharp className='text-[rgba(0,0,0,0.7)]' />
                                 </Button>
-                                <span className='text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]'>There are 27 products</span>
+                                <span className='text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]'>There are {productsData?.products?.length !== 0 ? productsData?.products?.length : 0} products</span>
                             </div>
 
                             <div className='col2 ml-auto flex items-center justify-end gap-3 pr-4'>
@@ -68,7 +97,7 @@ const ProductListing = () => {
                                     onClick={handleClick}
                                     className='!bg-white !text-[12px] !text-[#000] !capitalize !border-2 !border-[#000]'
                                 >
-                                    Sales, highest to lowest
+                                    {selectedSortVal}
                                 </Button>
                                 <Menu
                                     id="basic-menu"
@@ -79,12 +108,30 @@ const ProductListing = () => {
                                         'aria-labelledby': 'basic-button',
                                     }}
                                 >
-                                    <MenuItem onClick={handleClose} className='!text-[13px] !text-[#000] !capitalize'>Sales, highest to lowest</MenuItem>
-                                    <MenuItem onClick={handleClose} className='!text-[13px] !text-[#000] !capitalize'>Relevance</MenuItem>
-                                    <MenuItem onClick={handleClose} className='!text-[13px] !text-[#000] !capitalize'>Name, A to Z</MenuItem>
-                                    <MenuItem onClick={handleClose} className='!text-[13px] !text-[#000] !capitalize'>Name, Z to A</MenuItem>
-                                    <MenuItem onClick={handleClose} className='!text-[13px] !text-[#000] !capitalize'>Price, low to high</MenuItem>
-                                    <MenuItem onClick={handleClose} className='!text-[13px] !text-[#000] !capitalize'>Price, high to low</MenuItem>
+                                    <MenuItem
+                                        onClick={() => handleSortBy('name', 'asc', productsData, 'Name, A to Z')}
+                                        className='!text-[13px] !text-[#000] !capitalize'
+                                    >
+                                        Name, A to Z
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => handleSortBy('name', 'desc', productsData, 'Name, Z to A')}
+                                        className='!text-[13px] !text-[#000] !capitalize'
+                                    >
+                                        Name, Z to A
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => handleSortBy('price', 'asc', productsData, 'Price, low to high')}
+                                        className='!text-[13px] !text-[#000] !capitalize'
+                                    >
+                                        Price, low to high
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => handleSortBy('price', 'desc', productsData, 'Price, high to low')}
+                                        className='!text-[13px] !text-[#000] !capitalize'
+                                    >
+                                        Price, high to low
+                                    </MenuItem>
                                 </Menu>
                             </div>
                         </div>
@@ -93,34 +140,44 @@ const ProductListing = () => {
                             {
                                 itemView === 'grid' ?
                                     <>
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
-                                        <ProductItem />
+                                        {
+                                            isLoading === true ? <ProductLoadingGrid view={itemView} />
+                                                :
+                                                productsData?.products?.length !== 0 && productsData?.products?.map((item, index) => {
+                                                    return (
+                                                        <ProductItem key={index} item={item} />
+                                                    );
+                                                })
 
+                                        }
                                     </>
                                     :
                                     <>
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
-                                        <ProductItemListView />
+                                        {
+                                            isLoading === true ? <ProductLoadingGrid view={itemView} />
+                                                :
+                                                productsData?.products?.length !== 0 && productsData?.products?.map((item, index) => {
+                                                    return (
+                                                        <ProductItemListView key={index} item={item} />
+                                                    );
+                                                })
+                                        }
                                     </>
                             }
 
                         </div>
-
-                        <div className='flex items-center justify-center mt-10'>
-                            <Pagination count={10} showFirstButton showLastButton />
-                        </div>
+                        {
+                            totalPages > 1 &&
+                            <div className='flex items-center justify-center mt-10'>
+                                <Pagination
+                                    showFirstButton
+                                    showLastButton
+                                    count={totalPages}
+                                    page={page}
+                                    onChange={(e, value) => setPage(value)}
+                                />
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
