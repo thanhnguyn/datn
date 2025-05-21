@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema({
     },
     password: {
         type: String,
+        default: '',
         required: [true, "Provide password"]
     },
     avatar: {
@@ -71,6 +72,10 @@ const userSchema = mongoose.Schema({
         type: String,
         enum: ['ADMIN', 'USER'],
         default: "USER"
+    },
+    signUpWithGoogle: {
+        type: Boolean,
+        default: false
     }
 },
     {

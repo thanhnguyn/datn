@@ -11,6 +11,12 @@ import { FaEyeSlash } from "react-icons/fa";
 import { postData } from '../../utils/api.js';
 import { MyContext } from '../../App';
 
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { firebaseApp } from '../../firebase.jsx';
+
+const auth = getAuth(firebaseApp);
+const googleProvider = new GoogleAuthProvider();
+
 const SignUp = () => {
 
     const [loadingGoogle, setLoadingGoogle] = useState(false);
@@ -81,10 +87,56 @@ const SignUp = () => {
 
     function handleClickGoogle() {
         setLoadingGoogle(true);
+        authWithGoogle();
     }
-    function handleClickFacebook() {
-        setLoadingFacebook(true);
-    }
+
+    const authWithGoogle = () => {
+        signInWithPopup(auth, googleProvider)
+            .then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                // The signed-in user info.
+                const user = result.user;
+
+                const fields = {
+                    name: user.providerData[0].displayName,
+                    email: user.providerData[0].email,
+                    password: '',
+                    avatar: user.providerData[0].photoURL,
+                    mobile: user.providerData[0].phoneNumber,
+                    role: "USER"
+                };
+
+                postData("/api/user/authWithGoogle", fields).then((res) => {
+                    if (res?.error !== true) {
+                        context.openAlertBox("success", res?.message);
+                        localStorage.setItem("userEmail", fields.email);
+                        localStorage.setItem('accessToken', res?.data?.accessToken);
+                        localStorage.setItem('refreshToken', res?.data?.refreshToken);
+
+                        context.setIsLogin(true);
+
+                        history("/");
+                    } else {
+                        context.openAlertBox("error", res?.message);
+                    }
+                    setIsLoading(false);
+                });
+                // IdP data available using getAdditionalUserInfo(result)
+                // ...
+            }).catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
+            });
+    };
+
     return (
         <section className='bg-white w-full'>
             <header className='w-full fixed top-0 left-0 px-4 py-3 flex items-center justify-between z-50'>
@@ -127,17 +179,6 @@ const SignUp = () => {
                         className='!bg-none !py-2 !text-[15px] !capitalize !px-5 !text-[rgba(0,0,0,0.7)]'
                     >
                         Continue with Google
-                    </Button>
-                    <Button
-                        size="small"
-                        onClick={handleClickFacebook}
-                        endIcon={<BsFacebook />}
-                        loading={loadingFacebook}
-                        loadingPosition="end"
-                        variant="outlined"
-                        className='!bg-none !py-2 !text-[15px] !capitalize !px-5 !text-[rgba(0,0,0,0.7)]'
-                    >
-                        Continue with Facebook
                     </Button>
                 </div>
 

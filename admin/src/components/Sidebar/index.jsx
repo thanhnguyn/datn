@@ -11,6 +11,8 @@ import { IoMdLogOut } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa6";
 import { Collapse } from 'react-collapse';
 import { MyContext } from '../../App';
+import { PiFlagBanner } from "react-icons/pi";
+import { RiBloggerLine } from "react-icons/ri";
 
 const Sidebar = () => {
     const [submenuIndex, setSubmenuIndex] = useState(null);
@@ -176,7 +178,7 @@ const Sidebar = () => {
                     </li>
                     <li>
                         <Button className='w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]' onClick={() => isOpenSubMenu(5)}>
-                            <RiProductHuntLine className='text-[18px]' />
+                            <PiFlagBanner className='text-[18px]' />
                             <span>Banners</span>
                             <span className='ml-auto w-[30px] h-[30px] flex items-center justify-center' ><FaAngleDown className={`transition-all ${submenuIndex === 5 ? 'rotate-180' : ''}`} /></span>
                         </Button>
@@ -198,6 +200,35 @@ const Sidebar = () => {
                                     })}>
                                         <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
                                         Add banner
+                                    </Button>
+                                </li>
+                            </ul>
+                        </Collapse>
+                    </li>
+                    <li>
+                        <Button className='w-full !capitalize !justify-start flex gap-3 text-[14px] !text-[rgba(0,0,0,0.8)] !font-[500] items-center !py-2 hover:!bg-[#f1f1f1]' onClick={() => isOpenSubMenu(6)}>
+                            <RiBloggerLine className='text-[18px]' />
+                            <span>Blog</span>
+                            <span className='ml-auto w-[30px] h-[30px] flex items-center justify-center' ><FaAngleDown className={`transition-all ${submenuIndex === 6 ? 'rotate-180' : ''}`} /></span>
+                        </Button>
+
+                        <Collapse isOpened={submenuIndex === 6 ? true : false}>
+                            <ul className='w-full'>
+                                <li className='w-full'>
+                                    <Link to='/blog/list'>
+                                        <Button className='!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3'>
+                                            <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
+                                            Blog list
+                                        </Button>
+                                    </Link>
+                                </li>
+                                <li className='w-full'>
+                                    <Button className='!text-[rgba(0,0,0,0.7)] !capitalize !justify-start !w-full !text-[13px] !font-[500] !pl-9 flex gap-3' onClick={() => context.setIsOpenFullScreenPanel({
+                                        open: true,
+                                        model: "Add blog"
+                                    })}>
+                                        <span className='block w-[5px] h-[5px] rounded-full bg-[rgba(0,0,0,0.2)]'></span>
+                                        Add blog
                                     </Button>
                                 </li>
                             </ul>

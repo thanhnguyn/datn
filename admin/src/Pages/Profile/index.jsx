@@ -354,20 +354,23 @@ const Profile = () => {
                     </div>
                     <hr />
                     <form className='mt-8' onSubmit={handleSubmitChangePassword}>
-                        <div className='flex items-center gap-5'>
-                            <div className='w-[50%]'>
-                                <TextField
-                                    label="Old password"
-                                    variant="outlined"
-                                    size='small'
-                                    className='w-full'
-                                    name='oldPassword'
-                                    value={changePassword.oldPassword}
-                                    disabled={isLoading2 === true ? true : false}
-                                    onChange={onChangeInput}
-                                />
-                            </div>
-                            <div className='w-[50%]'>
+                        <div className='grid grid-cols-2 gap-5'>
+                            {
+                                context?.userData?.signUpWithGoogle === false &&
+                                <div className='col'>
+                                    <TextField
+                                        label="Old password"
+                                        variant="outlined"
+                                        size='small'
+                                        className='w-full'
+                                        name='oldPassword'
+                                        value={changePassword.oldPassword}
+                                        disabled={isLoading2 === true ? true : false}
+                                        onChange={onChangeInput}
+                                    />
+                                </div>
+                            }
+                            <div className='col'>
                                 <TextField
                                     type='text'
                                     label="New password"
@@ -379,9 +382,7 @@ const Profile = () => {
                                     onChange={onChangeInput}
                                 />
                             </div>
-                        </div>
-                        <div className='flex items-center mt-4 gap-5'>
-                            <div className='w-[50%]'>
+                            <div className='col'>
                                 <TextField
                                     label="Confirm new password"
                                     variant="outlined"

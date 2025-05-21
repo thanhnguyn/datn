@@ -131,7 +131,87 @@ export async function verifyEmailController(request, response) {
             message: error.message || error,
             error: true,
             success: false
-        })
+        });
+    }
+}
+
+export async function authWithGoogleController(request, response) {
+    const { name, email, avatar, mobile, role } = request.body;
+
+    try {
+        const existingUser = await UserModel.findOne({ email: email });
+        if (!existingUser) {
+            const user = await UserModel.create({
+                name: name,
+                mobile: mobile,
+                email: email,
+                password: 'null',
+                avatar: avatar,
+                role: role,
+                verify_email: true,
+                signUpWithGoogle: true
+            });
+
+            await user.save();
+
+            const accessToken = await generatedAccessToken(user._id);
+            const refreshToken = await generatedRefreshToken(user._id);
+
+            await UserModel.findByIdAndUpdate(
+                user?._id,
+                { last_login_date: new Date() }
+            )
+
+            const cookiesOption = {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None"
+            }
+            response.cookie('accessToken', accessToken, cookiesOption);
+            response.cookie('refreshToken', refreshToken, cookiesOption);
+
+            return response.status(200).json({
+                message: 'Login successfully',
+                error: false,
+                success: true,
+                data: {
+                    accessToken,
+                    refreshToken
+                }
+            });
+        } else {
+            const accessToken = await generatedAccessToken(existingUser._id);
+            const refreshToken = await generatedRefreshToken(existingUser._id);
+
+            await UserModel.findByIdAndUpdate(
+                existingUser?._id,
+                { last_login_date: new Date() }
+            )
+
+            const cookiesOption = {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None"
+            }
+            response.cookie('accessToken', accessToken, cookiesOption);
+            response.cookie('refreshToken', refreshToken, cookiesOption);
+
+            return response.status(200).json({
+                message: 'Login successfully',
+                error: false,
+                success: true,
+                data: {
+                    accessToken,
+                    refreshToken
+                }
+            });
+        }
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
 
@@ -178,7 +258,7 @@ export async function loginUserController(request, response) {
         const accessToken = await generatedAccessToken(user._id);
         const refreshToken = await generatedRefreshToken(user._id);
 
-        const updateUser = await UserModel.findByIdAndUpdate(
+        await UserModel.findByIdAndUpdate(
             user?._id,
             { last_login_date: new Date() }
         )
@@ -199,7 +279,7 @@ export async function loginUserController(request, response) {
                 accessToken,
                 refreshToken
             }
-        })
+        });
     } catch (error) {
         return response.status(500).json({
             message: error.message || error,
@@ -508,16 +588,9 @@ export async function verifyForgotPasswordOtpController(request, response) {
 export async function resetPasswordController(request, response) {
     try {
         const { email, oldPassword, newPassword, confirmPassword } = request.body;
-        // if (!email || !oldPassword || !newPassword || !confirmPassword) {
-        //     return response.status(400).json({
-        //         message: "Provide required fields email, oldPassword, newPassword, confirmPassword",
-        //         error: true,
-        //         success: false
-        //     })
-        // }
-        if (!email || !oldPassword || !newPassword || !confirmPassword) {
+        if (!email || !newPassword || !confirmPassword) {
             return response.status(400).json({
-                message: "Provide required fields email, oldPassword, newPassword, confirmPassword",
+                message: "Provide required fields email, newPassword, confirmPassword",
                 error: true,
                 success: false
             })
@@ -527,6 +600,14 @@ export async function resetPasswordController(request, response) {
         if (!user) {
             return response.status(400).json({
                 message: "Email is not available",
+                error: true,
+                success: false
+            })
+        }
+
+        if (!oldPassword && user?.signUpWithGoogle === false) {
+            return response.status(400).json({
+                message: "Provide required fields.",
                 error: true,
                 success: false
             })
