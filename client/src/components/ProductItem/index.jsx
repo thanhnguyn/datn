@@ -44,7 +44,7 @@ const ProductItem = (props) => {
                     <Link to={`/product/${props?.item?._id}`} className="link transition-all">{props?.item?.name?.length > 30 ? props?.item?.name?.substr(0, 30) + '...' : props?.item?.name}</Link>
                 </h3>
                 <Rating name="size-small" defaultValue={props?.item?.rating} size="small" readOnly />
-                <div className='flex items-center gap-4'>
+                <div className='flex items-center gap-2'>
                     <span className='oldPrice line-through text-gray-500 text-[15px] font-[500]'>{props?.item?.oldPrice?.toLocaleString('vi-VN')}đ</span>
                     <span className='price text-primary text-[15px] font-[600]'>{props?.item?.price?.toLocaleString('vi-VN')}đ</span>
                 </div>

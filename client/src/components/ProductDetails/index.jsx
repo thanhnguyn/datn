@@ -17,7 +17,7 @@ const ProductDetailsComponent = (props) => {
                 </span>
 
                 <Rating name="size-small" defaultValue={2} size="small" readOnly />
-                <span className='text-[13px] cursor-pointer'>Review (5)</span>
+                <span className='text-[13px] cursor-pointer' onClick={props.gotoReviews}>Review ({props?.reviewsCount})</span>
             </div>
             <div className='flex items-center gap-4 mt-4'>
                 <span className='oldPrice line-through text-gray-500 text-[20px] font-[500]'>{props?.item?.price?.toLocaleString('vi-VN')}đ</span>

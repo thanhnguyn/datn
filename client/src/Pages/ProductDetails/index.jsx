@@ -1,14 +1,61 @@
-import { Breadcrumbs, Button } from '@mui/material';
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Breadcrumbs, CircularProgress } from '@mui/material';
+import React, { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom';
 import ProductZoom from '../../components/ProductZoom';
-import Rating from '@mui/material/Rating';
-import TextField from '@mui/material/TextField';
 import ProductsSlider from '../../components/ProductsSlider';
 import ProductDetailsComponent from '../../components/ProductDetails';
+import { fetchDataFromApi } from '../../utils/api';
+import Reviews from './reviews';
+import { useRef } from 'react';
 
 const ProductDetails = () => {
     const [activeTab, setActiveTab] = useState(0);
+    const [productData, setProductData] = useState();
+    const [isLoading, setIsLoading] = useState(false);
+    const [reviewsCount, setReviewsCount] = useState(0);
+    const [relatedProductData, setRelatedProductData] = useState([]);
+
+    const { id } = useParams();
+
+    const reviewSec = useRef();
+
+    useEffect(() => {
+        fetchDataFromApi(`/api/user/getReviews?productId=${id}`).then((res) => {
+            if (res?.error === false) {
+                setReviewsCount(res.reviews.length);
+            }
+        });
+    }, [reviewsCount]);
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchDataFromApi(`/api/product/${id}`).then((res) => {
+            window.scrollTo(0, 0);
+            if (res?.error === false) {
+                setProductData(res?.product);
+                fetchDataFromApi(`/api/product/getAllProductsBySubCatId/${res?.product?.subCatId}`).then((res) => {
+                    if (res?.error === false) {
+                        const filteredData = res?.products?.filter((item) => item._id !== id);
+                        setRelatedProductData(filteredData);
+                    }
+                });
+                setTimeout(() => {
+                    setIsLoading(false);
+                }, 700);
+            }
+        });
+
+        window.scrollTo(0, 0);
+    }, [id]);
+
+    const gotoReviews = () => {
+        window.scrollTo({
+            top: reviewSec?.current?.offsetTop - 100,
+            behavior: 'smooth'
+        })
+
+        setActiveTab(1);
+    };
     return (
         <>
             <div className='py-5'>
@@ -42,177 +89,74 @@ const ProductDetails = () => {
             </div>
 
             <section className='bg-white py-5'>
-                <div className='container flex gap-8 items-center'>
-                    <div className='productZoomContainer w-[40%]'>
-                        <ProductZoom />
-                    </div>
+                {
+                    isLoading === true ?
+                        <div className='flex items-center justify-center min-h-[300px]'>
+                            <CircularProgress />
+                        </div>
+                        :
+                        <>
+                            <div className='container flex gap-8 items-center'>
+                                <div className='productZoomContainer w-[40%]'>
+                                    <ProductZoom images={productData?.images} />
+                                </div>
 
-                    <div className='productContent w-[60%] pr-10 pl-10'>
-                        <ProductDetailsComponent />
+                                <div className='productContent w-[60%] pr-10 pl-10'>
+                                    <ProductDetailsComponent item={productData} reviewsCount={reviewsCount} gotoReviews={gotoReviews} />
 
-                    </div>
-                </div>
-
-                <div className='container pt-10'>
-                    <div className='flex items-center gap-8 mb-5'>
-                        <span className={`link text-[17px] cursor-pointer font-[500] ${activeTab === 0 && 'text-primary'}`} onClick={() => setActiveTab(0)}>Description</span>
-                        <span className={`link text-[17px] cursor-pointer font-[500] ${activeTab === 1 && 'text-primary'}`} onClick={() => setActiveTab(1)}>Product Details</span>
-                        <span className={`link text-[17px] cursor-pointer font-[500] ${activeTab === 2 && 'text-primary'}`} onClick={() => setActiveTab(2)}>Reviews (5)</span>
-                    </div>
-
-                    {
-                        activeTab === 0 && (
-                            <div className='shadow-md w-full py-5 px-8 rounded-md'>
-                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</p>
-                            </div>
-                        )
-                    }
-                    {
-                        activeTab === 1 && (
-                            <div className='shadow-md w-full py-5 px-8 rounded-md'>
-                                <div class="relative overflow-x-auto">
-                                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                            <tr>
-                                                <th scope="col" class="px-6 py-3">
-                                                    Product name
-                                                </th>
-                                                <th scope="col" class="px-6 py-3">
-                                                    Color
-                                                </th>
-                                                <th scope="col" class="px-6 py-3">
-                                                    Category
-                                                </th>
-                                                <th scope="col" class="px-6 py-3">
-                                                    Price
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    Apple MacBook Pro 17"
-                                                </th>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    Silver
-                                                </td>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    Laptop
-                                                </td>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    $2999
-                                                </td>
-                                            </tr>
-                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    Apple MacBook Pro 17"
-                                                </th>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    Silver
-                                                </td>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    Laptop
-                                                </td>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    $2999
-                                                </td>
-                                            </tr>
-                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    Apple MacBook Pro 17"
-                                                </th>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    Silver
-                                                </td>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    Laptop
-                                                </td>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    $2999
-                                                </td>
-                                            </tr>
-                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    Apple MacBook Pro 17"
-                                                </th>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    Silver
-                                                </td>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    Laptop
-                                                </td>
-                                                <td class="px-6 py-4 font-[500]">
-                                                    $2999
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
-                        )
-                    }
-                    {
-                        activeTab === 2 && (
-                            <div className='shadow-md w-[80%] py-5 px-8 rounded-md'>
-                                <div className='w-full productReviewsContainer'>
-                                    <h2 className='text-[18px]'>Customer questions & answer</h2>
-                                    <div className='reviewScroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden mt-5 pr-5'>
-                                        <div className='review pt-5 pb-5 border-b border-[rgba(0,0,0,0.1)] w-full flex items-center justify-between'>
-                                            <div className='info w-[60%] flex items-center gap-3'>
-                                                <div className='img w-[80px] h-[80px] overflow-hidden rounded-full'>
-                                                    <img src="https://static.vecteezy.com/system/resources/previews/002/275/847/original/male-avatar-profile-icon-of-smiling-caucasian-man-vector.jpg" className='w-full' />
-                                                </div>
-                                                <div className='w-[80%]'>
-                                                    <h4 className='text-[16px]'>Alaska Shrimp</h4>
-                                                    <h5 className='text-[13px] mb-0'>2025-04-01</h5>
-                                                    <p className='mt-0 mb-0'>nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product </p>
-                                                </div>
-                                            </div>
-                                            <Rating name="size-small" defaultValue={2} readOnly />
-                                        </div>
-                                        <div className='review pt-5 pb-5 border-b border-[rgba(0,0,0,0.1)] w-full flex items-center justify-between'>
-                                            <div className='info w-[60%] flex items-center gap-3'>
-                                                <div className='img w-[80px] h-[80px] overflow-hidden rounded-full'>
-                                                    <img src="https://static.vecteezy.com/system/resources/previews/002/275/847/original/male-avatar-profile-icon-of-smiling-caucasian-man-vector.jpg" className='w-full' />
-                                                </div>
-                                                <div className='w-[80%]'>
-                                                    <h4 className='text-[16px]'>Alaska Shrimp</h4>
-                                                    <h5 className='text-[13px] mb-0'>2025-04-01</h5>
-                                                    <p className='mt-0 mb-0'>nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product nice product </p>
-                                                </div>
-                                            </div>
-                                            <Rating name="size-small" defaultValue={2} readOnly />
-                                        </div>
 
-                                    </div>
-
-                                    <br />
-                                    <div className='reviewForm bg-[#fafafa] p-4 rounded-md'>
-                                        <h2 className='text-[18px]'>Add a review</h2>
-                                        <form className='w-full mt-5'>
-                                            <TextField
-                                                id="outlined-multiline-flexible"
-                                                label="Write a review..."
-                                                className='w-full mb-5'
-                                                multiline
-                                                rows={5}
-                                            />
-                                            <br /><br />
-                                            <Rating name="size-small" defaultValue={2} />
-                                            <div className='flex items-center mt-5'>
-                                                <Button className='btn-org'>Submit review</Button>
-                                            </div>
-                                        </form>
-                                    </div>
+                            <div className='container pt-10'>
+                                <div className='flex items-center gap-8 mb-5'>
+                                    <span
+                                        className={`link text-[17px] cursor-pointer font-[500] ${activeTab === 0 && 'text-primary'}`}
+                                        onClick={() => setActiveTab(0)}
+                                    >
+                                        Description
+                                    </span>
+                                    <span
+                                        className={`link text-[17px] cursor-pointer font-[500] ${activeTab === 1 && 'text-primary'}`}
+                                        onClick={() => setActiveTab(1)}
+                                        ref={reviewSec}
+                                    >
+                                        Reviews ({reviewsCount})
+                                    </span>
                                 </div>
+
+                                {
+                                    activeTab === 0 && (
+                                        <div className='shadow-md w-full py-5 px-8 rounded-md'>
+                                            {
+                                                productData?.description
+                                            }
+                                        </div>
+                                    )
+                                }
+                                {
+                                    activeTab === 1 && (
+                                        <div className='shadow-md w-[80%] py-5 px-8 rounded-md'>
+                                            {
+                                                productData?.length !== 0 &&
+                                                <Reviews
+                                                    productId={productData?._id}
+                                                />
+                                            }
+                                        </div>
+                                    )
+                                }
                             </div>
-                        )
-                    }
-                </div>
-                <div className='container pt-8'>
-                    <h2 className='text-[20px] font-[600] pb-0'>Related Products</h2>
-                    <ProductsSlider items={6} />
-                </div>
+                            {
+                                relatedProductData?.length !== 0 &&
+                                <div className='container pt-8'>
+                                    <h2 className='text-[20px] font-[600] pb-0'>Related Products</h2>
+                                    <ProductsSlider items={6} data={relatedProductData} />
+                                </div>
+                            }
+                        </>
+                }
+
+
             </section>
         </>
     )

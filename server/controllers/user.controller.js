@@ -8,6 +8,7 @@ import generatedRefreshToken from '../utils/generatedRefreshToken.js';
 
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
+import ReviewModel from '../models/review.model.js';
 
 cloudinary.config({
     cloud_name: process.env.cloudinary_Config_Cloud_Name,
@@ -757,6 +758,68 @@ export async function userDetailsController(request, response) {
             success: true
         })
 
+
+    } catch (error) {
+        return response.status(500).json({
+            message: "Something is wrong",
+            error: true,
+            success: false
+        });
+    }
+}
+
+
+export async function addReviewController(request, response) {
+    try {
+        const { image, userName, review, rating, userId, productId } = request.body;
+
+        const userReview = new ReviewModel({
+            image: image,
+            userName: userName,
+            review: review,
+            rating: rating,
+            userId: userId,
+            productId: productId
+        });
+
+        await userReview.save();
+
+        return response.status(200).json({
+            message: 'Review added successfully',
+            error: false,
+            success: true
+        });
+
+
+    } catch (error) {
+        return response.status(500).json({
+            message: "Something is wrong",
+            error: true,
+            success: false
+        });
+    }
+
+}
+
+
+export async function getReviewsController(request, response) {
+    try {
+        const productId = request.query.productId;
+
+        const reviews = await ReviewModel.find({ productId: productId });
+        if (!reviews) {
+            return response.status(400).json({
+                message: "Review not found",
+                error: true,
+                success: false
+            });
+        }
+
+        return response.status(200).json({
+            error: false,
+            success: true,
+            reviews: reviews
+        });
 
     } catch (error) {
         return response.status(500).json({
