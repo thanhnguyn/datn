@@ -109,14 +109,20 @@ function App() {
 
     const data = {
       productTitle: product?.name,
-      image: product?.images[0],
+      image: product?.image,
       rating: product?.rating,
       price: product?.price,
+      oldPrice: product?.oldPrice,
+      discount: product?.discount,
       quantity: quantity,
       subTotal: parseInt(product?.price * quantity),
       productId: product?._id,
       countInStock: product?.countInStock,
-      userId: userId
+      userId: userId,
+      brand: product?.brand,
+      size: product?.size,
+      ram: product?.productRam,
+      weight: product?.productWeight
     };
 
     postData('/api/cart/add', data).then((res) => {
@@ -154,7 +160,8 @@ function App() {
     setCatData,
     addToCart,
     cartData,
-    setCartData
+    setCartData,
+    getCartItems
   };
 
   return (

@@ -3,7 +3,7 @@ import CartModel from '../models/cart.model.js';
 export async function addItemToCartController(request, response) {
     try {
         const userId = request.userId;
-        const { productTitle, image, rating, price, quantity, subTotal, productId, countInStock } = request.body;
+        const { productTitle, image, rating, price, oldPrice, discount, size, weight, ram, quantity, subTotal, productId, countInStock, brand } = request.body;
         if (!productId) {
             return response.status(402).json({
                 message: "Provide productId",
@@ -27,11 +27,17 @@ export async function addItemToCartController(request, response) {
             image: image,
             rating: rating,
             price: price,
+            oldPrice: oldPrice,
+            discount: discount,
             quantity: quantity,
             subTotal: subTotal,
             productId: productId,
             countInStock: countInStock,
-            userId: userId
+            userId: userId,
+            brand: brand,
+            size: size,
+            weight: weight,
+            ram: ram
         });
 
         const save = await cartItem.save();
@@ -107,7 +113,7 @@ export async function updateCartItemQtyController(request, response) {
             message: "Cart updated.",
             success: true,
             error: false,
-            date: updateCartItem
+            data: updateCartItem
         });
 
 

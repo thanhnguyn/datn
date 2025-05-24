@@ -427,3 +427,7 @@ header{
 .MuiCircularProgress-root{
   @apply !text-primary
 }
+
+.MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.selected{
+  @apply !text-primary
+}

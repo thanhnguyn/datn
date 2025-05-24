@@ -17,6 +17,23 @@ const cartSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    oldPrice: {
+        type: Number,
+        required: true
+    },
+    discount: {
+        type: Number,
+        required: true
+    },
+    size: {
+        type: String
+    },
+    weight: {
+        type: String
+    },
+    ram: {
+        type: String
+    },
     quantity: {
         type: Number,
         required: true
@@ -34,6 +51,10 @@ const cartSchema = new mongoose.Schema({
         required: true
     },
     userId: {
+        type: String,
+        required: true
+    },
+    brand: {
         type: String,
         required: true
     }

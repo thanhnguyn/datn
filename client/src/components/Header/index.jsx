@@ -198,7 +198,10 @@ export const Header = () => {
                             <li>
                                 <Tooltip title="Cart">
                                     <IconButton aria-label="cart" onClick={() => context.setOpenCartPanel(true)}>
-                                        <StyledBadge badgeContent={context?.cartData?.length} color="secondary">
+                                        <StyledBadge
+                                            badgeContent={context?.cartData?.length !== 0 ? context?.cartData?.length : 0}
+                                            color="secondary"
+                                        >
                                             <MdOutlineShoppingCart />
                                         </StyledBadge>
                                     </IconButton>

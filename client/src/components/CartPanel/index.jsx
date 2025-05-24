@@ -3,88 +3,50 @@ import React, { useContext } from 'react'
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import { MyContext } from '../../App';
+import { deleteData } from '../../utils/api';
 
-const CartPanel = () => {
+const CartPanel = (props) => {
     const context = useContext(MyContext);
+
+    const removeItem = (id) => {
+        deleteData(`/api/cart/deleteCartItem/${id}`).then((res) => {
+            context?.openAlertBox('success', 'Item removed from cart.');
+            context?.getCartItems();
+        });
+    };
+
     return (
         <>
             <div className='scroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden py-3 px-4'>
-                <div className='cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4'>
-                    <div className='img w-[25%] overflow-hidden h-[80px] rounded-md'>
-                        <Link to='/product/123' className='block group'>
-                            <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105' />
-                        </Link>
-                    </div>
-                    <div className='info w-[75%] pr-5 relative'>
-                        <h4 className='text-[14px] font-[500]'>
-                            <Link to='/product/123' className='link transition-all'>
-                                Men Opaque Casual Shirt
-                            </Link>
-                        </h4>
-                        <p className='flex items-center gap-5 mt-2 mb-2'>
-                            <span>Qty : <span>1</span></span>
-                            <span className='text-primary font-bold'>Price : $25</span>
-                        </p>
-                        <MdOutlineDeleteOutline className='absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all' />
-                    </div>
-                </div>
-                <div className='cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4'>
-                    <div className='img w-[25%] overflow-hidden h-[80px] rounded-md'>
-                        <Link to='/product/123' className='block group'>
-                            <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105' />
-                        </Link>
-                    </div>
-                    <div className='info w-[75%] pr-5 relative'>
-                        <h4 className='text-[14px] font-[500]'>
-                            <Link to='/product/123' className='link transition-all'>
-                                Men Opaque Casual Shirt
-                            </Link>
-                        </h4>
-                        <p className='flex items-center gap-5 mt-2 mb-2'>
-                            <span>Qty : <span>1</span></span>
-                            <span className='text-primary font-bold'>Price : $25</span>
-                        </p>
-                        <MdOutlineDeleteOutline className='absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all' />
-                    </div>
-                </div>
-                <div className='cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4'>
-                    <div className='img w-[25%] overflow-hidden h-[80px] rounded-md'>
-                        <Link to='/product/123' className='block group'>
-                            <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105' />
-                        </Link>
-                    </div>
-                    <div className='info w-[75%] pr-5 relative'>
-                        <h4 className='text-[14px] font-[500]'>
-                            <Link to='/product/123' className='link transition-all'>
-                                Men Opaque Casual Shirt
-                            </Link>
-                        </h4>
-                        <p className='flex items-center gap-5 mt-2 mb-2'>
-                            <span>Qty : <span>1</span></span>
-                            <span className='text-primary font-bold'>Price : $25</span>
-                        </p>
-                        <MdOutlineDeleteOutline className='absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all' />
-                    </div>
-                </div>
-                <div className='cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4'>
-                    <div className='img w-[25%] overflow-hidden h-[80px] rounded-md'>
-                        <Link to='/product/123' className='block group'>
-                            <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-full group-hover:scale-105' />
-                        </Link>
-                    </div>
-                    <div className='info w-[75%] pr-5 relative'>
-                        <h4 className='text-[14px] font-[500]'>
-                            <Link to='/product/123' className='link transition-all'>
-                                Men Opaque Casual Shirt
-                            </Link>
-                        </h4>
-                        <p className='flex items-center gap-5 mt-2 mb-2'>
-                            <span>Qty : <span>1</span></span>
-                            <span className='text-primary font-bold'>Price : $25</span>
-                        </p>
-                        <MdOutlineDeleteOutline className='absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all' />
-                    </div>
-                </div>
+                {
+                    props?.data?.map((item, index) => {
+                        console.log(item);
+                        return (
+                            <div className='cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4'>
+                                <div className='img w-[25%] overflow-hidden h-[80px] rounded-md'>
+                                    <Link to={`/product/${item?.productId}`} className='block group'>
+                                        <img src={item?.image} className='w-full group-hover:scale-105' />
+                                    </Link>
+                                </div>
+                                <div className='info w-[75%] pr-5 relative pt-3'>
+                                    <h4 className='text-[14px] font-[500]'>
+                                        <Link to={`/product/${item?.productId}`} className='link transition-all'>
+                                            {item?.productTitle?.length > 27 ? item?.productTitle?.substr(0, 27) + '...' : item?.productTitle}
+                                        </Link>
+                                    </h4>
+                                    <p className='flex items-center gap-5 mt-2 mb-2'>
+                                        <span>Qty : <span>{item?.quantity}</span></span>
+                                        <span className='text-primary font-bold'>Price : {item?.subTotal?.toLocaleString('vi-VN')}đ</span>
+                                    </p>
+                                    <MdOutlineDeleteOutline
+                                        className='absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all'
+                                        onClick={() => removeItem(item?._id)}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })
+                }
             </div>
 
             <br />
@@ -93,18 +55,30 @@ const CartPanel = () => {
 
                 <div className='bottomInfo py-3 px-4 w-full border-t border-[rgba(0,0,0,0.1)] flex items-center justify-between flex-col'>
                     <div className='flex items-center justify-between w-full'>
-                        <span className='text-[14px] font-[600]'>1 item</span>
-                        <span className='text-primary font-bold'>$25</span>
+                        <span className='text-[14px] font-[600]'>{context?.cartData?.length > 1 ? context?.cartData?.length + ' items' : context?.cartData?.length + ' item'} </span>
+                        <span className='text-primary font-bold'>
+                            {
+                                (context?.cartData?.length !== 0 ?
+                                    context?.cartData?.map(item => item?.subTotal)
+                                        .reduce((total, value) => total + value, 0) : 0)?.toLocaleString('vi-VN')
+                            }đ
+                        </span>
                     </div>
-                    <div className='flex items-center justify-between w-full'>
+                    {/* <div className='flex items-center justify-between w-full'>
                         <span className='text-[14px] font-[600]'>Shipping</span>
                         <span className='text-primary font-bold'>$5</span>
-                    </div>
+                    </div> */}
                 </div>
                 <div className='bottomInfo py-3 px-4 w-full border-t border-[rgba(0,0,0,0.1)] flex items-center justify-between flex-col'>
                     <div className='flex items-center justify-between w-full'>
                         <span className='text-[14px] font-[600]'>Total (tax excl.)</span>
-                        <span className='text-primary font-bold'>$30</span>
+                        <span className='text-primary font-bold'>
+                            {
+                                (context?.cartData?.length !== 0 ?
+                                    context?.cartData?.map(item => item?.subTotal)
+                                        .reduce((total, value) => total + value, 0) : 0)?.toLocaleString('vi-VN')
+                            }đ
+                        </span>
                     </div>
                 </div>
 
