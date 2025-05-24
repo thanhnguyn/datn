@@ -53,6 +53,7 @@ export const Header = () => {
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
                 context.openAlertBox("success", res?.message);
+                context.setUserData(null);
                 history("/");
             }
         });
@@ -197,7 +198,7 @@ export const Header = () => {
                             <li>
                                 <Tooltip title="Cart">
                                     <IconButton aria-label="cart" onClick={() => context.setOpenCartPanel(true)}>
-                                        <StyledBadge badgeContent={4} color="secondary">
+                                        <StyledBadge badgeContent={context?.cartData?.length} color="secondary">
                                             <MdOutlineShoppingCart />
                                         </StyledBadge>
                                     </IconButton>

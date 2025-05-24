@@ -26,6 +26,11 @@ const Register = () => {
 
     const context = useContext(MyContext);
     const history = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const onChangeInput = (e) => {
         const { name, value } = e.target;
         setFormFields(() => {

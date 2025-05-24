@@ -1,5 +1,5 @@
 import { Button } from '@mui/material';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import "./style.css";
 import { Link } from 'react-router-dom';
 import Rating from '@mui/material/Rating';
@@ -7,10 +7,67 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoGitCompareOutline } from 'react-icons/io5';
 import { MdOutlineShoppingCart, MdZoomOutMap } from "react-icons/md";
 import { MyContext } from '../../App';
+import { FaMinus, FaPlus } from 'react-icons/fa6';
+import { deleteData, editData } from '../../utils/api';
 
 const ProductItem = (props) => {
+    const [quantity, setQuantity] = useState(1); //Sai ở đây
+    const [isAdded, setIsAdded] = useState(false);
+    const [cartItem, setCartItem] = useState([]);
 
     const context = useContext(MyContext);
+
+    const addToCart = (product, userId, quantity) => {
+        context?.addToCart(product, userId, quantity);
+        setIsAdded(true);
+    };
+
+    useEffect(() => {
+        const item = context?.cartData?.filter((cartItem) => cartItem.productId.includes(props?.item?._id));
+        if (item?.length !== 0) {
+            setCartItem(item);
+            setIsAdded(true);
+        }
+    }, [context?.cartData]);
+
+    const minusQty = () => {
+        if (quantity !== 1 && quantity > 1) {
+            setQuantity(quantity - 1);
+        } else {
+            setQuantity(1);
+        }
+
+        if (quantity === 1) {
+            deleteData(`/api/cart/deleteCartItem/${cartItem[0]?._id}`).then((res) => {
+                setIsAdded(false);
+                context?.openAlertBox('success', res?.message);
+            });
+        } else {
+            const obj = {
+                _id: cartItem[0]?._id,
+                qty: quantity - 1,
+                subTotal: parseInt(props?.item?.price * (quantity - 1))
+            };
+
+            editData(`/api/cart/updateQty`, obj).then((res) => {
+                console.log(res);
+            });
+        }
+    };
+
+    const addQty = () => {
+        setQuantity(quantity + 1);
+
+        const obj = {
+            _id: cartItem[0]?._id,
+            qty: quantity + 1,
+            subTotal: parseInt(props?.item?.price * (quantity + 1))
+        };
+
+        editData(`/api/cart/updateQty`, obj).then((res) => {
+            console.log(res);
+        });
+    };
 
     return (
         <div className='productItem  shadow-lg rounded-md overflow-hidden border-2 border-[rgba(0,0,0,0.1)]'>
@@ -49,9 +106,34 @@ const ProductItem = (props) => {
                     <span className='price text-primary text-[15px] font-[600]'>{props?.item?.price?.toLocaleString('vi-VN')}đ</span>
                 </div>
                 <div className='!absolute bottom-[15px] left-0 pl-3 pr-3 w-full'>
-                    <Button className='btn-org btn-border flex w-full btn-sm gap-2' size='small'>
-                        <MdOutlineShoppingCart className='text-[18px]' /> Add to cart
-                    </Button>
+                    {
+                        isAdded === false ?
+                            <Button
+                                className='btn-org btn-border flex w-full btn-sm gap-2'
+                                size='small'
+                                onClick={() => addToCart(props?.item, context?.userData?._id, quantity)}
+                            >
+                                <MdOutlineShoppingCart className='text-[18px]' /> Add to cart
+                            </Button>
+                            :
+                            <div className='flex items-center justify-between overflow-hidden rounded-full border border-[rgba(0,0,0,0.1)]'>
+                                <Button
+                                    className='!min-w-[35px] !w-[35px] !h-[30px] !bg-[#f1f1f1] !rounded-none '
+                                    onClick={minusQty}
+                                >
+                                    <FaMinus className='text-[rgba(0,0,0,0.7)]' />
+                                </Button>
+                                <span>{quantity}</span>
+                                <Button
+                                    className='!min-w-[35px] !w-[35px] !h-[30px] !bg-primary !rounded-none'
+                                    onClick={addQty}
+                                >
+                                    <FaPlus className='text-white' />
+                                </Button>
+                            </div>
+                    }
+
+
                 </div>
             </div>
         </div>

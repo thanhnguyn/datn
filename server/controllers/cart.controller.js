@@ -1,10 +1,9 @@
-import CartProductModel from '../models/cartproduct.model.js';
-import UserModel from "../models/user.model.js";
+import CartModel from '../models/cart.model.js';
 
 export async function addItemToCartController(request, response) {
     try {
         const userId = request.userId;
-        const { productId } = request.body;
+        const { productTitle, image, rating, price, quantity, subTotal, productId, countInStock } = request.body;
         if (!productId) {
             return response.status(402).json({
                 message: "Provide productId",
@@ -13,7 +12,7 @@ export async function addItemToCartController(request, response) {
             });
         }
 
-        const checkItemCart = await CartProductModel.findOne({
+        const checkItemCart = await CartModel.findOne({
             userId: userId,
             productId: productId
         });
@@ -23,24 +22,19 @@ export async function addItemToCartController(request, response) {
             });
         }
 
-        const cartItem = new CartProductModel({
-            quantity: 1,
-            userId: userId,
-            productId: productId
+        const cartItem = new CartModel({
+            productTitle: productTitle,
+            image: image,
+            rating: rating,
+            price: price,
+            quantity: quantity,
+            subTotal: subTotal,
+            productId: productId,
+            countInStock: countInStock,
+            userId: userId
         });
 
         const save = await cartItem.save();
-
-        const updateCartUser = await UserModel.updateOne(
-            {
-                _id: userId
-            },
-            {
-                $push: {
-                    shopping_cart: productId
-                }
-            }
-        );
 
         return response.status(200).json({
             data: save,
@@ -62,12 +56,12 @@ export async function getCartItemController(request, response) {
     try {
         const userId = request.userId;
 
-        const cartItem = await CartProductModel.find({
+        const cartItems = await CartModel.find({
             userId: userId
-        }).populate('productId');
+        });
 
         return response.status(200).json({
-            data: cartItem,
+            data: cartItems,
             error: false,
             success: true
         });
@@ -86,22 +80,26 @@ export async function getCartItemController(request, response) {
 export async function updateCartItemQtyController(request, response) {
     try {
         const userId = request.userId;
-        const { _id, qty } = request.body;
-        if (!_id || !qty) {
+        const { _id, qty, subTotal } = request.body;
+        if (!_id || !qty || !subTotal) {
             return response.status(400).json({
-                message: "Provide _id, qty.",
+                message: "Provide _id, qty, subTotal.",
                 error: true,
                 success: false
             });
         }
 
-        const updateCartItem = await CartProductModel.updateOne(
+        const updateCartItem = await CartModel.updateOne(
             {
                 _id: _id,
                 userId: userId
             },
             {
-                quantity: qty
+                quantity: qty,
+                subTotal: subTotal
+            },
+            {
+                new: true
             }
         );
 
@@ -126,8 +124,8 @@ export async function updateCartItemQtyController(request, response) {
 export async function deleteCartItemController(request, response) {
     try {
         const userId = request.userId;
-        const { _id, productId } = request.body;
-        if (!_id) {
+        const { id } = request.params;
+        if (!id) {
             return response.status(400).json({
                 message: "Provide _id",
                 error: true,
@@ -135,9 +133,9 @@ export async function deleteCartItemController(request, response) {
             });
         }
 
-        const deleteCartItem = await CartProductModel.deleteOne(
+        const deleteCartItem = await CartModel.deleteOne(
             {
-                _id: _id,
+                _id: id,
                 userId: userId
             }
         );
@@ -148,17 +146,6 @@ export async function deleteCartItemController(request, response) {
                 success: false
             });
         }
-
-        const user = await UserModel.findOne({
-            _id: userId
-        })
-
-        const cartItems = user?.shopping_cart;
-
-        const updatedUserCart = [...cartItems.slice(0, cartItems.indexOf(productId)), ...cartItems.slice(cartItems.indexOf(productId) + 1)];
-
-        user.shopping_cart = updatedUserCart;
-        await user.save();
 
         return response.status(200).json({
             message: "Item removed",

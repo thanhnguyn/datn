@@ -22,7 +22,7 @@ import Checkout from './Pages/Checkout'
 import MyAccount from './Pages/MyAccount'
 import MyList from './Pages/MyList'
 import Orders from './Pages/Orders'
-import { fetchDataFromApi } from './utils/api'
+import { fetchDataFromApi, postData } from './utils/api'
 import Address from './Pages/MyAccount/address'
 
 const MyContext = createContext();
@@ -37,6 +37,7 @@ function App() {
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
   const [catData, setCatData] = useState([]);
+  const [cartData, setCartData] = useState([]);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
@@ -77,6 +78,8 @@ function App() {
         }
       });
 
+      getCartItems();
+
     } else {
       setIsLogin(false);
     }
@@ -98,6 +101,44 @@ function App() {
     }
   }
 
+  const addToCart = (product, userId, quantity) => {
+    if (userId === undefined || userId === null || userId === '') {
+      openAlertBox('error', 'Please login.');
+      return false;
+    }
+
+    const data = {
+      productTitle: product?.name,
+      image: product?.images[0],
+      rating: product?.rating,
+      price: product?.price,
+      quantity: quantity,
+      subTotal: parseInt(product?.price * quantity),
+      productId: product?._id,
+      countInStock: product?.countInStock,
+      userId: userId
+    };
+
+    postData('/api/cart/add', data).then((res) => {
+      if (res?.error === false) {
+        openAlertBox('success', res?.message);
+
+        getCartItems();
+      } else {
+        openAlertBox('error', res?.message);
+      }
+    });
+
+  };
+
+  const getCartItems = () => {
+    fetchDataFromApi(`/api/cart/get`).then((res) => {
+      if (res?.error === false) {
+        setCartData(res?.data);
+      }
+    });
+  };
+
   const values = {
     setOpenProductDetailsModal,
     handleOpenProductDetailsModal,
@@ -108,8 +149,12 @@ function App() {
     isLogin,
     setIsLogin,
     userData,
+    setUserData,
     catData,
-    setCatData
+    setCatData,
+    addToCart,
+    cartData,
+    setCartData
   };
 
   return (
