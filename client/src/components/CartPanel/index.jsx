@@ -24,13 +24,13 @@ const CartPanel = (props) => {
                         return (
                             <div className='cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4'>
                                 <div className='img w-[25%] overflow-hidden h-[80px] rounded-md'>
-                                    <Link to={`/product/${item?.productId}`} className='block group'>
+                                    <Link to={`/product/${item?.productId}`} className='block group' onClick={context.toggleCartPanel(false)}>
                                         <img src={item?.image} className='w-full group-hover:scale-105' />
                                     </Link>
                                 </div>
                                 <div className='info w-[75%] pr-5 relative pt-3'>
                                     <h4 className='text-[14px] font-[500]'>
-                                        <Link to={`/product/${item?.productId}`} className='link transition-all'>
+                                        <Link to={`/product/${item?.productId}`} className='link transition-all' onClick={context.toggleCartPanel(false)}>
                                             {item?.productTitle?.length > 27 ? item?.productTitle?.substr(0, 27) + '...' : item?.productTitle}
                                         </Link>
                                     </h4>
@@ -64,10 +64,6 @@ const CartPanel = (props) => {
                             }đ
                         </span>
                     </div>
-                    {/* <div className='flex items-center justify-between w-full'>
-                        <span className='text-[14px] font-[600]'>Shipping</span>
-                        <span className='text-primary font-bold'>$5</span>
-                    </div> */}
                 </div>
                 <div className='bottomInfo py-3 px-4 w-full border-t border-[rgba(0,0,0,0.1)] flex items-center justify-between flex-col'>
                     <div className='flex items-center justify-between w-full'>
@@ -84,11 +80,11 @@ const CartPanel = (props) => {
 
                 <br />
                 <div className='flex items-center justify-between w-full gap-5'>
-                    <Link to='/cart' className='w-[50%] d-block' >
-                        <Button className='btn-org btn-lg w-full' onClick={context.toggleCartPanel(false)}>View Cart</Button>
+                    <Link to='/cart' className='w-[50%] d-block' onClick={context.toggleCartPanel(false)}>
+                        <Button className='btn-org btn-lg w-full' >View Cart</Button>
                     </Link>
-                    <Link to='/checkout' className='w-[50%] d-block'>
-                        <Button className='btn-org btn-border btn-lg w-full' onClick={context.toggleCartPanel(false)}>Checkout</Button>
+                    <Link to='/checkout' className='w-[50%] d-block' onClick={context.toggleCartPanel(false)}>
+                        <Button className='btn-org btn-border btn-lg w-full' >Checkout</Button>
                     </Link>
                 </div>
             </div>

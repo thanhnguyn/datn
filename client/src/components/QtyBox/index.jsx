@@ -3,17 +3,21 @@ import React, { useState } from 'react'
 import { FaAngleUp } from "react-icons/fa6";
 import { FaAngleDown } from "react-icons/fa6";
 
-export const QtyBox = () => {
+export const QtyBox = (props) => {
 
     const [qtyVal, setQtyVal] = useState(1);
     const plusQty = () => {
         setQtyVal(qtyVal + 1);
+        props.handleSelectQty(qtyVal + 1);
     }
     const minusQty = () => {
         if (qtyVal === 1) {
             setQtyVal(1);
+            props.handleSelectQty(1);
+
         } else {
             setQtyVal(qtyVal - 1);
+            props.handleSelectQty(qtyVal - 1);
         }
     }
 

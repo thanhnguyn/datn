@@ -12,15 +12,18 @@ export async function addItemToCartController(request, response) {
             });
         }
 
-        const checkItemCart = await CartModel.findOne({
-            userId: userId,
-            productId: productId
-        });
-        if (checkItemCart) {
-            return response.status(400).json({
-                message: "Item already in cart."
-            });
-        }
+        // const checkItemCart = await CartModel.findOne({
+        //     userId,
+        //     productId,
+        //     size,
+        //     ram,
+        //     weight
+        // });
+        // if (checkItemCart) {
+        //     return response.status(400).json({
+        //         message: "Item already in cart."
+        //     });
+        // }
 
         const cartItem = new CartModel({
             productTitle: productTitle,
@@ -86,24 +89,30 @@ export async function getCartItemController(request, response) {
 export async function updateCartItemQtyController(request, response) {
     try {
         const userId = request.userId;
-        const { _id, qty, subTotal } = request.body;
-        if (!_id || !qty || !subTotal) {
+        const { _id, qty, subTotal, size, weight, ram } = request.body;
+
+        if (!_id) {
             return response.status(400).json({
-                message: "Provide _id, qty, subTotal.",
+                message: "Provide _id.",
                 error: true,
                 success: false
             });
         }
+
+        // Tạo object update động
+        const updateFields = {};
+        if (qty !== undefined) updateFields.quantity = qty;
+        if (subTotal !== undefined) updateFields.subTotal = subTotal;
+        if (size !== undefined) updateFields.size = size;
+        if (ram !== undefined) updateFields.ram = ram;
+        if (weight !== undefined) updateFields.weight = weight;
 
         const updateCartItem = await CartModel.updateOne(
             {
                 _id: _id,
                 userId: userId
             },
-            {
-                quantity: qty,
-                subTotal: subTotal
-            },
+            updateFields,
             {
                 new: true
             }
@@ -116,8 +125,6 @@ export async function updateCartItemQtyController(request, response) {
             data: updateCartItem
         });
 
-
-
     } catch (error) {
         return response.status(500).json({
             message: error.message || error,
@@ -126,6 +133,7 @@ export async function updateCartItemQtyController(request, response) {
         });
     }
 }
+
 
 export async function deleteCartItemController(request, response) {
     try {

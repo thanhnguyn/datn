@@ -184,7 +184,16 @@ const Footer = () => {
                     <IoCloseSharp className='text-[20px] cursor-pointer' onClick={context.toggleCartPanel(false)} />
                 </div>
                 {
-                    context?.cartData?.length !== 0 ? <CartPanel data={context?.cartData} /> : "Cart empty"
+                    context?.cartData?.length !== 0 ? <CartPanel data={context?.cartData} />
+                        :
+                        <>
+                            <div className='flex items-center justify-center flex-col pt-[100px] gap-5'>
+                                <h4>Your cart is currently empty.</h4>
+                                <img src="./cart img/empty-cart.png" className='w-[150px]' />
+                                <Button className='btn-org btn-sm' onClick={context.toggleCartPanel(false)}>Continue shopping</Button>
+                            </div>
+                        </>
+
                 }
 
 

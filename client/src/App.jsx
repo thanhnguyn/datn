@@ -22,7 +22,7 @@ import Checkout from './Pages/Checkout'
 import MyAccount from './Pages/MyAccount'
 import MyList from './Pages/MyList'
 import Orders from './Pages/Orders'
-import { fetchDataFromApi, postData } from './utils/api'
+import { editData, fetchDataFromApi, postData } from './utils/api'
 import Address from './Pages/MyAccount/address'
 
 const MyContext = createContext();
@@ -101,13 +101,55 @@ function App() {
     }
   }
 
-  const addToCart = (product, userId, quantity) => {
-    if (userId === undefined || userId === null || userId === '') {
+  const findDuplicateItem = (cartData, newItem) => {
+    return cartData.find(item =>
+      item.productId === newItem.productId &&
+      item.size === newItem.size &&
+      item.ram === newItem.ram &&
+      item.weight === newItem.weight
+    );
+  };
+
+  const mergeOrAddToCart = async (cartData, productItem, postData, editData, getCartItems, openAlertBox) => {
+    const duplicateItem = findDuplicateItem(cartData, productItem);
+
+    if (duplicateItem) {
+      const newQty = duplicateItem.quantity + productItem.quantity;
+      const newSubTotal = productItem.price * newQty;
+
+      try {
+        await editData('/api/cart/updateQty', {
+          _id: duplicateItem._id,
+          qty: newQty,
+          subTotal: newSubTotal
+        });
+        await getCartItems();
+      } catch (error) {
+        openAlertBox('error', 'Không thể cập nhật giỏ hàng');
+      }
+
+    } else {
+      try {
+        const res = await postData('/api/cart/add', productItem);
+        if (res?.error === false) {
+          openAlertBox('success', res?.message);
+          await getCartItems();
+        } else {
+          openAlertBox('error', res?.message);
+        }
+      } catch (err) {
+        openAlertBox('error', 'Thêm sản phẩm thất bại');
+      }
+    }
+  };
+
+  const addToCart = async (product, userId, quantity) => {
+    if (!userId) {
       openAlertBox('error', 'Please login.');
       return false;
     }
 
-    const data = {
+    const productItem = {
       productTitle: product?.name,
       image: product?.image,
       rating: product?.rating,
@@ -121,20 +163,18 @@ function App() {
       userId: userId,
       brand: product?.brand,
       size: product?.size,
-      ram: product?.productRam,
-      weight: product?.productWeight
+      ram: product?.ram,
+      weight: product?.weight
     };
 
-    postData('/api/cart/add', data).then((res) => {
-      if (res?.error === false) {
-        openAlertBox('success', res?.message);
-
-        getCartItems();
-      } else {
-        openAlertBox('error', res?.message);
-      }
-    });
-
+    await mergeOrAddToCart(
+      cartData,
+      productItem,
+      postData,
+      editData,
+      getCartItems,
+      openAlertBox
+    );
   };
 
   const getCartItems = () => {
