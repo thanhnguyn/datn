@@ -3,9 +3,9 @@ import UserModel from "../models/user.model.js";
 
 export async function addAddressController(request, response) {
     try {
-        const { address_line1, city, state, pincode, country, mobile, status, userId } = request.body;
+        const { address_line1, city, district, pincode, country, mobile, userId, isSelected, landmark, addressType } = request.body;
 
-        if (!address_line1 || !city || !state || !pincode || !country || !mobile || !userId) {
+        if (!address_line1 || !city || !district || !pincode || !country || !mobile || !userId || !addressType) {
 
             return response.status(500).json({
                 message: "Please provide all the fields.",
@@ -15,7 +15,16 @@ export async function addAddressController(request, response) {
         }
 
         const address = new AddressModel({
-            address_line1, city, state, pincode, country, mobile, status, userId
+            address_line1,
+            city,
+            district,
+            pincode,
+            country,
+            mobile,
+            landmark,
+            addressType,
+            isSelected,
+            userId
         });
 
         const saveAddress = await address.save();
@@ -121,6 +130,76 @@ export async function deleteAddressController(request, response) {
             success: true,
             data: deleteAddress
         });
+
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function getSingleAddressController(request, response) {
+    try {
+        const id = request.params.id;
+
+        const address = await AddressModel.findOne({ _id: id });
+        if (!address) {
+            return response.status(404).json({
+                message: 'Address not found.',
+                error: true,
+                success: false
+            });
+        }
+
+        return response.status(200).json({
+            error: false,
+            success: true,
+            address: address
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function editAddressController(request, response) {
+    try {
+        const id = request.params.id;
+
+        const { address_line1, city, district, pincode, country, mobile, userId, isSelected, landmark, addressType } = request.body;
+
+        const address = await AddressModel.findByIdAndUpdate(
+            id,
+            {
+                address_line1: address_line1,
+                city: city,
+                district: district,
+                pincode: pincode,
+                country: country,
+                mobile: mobile,
+                isSelected: isSelected,
+                landmark: landmark,
+                addressType: addressType
+            },
+            {
+                new: true
+            }
+        );
+
+
+        return response.json({
+            message: "Address updated successfully.",
+            error: false,
+            success: true,
+            address: address
+        });
+
+
 
     } catch (error) {
         return response.status(500).json({

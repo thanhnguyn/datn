@@ -33,6 +33,7 @@ function App() {
   const [myListData, setMyListData] = useState([]);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
+  const [openAddressPanel, setOpenAddressPanel] = useState(false);
 
   const handleOpenProductDetailsModal = (status, item) => {
     setOpenProductDetailsModal({
@@ -50,6 +51,10 @@ function App() {
 
   const toggleCartPanel = (newOpen) => () => {
     setOpenCartPanel(newOpen);
+  };
+
+  const toggleAddressPanel = (newOpen) => () => {
+    setOpenAddressPanel(newOpen);
   };
 
   useEffect(() => {
@@ -197,6 +202,9 @@ function App() {
     setOpenCartPanel,
     toggleCartPanel,
     openCartPanel,
+    setOpenAddressPanel,
+    toggleAddressPanel,
+    openAddressPanel,
     openAlertBox,
     isLogin,
     setIsLogin,

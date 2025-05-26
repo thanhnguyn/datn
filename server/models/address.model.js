@@ -9,7 +9,7 @@ const addressSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    state: {
+    district: {
         type: String,
         default: ""
     },
@@ -23,9 +23,16 @@ const addressSchema = new mongoose.Schema({
         type: Number,
         default: null
     },
-    status: {
+    landmark: {
+        type: String
+    },
+    addressType: {
+        type: String,
+        enum: ['Home', 'Office']
+    },
+    isSelected: {
         type: Boolean,
-        default: true
+        default: false
     },
     userId: {
         type: mongoose.Schema.ObjectId,

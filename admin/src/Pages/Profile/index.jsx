@@ -322,8 +322,8 @@ const Profile = () => {
                                             <span className='text-[12px]'>
                                                 {
                                                     address?.address_line1 + " " +
+                                                    address?.district + " " +
                                                     address?.city + " " +
-                                                    address?.state + " " +
                                                     address?.country + " " +
                                                     address?.pincode
                                                 }

@@ -4,26 +4,27 @@ import 'react-lazy-load-image-component/src/effects/blur.css'
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import { fetchDataFromApi, postData } from '../../utils/api';
 import { MyContext } from '../../App';
+import { getProvinces, getDistrictsByProvinceCode } from 'sub-vn';
+import TextField from '@mui/material/TextField';
 
 const AddAddress = () => {
   const context = useContext(MyContext);
 
   const [phone, setPhone] = useState('');
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState(false);
 
   const [formFields, setFormFields] = useState({
     address_line1: "",
     city: "",
-    state: "",
+    district: "",
     pincode: "",
     country: "",
     mobile: "",
-    status: "",
     userId: "",
     isSelected: false
   });
@@ -31,18 +32,15 @@ const AddAddress = () => {
   useEffect(() => {
     setFormFields((prevState) => ({
       ...prevState,
+      country: "Việt Nam",
       userId: context?.userData?._id
     }));
   }, [context?.userData]);
 
-  const handleChangeStatus = (event) => {
-    setStatus(event.target.value);
-    setFormFields((prevState) => ({
-      ...prevState,
-      status: event.target.value
-    }));
-  };
-
+  useEffect(() => {
+    const data = getProvinces();
+    setProvinces(data);
+  }, []);
 
   const onChangeInput = (e) => {
     const { name, value } = e.target;
@@ -55,6 +53,26 @@ const AddAddress = () => {
     });
   }
 
+  const handleProvinceChange = (e) => {
+    const selectedCode = e.target.value;
+    const selectedProvince = provinces.find(p => p.code === selectedCode);
+
+    setFormFields((prevState) => ({
+      ...prevState,
+      city: selectedProvince.name,
+      district: ""
+    }));
+
+    const districts = getDistrictsByProvinceCode(selectedCode);
+    setDistricts(districts);
+  };
+
+  const handleDistrictChange = (e) => {
+    setFormFields((prevState) => ({
+      ...prevState,
+      district: e.target.value
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -71,8 +89,8 @@ const AddAddress = () => {
       return false;
     }
 
-    if (formFields.state === "") {
-      context.openAlertBox("error", "Please enter state.");
+    if (formFields.district === "") {
+      context.openAlertBox("error", "Please enter district.");
       return false;
     }
     if (formFields.pincode === "") {
@@ -116,25 +134,79 @@ const AddAddress = () => {
           <div className='grid grid-cols-2 mb-3 gap-4'>
             <div className='col w-[100%]'>
               <h3 className='text-[14px] font-[500] mb-1 text-black'>Address line 1</h3>
-              <input type="text" className='w-full h-[40x] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name='address_line1' onChange={onChangeInput} value={formFields.address_line1} />
+              <TextField
+                className='w-full'
+                variant="outlined"
+                size='small'
+                name='address_line1'
+                onChange={onChangeInput}
+                value={formFields.address_line1}
+              />
             </div>
             <div className='col w-[100%]'>
               <h3 className='text-[14px] font-[500] mb-1 text-black'>City</h3>
-              <input type="text" className='w-full h-[40x] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name='city' onChange={onChangeInput} value={formFields.city} />
+              <TextField
+                select
+                className='w-full'
+                variant="outlined"
+                size='small'
+                value={provinces.find(p => p.name === formFields.city)?.code || ''}
+                onChange={handleProvinceChange}
+                SelectProps={{ native: true }}
+              >
+                <option value=""></option>
+                {provinces.map((province) => (
+                  <option key={province.code} value={province.code}>
+                    {province.name}
+                  </option>
+                ))}
+              </TextField>
             </div>
           </div>
           <div className='grid grid-cols-3 mb-3 gap-4'>
             <div className='col w-[100%]'>
-              <h3 className='text-[14px] font-[500] mb-1 text-black'>State</h3>
-              <input type="text" className='w-full h-[40x] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name='state' onChange={onChangeInput} value={formFields.state} />
+              <h3 className='text-[14px] font-[500] mb-1 text-black'>District</h3>
+              <TextField
+                select
+                className='w-full'
+                variant="outlined"
+                size='small'
+                value={formFields.district}
+                onChange={handleDistrictChange}
+                SelectProps={{ native: true }}
+                disabled={districts.length === 0}
+              >
+                <option value=""></option>
+                {districts.map((district) => (
+                  <option key={district.code} value={district.name}>
+                    {district.name}
+                  </option>
+                ))}
+              </TextField>
             </div>
             <div className='col w-[100%]'>
               <h3 className='text-[14px] font-[500] mb-1 text-black'>Pincode</h3>
-              <input type="text" className='w-full h-[40x] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name='pincode' onChange={onChangeInput} value={formFields.pincode} />
+              <TextField
+                className='w-full'
+                variant="outlined"
+                size='small'
+                name='pincode'
+                onChange={onChangeInput}
+                value={formFields.pincode}
+              />
             </div>
             <div className='col w-[100%]'>
               <h3 className='text-[14px] font-[500] mb-1 text-black'>Country</h3>
-              <input type="text" className='w-full h-[40x] border border-[rgba(0,0,0,0.2)] focus:outline-none focus:border-[rgba(0,0,0,0.4)] rounded-sm p-3 text-sm' name='country' onChange={onChangeInput} value={formFields.country} />
+              <TextField
+                className='w-full'
+                variant="outlined"
+                size='small'
+                name='country'
+                value="Việt Nam"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
             </div>
             <div className='col w-[100%]'>
               <h3 className='text-[14px] font-[500] mb-1 text-black'>
@@ -152,22 +224,6 @@ const AddAddress = () => {
                   }));
                 }}
               />
-            </div>
-            <div className='col w-[100%]'>
-              <h3 className='text-[14px] font-[500] mb-1 text-black'>
-                Status
-              </h3>
-              <Select
-                value={status}
-                onChange={handleChangeStatus}
-                displayEmpty
-                inputProps={{ 'aria-label': 'Without label' }}
-                size='small'
-                className='w-full'
-              >
-                <MenuItem value={true}>True</MenuItem>
-                <MenuItem value={false}>False</MenuItem>
-              </Select>
             </div>
           </div>
           <br />
