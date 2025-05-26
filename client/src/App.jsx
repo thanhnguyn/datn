@@ -30,6 +30,7 @@ function App() {
   const [userData, setUserData] = useState(null);
   const [catData, setCatData] = useState([]);
   const [cartData, setCartData] = useState([]);
+  const [myListData, setMyListData] = useState([]);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
@@ -71,6 +72,7 @@ function App() {
       });
 
       getCartItems();
+      getMyList();
 
     } else {
       setIsLogin(false);
@@ -178,6 +180,15 @@ function App() {
     });
   };
 
+  const getMyList = () => {
+    fetchDataFromApi('/api/myList/').then((res) => {
+      console.log(res);
+      if (res?.error === false) {
+        setMyListData(res?.data);
+      }
+    })
+  }
+
   const values = {
     openProductDetailsModal,
     setOpenProductDetailsModal,
@@ -196,7 +207,10 @@ function App() {
     addToCart,
     cartData,
     setCartData,
-    getCartItems
+    getCartItems,
+    getMyList,
+    myListData,
+    setMyListData
   };
 
   return (

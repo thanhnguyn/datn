@@ -88,6 +88,7 @@ export const deleteData = async (url) => {
         }
     };
 
-    const { res } = await axios.delete(apiUrl + url, params);
-    return res;
+    const response = await axios.delete(apiUrl + url, params);
+    return response.data;
+
 }

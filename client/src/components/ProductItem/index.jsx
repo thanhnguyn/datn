@@ -7,10 +7,80 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoGitCompareOutline } from 'react-icons/io5';
 import { MdOutlineShoppingCart, MdZoomOutMap } from "react-icons/md";
 import { MyContext } from '../../App';
+import { deleteData, postData } from '../../utils/api';
+import { IoMdHeart } from 'react-icons/io';
 
 const ProductItem = (props) => {
 
     const context = useContext(MyContext);
+    const [isAddedToMyList, setIsAddedToMyList] = useState(false);
+
+    useEffect(() => {
+        const myListItem = context?.myListData?.filter((item) =>
+            item.productId === props?.item?._id
+        );
+
+
+
+        if (myListItem?.length !== 0) {
+            setIsAddedToMyList(true);
+        } else {
+            setIsAddedToMyList(false);
+        }
+    }, []);
+
+    const handleAddToMyList = (item) => {
+        if (context?.userData === null) {
+            context?.openAlertBox('error', "You have not login.");
+            return false;
+        }
+        if (isAddedToMyList) {
+            // Tìm item trong myListData để lấy _id cần xoá
+            const itemInList = context?.myListData?.find(
+                (listItem) => listItem.productId === item._id
+            );
+
+            if (itemInList?._id) {
+                deleteData(`/api/myList/${itemInList._id}`).then((res) => {
+                    console.log(res);
+                    if (res?.error === false) {
+                        context?.openAlertBox('success', 'Deleted from My List.');
+                        setIsAddedToMyList(false);
+                        context?.getMyList();
+                    } else {
+                        context?.openAlertBox('error', res?.data?.message || 'Delete fail.');
+                    }
+                }).catch((error) => {
+                    context?.openAlertBox('error', error);
+                });
+            } else {
+                context?.openAlertBox('error', 'Product is not in My List.');
+            }
+        } else {
+            const obj = {
+                productId: item?._id,
+                userId: context?.userData?._id,
+                productTitle: item?.name,
+                image: item?.images[0],
+                rating: item?.rating,
+                price: item?.price,
+                oldPrice: item?.oldPrice,
+                brand: item?.brand,
+                discount: item?.discount
+            };
+
+            postData('/api/myList/add', obj).then((res) => {
+                if (res?.error === false) {
+                    context?.openAlertBox('success', res?.message);
+                    setIsAddedToMyList(true);
+                    context?.getMyList();
+                } else {
+                    context?.openAlertBox('error', res?.message);
+
+                }
+            });
+        }
+    };
 
     return (
         <div className='productItem  shadow-lg rounded-md overflow-hidden border-2 border-[rgba(0,0,0,0.1)]'>
@@ -24,8 +94,14 @@ const ProductItem = (props) => {
                 </Link>
                 <span className='discount flex items-center absolute top-[10px] left-[10px] z-50 bg-primary text-white rounded-lg p-1 text-[12px] font-[500]'>{props?.item?.discount} %</span>
                 <div className='actions absolute top-[-200px] right-[5px] z-50 flex items-center gap-2 flex-col w-[50px] transition-all duration-300 group-hover:top-[15px] opacity-0 group-hover:opacity-100'>
-                    <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary hover:text-white group'>
-                        <FaRegHeart className='text-[18px] !text-black group-hover:text-white hover:!text-white' />
+                    <Button className={`!w-[35px] !h-[35px] !min-w-[35px] !rounded-full text-black hover:!bg-primary hover:text-white group ${isAddedToMyList === true ? '!bg-primary' : '!bg-white'}`}
+                        onClick={() => handleAddToMyList(props?.item)}
+                    >
+                        {
+                            isAddedToMyList === true ? <IoMdHeart className='text-[18px] !text-white group-hover:text-white hover:!text-white' />
+                                :
+                                <FaRegHeart className='text-[18px] !text-black group-hover:text-white hover:!text-white' />
+                        }
                     </Button>
                     <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary hover:text-white group'>
                         <IoGitCompareOutline className='text-[18px] !text-black group-hover:text-white hover:!text-white' />

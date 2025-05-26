@@ -75,9 +75,9 @@ export async function deleteFromMyListController(request, response) {
         }
 
         return response.status(200).json({
-            errorr: false,
+            error: false,
             success: true,
-            message: "The item deleted."
+            message: "The item deleted from My List."
         });
 
 

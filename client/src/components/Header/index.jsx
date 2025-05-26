@@ -54,7 +54,8 @@ export const Header = () => {
                 localStorage.removeItem("refreshToken");
                 context.openAlertBox("success", res?.message);
                 context.setUserData(null);
-                context.setCartData([]); // Xóa giỏ hàng ngay lập tức
+                context.setCartData([]);
+                context.setMyListData([]);
                 context.getCartItems();
                 history("/");
             }
@@ -154,17 +155,17 @@ export const Header = () => {
                                                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                                                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                                             >
-                                                <Link to='my-account' className='w-full block'>
+                                                <Link to='/my-account' className='w-full block'>
                                                     <MenuItem onClick={handleClose} className='flex gap-2 !py-2'>
                                                         <FaRegUser className='text-[18px]' /> <span className='text-[14px]'>My account</span>
                                                     </MenuItem>
                                                 </Link>
-                                                <Link to='my-orders' className='w-full block'>
+                                                <Link to='/my-orders' className='w-full block'>
                                                     <MenuItem onClick={handleClose} className='flex gap-2 !py-2'>
                                                         <IoBagCheckOutline className='text-[18px]' /> <span className='text-[14px]'>Orders</span>
                                                     </MenuItem>
                                                 </Link>
-                                                <Link to='my-list' className='w-full block'>
+                                                <Link to='/my-list' className='w-full block'>
                                                     <MenuItem onClick={handleClose} className='flex gap-2 !py-2'>
                                                         <IoMdHeartEmpty className='text-[18px]' /> <span className='text-[14px]'>My list</span>
                                                     </MenuItem>
@@ -189,11 +190,16 @@ export const Header = () => {
                             </li>
                             <li>
                                 <Tooltip title="Wishlist">
-                                    <IconButton aria-label="cart">
-                                        <StyledBadge badgeContent={4} color="secondary">
-                                            <Link to='/my-list'><FaRegHeart /></Link>
-                                        </StyledBadge>
-                                    </IconButton>
+                                    <Link to='/my-list'>
+                                        <IconButton aria-label="cart">
+                                            <StyledBadge
+                                                badgeContent={context?.myListData?.length !== 0 ? context?.myListData?.length : 0}
+                                                color="secondary"
+                                            >
+                                                <FaRegHeart />
+                                            </StyledBadge>
+                                        </IconButton>
+                                    </Link>
                                 </Tooltip>
 
                             </li>
