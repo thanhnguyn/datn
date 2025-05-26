@@ -7,8 +7,6 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoGitCompareOutline } from 'react-icons/io5';
 import { MdOutlineShoppingCart, MdZoomOutMap } from "react-icons/md";
 import { MyContext } from '../../App';
-import { FaMinus, FaPlus } from 'react-icons/fa6';
-import { deleteData, editData } from '../../utils/api';
 
 const ProductItem = (props) => {
 

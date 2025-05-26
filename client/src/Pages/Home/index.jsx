@@ -59,7 +59,6 @@ const Home = () => {
 
     useEffect(() => {
         fetchDataFromApi(`/api/product/getAllProductsByCatId/${context?.catData[0]?._id}`).then((res) => {
-            console.log(res);
             if (res?.error === false) {
                 setPopularProductsData(res?.products);
             }

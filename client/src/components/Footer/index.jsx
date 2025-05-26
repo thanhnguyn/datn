@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { PiKeyReturnLight } from "react-icons/pi";
 import { BsWallet2 } from "react-icons/bs";
@@ -17,9 +17,30 @@ import Drawer from '@mui/material/Drawer';
 import CartPanel from '../CartPanel';
 import { MyContext } from '../../App';
 
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import ProductZoom from '../ProductZoom';
+import ProductDetailsComponent from '../ProductDetails';
+import { fetchDataFromApi } from '../../utils/api';
+
+
 const Footer = () => {
 
     const context = useContext(MyContext);
+    const [fullWidth, setFullWidth] = useState(true);
+    const [maxWidth, setMaxWidth] = useState('lg');
+    const [reviewsCount, setReviewsCount] = useState(0);
+
+    useEffect(() => {
+        const productId = context?.openProductDetailsModal?.item?._id;
+        if (productId) {
+            fetchDataFromApi(`/api/user/getReviews?productId=${productId}`).then((res) => {
+                if (res?.error === false) {
+                    setReviewsCount(res.reviews.length);
+                }
+            });
+        }
+    }, [context?.openProductDetailsModal?.item?._id]);
 
     return (
 
@@ -193,11 +214,39 @@ const Footer = () => {
                                 <Button className='btn-org btn-sm' onClick={context.toggleCartPanel(false)}>Continue shopping</Button>
                             </div>
                         </>
-
                 }
-
-
             </Drawer>
+
+            <Dialog
+                open={context?.openProductDetailsModal.open}
+                fullWidth={fullWidth}
+                maxWidth={maxWidth}
+                onClose={context?.handleCloseProductDetailsModal}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                className='productdetailsModal'
+            >
+                <DialogContent>
+                    <div className='flex items-center w-full productDetailsModalContainer relative'>
+                        <Button className='!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] !absolute top-[15px] right-[15px] bg-[#f1f1f1]' onClick={context?.handleCloseProductDetailsModal}>
+                            <IoCloseSharp className='text-[20px]' />
+                        </Button>
+                        {
+                            context?.openProductDetailsModal?.item?.length !== 0 &&
+                            <>
+                                <div className='col1 w-[40%] px-3 py-8'>
+                                    <ProductZoom images={context?.openProductDetailsModal?.item?.images} />
+                                </div>
+
+                                <div className='col2 w-[60%] py-8 px-8 pr-16 productContent'>
+                                    <ProductDetailsComponent item={context?.openProductDetailsModal?.item} reviewsCount={reviewsCount} />
+                                </div>
+
+                            </>
+                        }
+                    </div>
+                </DialogContent>
+            </Dialog>
         </>
     )
 }

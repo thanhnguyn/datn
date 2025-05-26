@@ -26,7 +26,6 @@ const ProductDetailsComponent = (props) => {
     };
 
     const handleSelectTab = (type, index, value) => {
-        // setActiveTab(index);
         if (type === 'size') {
             setSelectedSize(value);
             setTabErrorSize(false);
@@ -43,14 +42,17 @@ const ProductDetailsComponent = (props) => {
         if (product?.size?.length > 0 && !selectedSize) {
             context?.openAlertBox('error', 'Please choose Size before adding to cart.');
             setTabErrorSize(true);
+            return false;
         }
         if (product?.productRam?.length > 0 && !selectedRam) {
             context?.openAlertBox('error', 'Please choose RAM before adding to cart.');
             setTabErrorRam(true);
+            return false;
         }
         if (product?.productWeight?.length > 0 && !selectedWeight) {
             context?.openAlertBox('error', 'Please choose Weight before adding to cart.');
             setTabErrorWeight(true);
+            return false;
         }
 
         const productItem = {
@@ -80,12 +82,11 @@ const ProductDetailsComponent = (props) => {
             <h1 className='text-[24px] font-[600] mb-2'>{props?.item?.name}</h1>
             <div className='flex items-center gap-3'>
                 <span className='text-gray-400 text-[13px]'>
-                    Brands:
-                    <span className='font-[500] text-black opacity-75'>{props?.item?.brand}</span>
+                    Brand: <span className='font-[500] text-black opacity-75'>{props?.item?.brand}</span>
                 </span>
 
-                <Rating name="size-small" defaultValue={2} size="small" readOnly />
-                <span className='text-[13px] cursor-pointer' onClick={props.gotoReviews}>Review ({props?.reviewsCount})</span>
+                <Rating name="size-small" defaultValue={props?.item?.rating} size="small" readOnly />
+                <span className='text-[13px] cursor-pointer'>Review ({props?.reviewsCount})</span>
             </div>
             <div className='flex items-center gap-4 mt-4'>
                 <span className='oldPrice line-through text-gray-500 text-[20px] font-[500]'>{props?.item?.price?.toLocaleString('vi-VN')}đ</span>

@@ -17,10 +17,9 @@ const CartPanel = (props) => {
 
     return (
         <>
-            <div className='scroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden py-3 px-4'>
+            <div className='scroll w-full max-h-[400px] overflow-y-scroll overflow-x-hidden py-3 px-4'>
                 {
                     props?.data?.map((item, index) => {
-                        console.log(item);
                         return (
                             <div className='cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4'>
                                 <div className='img w-[25%] overflow-hidden h-[80px] rounded-md'>

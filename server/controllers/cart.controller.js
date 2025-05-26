@@ -12,19 +12,6 @@ export async function addItemToCartController(request, response) {
             });
         }
 
-        // const checkItemCart = await CartModel.findOne({
-        //     userId,
-        //     productId,
-        //     size,
-        //     ram,
-        //     weight
-        // });
-        // if (checkItemCart) {
-        //     return response.status(400).json({
-        //         message: "Item already in cart."
-        //     });
-        // }
-
         const cartItem = new CartModel({
             productTitle: productTitle,
             image: image,

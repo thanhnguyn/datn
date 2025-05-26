@@ -54,6 +54,8 @@ export const Header = () => {
                 localStorage.removeItem("refreshToken");
                 context.openAlertBox("success", res?.message);
                 context.setUserData(null);
+                context.setCartData([]); // Xóa giỏ hàng ngay lập tức
+                context.getCartItems();
                 history("/");
             }
         });
