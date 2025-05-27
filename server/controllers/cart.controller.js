@@ -163,3 +163,22 @@ export async function deleteCartItemController(request, response) {
         });
     }
 }
+
+
+export async function emptyCartController(request, response) {
+    try {
+        const userId = request.params.id;
+        await CartModel.deleteMany({ userId: userId })
+
+        return response.status(200).json({
+            error: false,
+            success: true
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+}
