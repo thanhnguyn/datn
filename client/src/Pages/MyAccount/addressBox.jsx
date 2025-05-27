@@ -27,8 +27,12 @@ const AddressBox = (props) => {
 
     const editAddress = (id) => {
         setAnchorEl(null);
-        props.editAddress(id);
+        context?.setOpenAddressPanel(true);
+        context?.setAddressMode('edit');
+        context?.setAddressId(id);
     }
+
+
 
     return (
         <div className='group relative border border-dashed border-[rgba(0,0,0,0.2)] addressBox w-full bg-[#fafafa] p-4 rounded-md cursor-pointer'>

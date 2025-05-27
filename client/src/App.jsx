@@ -35,6 +35,9 @@ function App() {
   const [openCartPanel, setOpenCartPanel] = useState(false);
   const [openAddressPanel, setOpenAddressPanel] = useState(false);
 
+  const [addressMode, setAddressMode] = useState('add');
+  const [addressId, setAddressId] = useState('');
+
   const handleOpenProductDetailsModal = (status, item) => {
     setOpenProductDetailsModal({
       open: status,
@@ -57,32 +60,37 @@ function App() {
     setOpenAddressPanel(newOpen);
   };
 
+
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token !== undefined && token !== null && token !== "") {
       setIsLogin(true);
 
-      fetchDataFromApi(`/api/user/user-details`).then((res) => {
-        setUserData(res.data);
-        if (res?.response?.data?.error === true) {
-          if (res?.response?.data?.message == "You have not login.") {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-
-            openAlertBox("error", "Your session is closed.");
-
-            setIsLogin(false);
-          }
-        }
-      });
-
       getCartItems();
       getMyList();
-
+      getUserDetails();
     } else {
       setIsLogin(false);
     }
   }, [isLogin]);
+
+  const getUserDetails = () => {
+    fetchDataFromApi(`/api/user/user-details`).then((res) => {
+      setUserData(res.data);
+      if (res?.response?.data?.error === true) {
+        if (res?.response?.data?.message == "You have not login.") {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+
+          openAlertBox("error", "Your session is closed.");
+
+          setIsLogin(false);
+        }
+      }
+    });
+  };
+
 
   useEffect(() => {
     fetchDataFromApi('/api/category').then((res) => {
@@ -187,7 +195,6 @@ function App() {
 
   const getMyList = () => {
     fetchDataFromApi('/api/myList/').then((res) => {
-      console.log(res);
       if (res?.error === false) {
         setMyListData(res?.data);
       }
@@ -218,7 +225,12 @@ function App() {
     getCartItems,
     getMyList,
     myListData,
-    setMyListData
+    setMyListData,
+    getUserDetails,
+    setAddressMode,
+    addressMode,
+    setAddressId,
+    addressId
   };
 
   return (

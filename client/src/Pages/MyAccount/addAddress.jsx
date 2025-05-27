@@ -1,5 +1,5 @@
 import { Button, FormControl, FormControlLabel, FormLabel, TextField } from '@mui/material';
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import Dialog from '@mui/material/Dialog';
@@ -8,12 +8,12 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import { getProvinces, getDistrictsByProvinceCode } from 'sub-vn';
 import { MyContext } from '../../App';
+import { editData, fetchDataFromApi, postData } from '../../utils/api';
 const AddAddress = () => {
-    onst[phone, setPhone] = useState('');
+    const [phone, setPhone] = useState('');
     const [provinces, setProvinces] = useState([]);
     const [districts, setDistricts] = useState([]);
     const [addressType, setAddressType] = useState('');
-    const [mode, setMode] = useState('add');
     const [addressId, setAddressId] = useState();
 
     const [formFields, setFormFields] = useState({
@@ -64,19 +64,37 @@ const AddAddress = () => {
         }));
     };
 
+    useEffect(() => {
+        if (context?.addressMode === 'edit') {
+            fetchAddress(context?.addressId);
+        }
+    }, [context?.addressMode]);
+
+    useEffect(() => {
+        if (provinces.length > 0 && context?.addressMode === 'edit' && context?.addressId) {
+            fetchAddress(context.addressId);
+        }
+    }, [provinces, context?.addressMode, context?.addressId]);
+
+
     const handleProvinceChange = (e) => {
         const selectedCode = e.target.value;
         const selectedProvince = provinces.find(p => p.code === selectedCode);
 
         setFormFields((prevState) => ({
             ...prevState,
-            city: selectedProvince.name,
+            city: selectedProvince?.name || "",
             district: ""
         }));
 
-        const districts = getDistrictsByProvinceCode(selectedCode);
-        setDistricts(districts);
+        if (selectedCode) {
+            const districtsData = getDistrictsByProvinceCode(selectedCode);
+            setDistricts(districtsData);
+        } else {
+            setDistricts([]);
+        }
     };
+
 
     const handleDistrictChange = (e) => {
         setFormFields((prevState) => ({
@@ -88,7 +106,7 @@ const AddAddress = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (mode === 'add') {
+        if (context?.addressMode === 'add') {
             setIsLoading(true);
 
             if (formFields.address_line1 === "") {
@@ -124,29 +142,26 @@ const AddAddress = () => {
 
             postData(`/api/address/add`, formFields, { withCredentials: true }).then((res) => {
                 if (res?.error !== true) {
+                    context.setOpenAddressPanel(false);
                     setIsLoading(false);
                     context.openAlertBox("success", res?.message);
 
-                    setIsOpenModel(false);
+                    context.getUserDetails();
 
-                    fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
-                        setAddress(res.data);
-                        setFormFields({
-                            address_line1: "",
-                            city: "",
-                            district: "",
-                            pincode: "",
-                            country: "",
-                            mobile: "",
-                            userId: "",
-                            isSelected: false,
-                            landmark: '',
-                            addressType: ''
-                        });
-                        setAddressType('');
-                        setPhone('');
+                    setFormFields({
+                        address_line1: "",
+                        city: "",
+                        district: "",
+                        pincode: "",
+                        country: "",
+                        mobile: "",
+                        userId: "",
+                        isSelected: false,
+                        landmark: '',
+                        addressType: ''
                     });
-
+                    setAddressType('');
+                    setPhone('');
 
                 } else {
                     context.openAlertBox("error", res?.message);
@@ -155,18 +170,17 @@ const AddAddress = () => {
             });
         }
 
-        if (mode === 'edit') {
+        if (context?.addressMode === 'edit') {
             setIsLoading(true);
             editData(`/api/address/${addressId}`, formFields, { withCredentials: true }).then((res) => {
                 if (!res?.error) {
-                    context.openAlertBox("success", "Address updated successfully.");
-                    setIsOpenModel(false);
-                    setMode("add");
+                    context?.openAlertBox("success", "Address updated successfully.");
+                    context?.setOpenAddressPanel(false);
+                    context?.setAddressMode("add");
                     setIsLoading(false);
 
-                    fetchDataFromApi(`/api/address/get?userId=${context?.userData?._id}`).then((res) => {
-                        setAddress(res.data);
-                    });
+                    context.getUserDetails();
+
                     setFormFields({
                         address_line1: "",
                         city: "",
@@ -189,172 +203,163 @@ const AddAddress = () => {
         }
     }
 
-    const editAddress = (id) => {
-
-        setMode('edit');
-        setIsOpenModel(true);
-        setAddressId(id);
+    const fetchAddress = (id) => {
         fetchDataFromApi(`/api/address/${id}`).then((res) => {
-            const cityName = res?.address?.city;
+            if (!res?.address) return;
+
+            const cityName = res.address.city;
             const selectedProvince = provinces.find(p => p.name === cityName);
-            const provinceCode = selectedProvince?.code;
+            const provinceCode = selectedProvince?.code || "";
 
             if (provinceCode) {
-                const districts = getDistrictsByProvinceCode(provinceCode);
-                setDistricts(districts);
+                const districtsData = getDistrictsByProvinceCode(provinceCode);
+                setDistricts(districtsData);
+            } else {
+                setDistricts([]);
             }
+
             setFormFields({
-                address_line1: res?.address?.address_line1,
-                city: cityName,
-                district: res?.address?.district,
-                pincode: res?.address?.pincode,
-                country: res?.address?.country,
-                mobile: res?.address?.mobile,
-                userId: res?.address?.userId,
-                isSelected: res?.address?.isSelected,
-                landmark: res?.address?.landmark,
-                addressType: res?.address?.addressType
+                address_line1: res.address.address_line1 || "",
+                city: cityName || "",
+                district: res.address.district || "",
+                pincode: res.address.pincode || "",
+                country: res.address.country || "Việt Nam",
+                mobile: res.address.mobile || "",
+                userId: res.address.userId || "",
+                isSelected: res.address.isSelected || false,
+                landmark: res.address.landmark || "",
+                addressType: res.address.addressType || ""
             });
-            const ph = `${res?.address?.mobile}`;
-            setPhone(ph || '');
-            setAddressType(res?.address?.addressType || '');
+
+            setPhone(`${res.address.mobile}` || "");
+            setAddressType(res.address.addressType || "");
+            setAddressId(id);  // nhớ set addressId để sửa
         });
     };
 
 
+
+
     return (
-        <form className='p-8 py-3 pb-5' onSubmit={handleSubmit}>
-            <div className='flex items-center gap-5 pb-5'>
-                <div className='col w-[100%]'>
-                    <TextField
-                        className='w-full'
-                        label="Address line 1"
-                        variant="outlined"
-                        size='small'
-                        name='address_line1'
-                        onChange={onChangeInput}
-                        value={formFields.address_line1}
-                    />
-                </div>
+        <form className='p-8 py-3 pb-8 px-4' onSubmit={handleSubmit}>
+            <div className='col w-[100%] mb-4'>
+                <TextField
+                    className='w-full'
+                    label="Address line 1"
+                    variant="outlined"
+                    size='small'
+                    name='address_line1'
+                    onChange={onChangeInput}
+                    value={formFields.address_line1}
+                />
             </div>
-            <div className='flex items-center gap-5 pb-5'>
-                <div className='col w-[50%]'>
-                    <TextField
-                        select
-                        className='w-full'
-                        label="City"
-                        variant="outlined"
-                        size='small'
-                        value={provinces.find(p => p.name === formFields.city)?.code || ''}
-                        onChange={handleProvinceChange}
-                        SelectProps={{ native: true }}
-                    >
-                        <option value=""></option>
-                        {provinces.map((province) => (
-                            <option key={province.code} value={province.code}>
-                                {province.name}
-                            </option>
-                        ))}
-                    </TextField>
-                </div>
-
-                <div className='col w-[50%]'>
-                    <TextField
-                        select
-                        className='w-full'
-                        label="District"
-                        variant="outlined"
-                        size='small'
-                        value={formFields.district}
-                        onChange={handleDistrictChange}
-                        SelectProps={{ native: true }}
-                        disabled={districts.length === 0}
-                    >
-                        <option value=""></option>
-                        {districts.map((district) => (
-                            <option key={district.code} value={district.name}>
-                                {district.name}
-                            </option>
-                        ))}
-                    </TextField>
-                </div>
+            <div className='col w-[100%] mb-4'>
+                <TextField
+                    select
+                    className='w-full'
+                    label="City"
+                    variant="outlined"
+                    size='small'
+                    value={provinces.find(p => p.name === formFields.city)?.code || ''}
+                    onChange={handleProvinceChange}
+                    SelectProps={{ native: true }}
+                >
+                    <option value=""></option>
+                    {provinces.map((province) => (
+                        <option key={province.code} value={province.code}>
+                            {province.name}
+                        </option>
+                    ))}
+                </TextField>
             </div>
 
-            <div className='flex items-center gap-5 pb-5'>
-                <div className='col w-[50%]'>
-                    <TextField
-                        className='w-full'
-                        label="Pincode"
-                        variant="outlined"
-                        size='small'
-                        name='pincode'
-                        onChange={onChangeInput}
-                        value={formFields.pincode}
-                    />
-                </div>
-                <div className='col w-[50%]'>
-                    <TextField
-                        className='w-full'
-                        label="Country"
-                        variant="outlined"
-                        size='small'
-                        name='country'
-                        value="Việt Nam"
-                        InputProps={{
-                            readOnly: true,
-                        }}
-                    />
-                </div>
-            </div>
-            <div className='flex items-center gap-5 pb-5'>
-                <div className='col w-[50%]'>
-                    <PhoneInput
-                        defaultCountry='vn'
-                        value={phone}
-                        onChange={(phone) => {
-                            setPhone(phone);
-                            setFormFields((prevState) => ({
-                                ...prevState,
-                                mobile: phone
-                            }));
-                        }}
-                    />
-                </div>
-                <div className='col w-[50%]'>
-                    <TextField
-                        className='w-full'
-                        label="Landmark"
-                        variant="outlined"
-                        size='small'
-                        name='landmark'
-                        onChange={onChangeInput}
-                        value={formFields.landmark}
-                    />
-                </div>
-            </div>
-            <div className='flex gap-5 pb-5'>
-                <FormControl>
-                    <FormLabel id="demo-row-radio-buttons-group-label">Address type:</FormLabel>
-                    <RadioGroup
-                        row
-                        aria-labelledby="demo-row-radio-buttons-group-label"
-                        className='flex items-center gap-5'
-                        name="row-radio-buttons-group"
-                        value={formFields.addressType}
-                        onChange={handleChangeAddressType}
-                    >
-                        <FormControlLabel value="Home" control={<Radio />} label="Home" />
-                        <FormControlLabel value="Office" control={<Radio />} label="Office" />
-                    </RadioGroup>
-                </FormControl>
+            <div className='col w-[100%] mb-4'>
+                <TextField
+                    select
+                    className='w-full'
+                    label="District"
+                    variant="outlined"
+                    size='small'
+                    value={formFields.district}
+                    onChange={handleDistrictChange}
+                    SelectProps={{ native: true }}
+                    disabled={districts.length === 0}
+                >
+                    <option value=""></option>
+                    {districts.map((district) => (
+                        <option key={district.code} value={district.name}>
+                            {district.name}
+                        </option>
+                    ))}
+                </TextField>
             </div>
 
-            <div className='flex items-center gap-5'>
+            <div className='col w-[100%] mb-4'>
+                <TextField
+                    className='w-full'
+                    label="Pincode"
+                    variant="outlined"
+                    size='small'
+                    name='pincode'
+                    onChange={onChangeInput}
+                    value={formFields.pincode}
+                />
+            </div>
+            <div className='col w-[100%] mb-4'>
+                <TextField
+                    className='w-full'
+                    label="Country"
+                    variant="outlined"
+                    size='small'
+                    name='country'
+                    value="Việt Nam"
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                />
+            </div>
+            <div className='col w-[100%] mb-4'>
+                <PhoneInput
+                    defaultCountry='vn'
+                    value={phone}
+                    onChange={(phone) => {
+                        setPhone(phone);
+                        setFormFields((prevState) => ({
+                            ...prevState,
+                            mobile: phone
+                        }));
+                    }}
+                />
+            </div>
+            <div className='col w-[100%] mb-4'>
+                <TextField
+                    className='w-full'
+                    label="Landmark"
+                    variant="outlined"
+                    size='small'
+                    name='landmark'
+                    onChange={onChangeInput}
+                    value={formFields.landmark}
+                />
+            </div>
+            <FormControl >
+                <FormLabel id="demo-row-radio-buttons-group-label">Address type:</FormLabel>
+                <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    className='flex items-center gap-5'
+                    name="row-radio-buttons-group"
+                    value={formFields.addressType}
+                    onChange={handleChangeAddressType}
+                >
+                    <FormControlLabel value="Home" control={<Radio />} label="Home" />
+                    <FormControlLabel value="Office" control={<Radio />} label="Office" />
+                </RadioGroup>
+            </FormControl>
+
+            <div className='flex items-center gap-5 mt-5'>
                 <Button type='submit' className='btn-org btn-lg w-full flex gap-2 items-center'>
                     Save
-                </Button>
-                <Button className='btn-org btn-border btn-lg w-full flex gap-2 items-center' onClick={handleClose}>
-                    Cancel
                 </Button>
             </div>
         </form>
