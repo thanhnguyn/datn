@@ -25,8 +25,8 @@ const Navigation = () => {
 
     return (
         <>
-            <nav>
-                <div className='container flex items-center justify-end gap-8'>
+            <nav className="sticky top-0 z-[1000] bg-white">
+                <div className='container flex items-center justify-end gap-8' >
                     <div className='col_1 w-[20%]'>
                         <Button className='!text-black gap-2 w-full' onClick={openCategoryPanel}>
                             <RiMenu2Fill className='text-[18px]' />

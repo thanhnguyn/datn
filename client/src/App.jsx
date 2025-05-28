@@ -18,6 +18,8 @@ import MyList from './Pages/MyList'
 import Orders from './Pages/Orders'
 import { editData, fetchDataFromApi, postData } from './utils/api'
 import Address from './Pages/MyAccount/address'
+import OrderSuccess from './Pages/Orders/success'
+import OrderFail from './Pages/Orders/fail'
 
 const MyContext = createContext();
 
@@ -37,6 +39,11 @@ function App() {
 
   const [addressMode, setAddressMode] = useState('add');
   const [addressId, setAddressId] = useState('');
+  const [ordersData, setOrdersData] = useState([]);
+
+  useEffect(() => {
+
+  }, [])
 
   const handleOpenProductDetailsModal = (status, item) => {
     setOpenProductDetailsModal({
@@ -70,10 +77,17 @@ function App() {
       getCartItems();
       getMyList();
       getUserDetails();
+      getOrdersData();
     } else {
       setIsLogin(false);
     }
   }, [isLogin]);
+
+  const getOrdersData = () => {
+    fetchDataFromApi(`/api/order/order-list`).then((res) => {
+      setOrdersData(res?.data);
+    });
+  }
 
   const getUserDetails = () => {
     fetchDataFromApi(`/api/user/user-details`).then((res) => {
@@ -230,7 +244,9 @@ function App() {
     setAddressMode,
     addressMode,
     setAddressId,
-    addressId
+    addressId,
+    ordersData,
+    getOrdersData
   };
 
   return (
@@ -252,6 +268,8 @@ function App() {
             <Route path={"/my-account"} exact={true} element={<MyAccount />} />
             <Route path={"/my-list"} exact={true} element={<MyList />} />
             <Route path={"/my-orders"} exact={true} element={<Orders />} />
+            <Route path={"/order/success"} exact={true} element={<OrderSuccess />} />
+            <Route path={"/order/fail"} exact={true} element={<OrderFail />} />
             <Route path={"/address"} exact={true} element={<Address />} />
           </Routes>
           <Footer />

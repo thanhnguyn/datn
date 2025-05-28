@@ -450,3 +450,7 @@ header{
 .MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.selected{
   @apply !text-primary
 }
+
+#paypal-button-container{
+  width: 100% !important;
+}

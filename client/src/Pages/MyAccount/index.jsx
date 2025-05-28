@@ -188,7 +188,7 @@ const MyAccount = () => {
                                         size='small'
                                         className='w-full'
                                         name='name'
-                                        value={formFields.name}
+                                        value={formFields.name ?? ''}
                                         disabled={isLoading === true ? true : false}
                                         onChange={onChangeInput}
                                     />
@@ -201,7 +201,7 @@ const MyAccount = () => {
                                         size='small'
                                         className='w-full'
                                         name='email'
-                                        value={formFields.email}
+                                        value={formFields.email ?? ''}
                                         disabled={true}
                                         onChange={onChangeInput}
                                     />
@@ -211,12 +211,14 @@ const MyAccount = () => {
                                         defaultCountry='vn'
                                         value={phone}
                                         disabled={isLoading === true ? true : false}
-                                        onChange={(phone) => {
+                                        oonChange={(phone) => {
                                             setPhone(phone);
-                                            setFormFields({
+                                            setFormFields(prev => ({
+                                                ...prev,
                                                 mobile: phone
-                                            });
+                                            }));
                                         }}
+
                                     />
                                 </div>
                             </div>

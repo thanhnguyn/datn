@@ -10,6 +10,7 @@ import VerifyAccount from './Pages/VerifyAccount';
 import ChangePassword from './Pages/ChangePassword';
 import toast, { Toaster } from 'react-hot-toast';
 import { fetchDataFromApi } from './utils/api';
+import ReactDOM from "react-dom/client";
 
 const MyContext = createContext();
 function App() {

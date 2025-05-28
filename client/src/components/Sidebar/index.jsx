@@ -122,7 +122,7 @@ const Sidebar = (props) => {
     };
 
     return (
-        <aside className='sidebar py-5 sticky top-[130px] z-50'>
+        <aside className='sidebar py-5 sticky top-[130px]'>
             <div className='box'>
                 <h3 className='w-full mb-3 text-[16px] font-[600] flex items-center pr-5'>Shop by Category
                     <Button className='!w-[30px] !h-[30px] !min-w-[30px] !rounded-full !ml-auto !text-[#000]' onClick={() => SetIsOpenCategoryFilter(!isOpenCategoryFilter)}>

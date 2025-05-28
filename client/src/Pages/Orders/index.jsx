@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AccountSidebar from '../../components/AccountSidebar';
 import { Button } from '@mui/material';
 import { FaAngleDown } from "react-icons/fa6";
 import Badge from '../../components/Badge';
 import { FaAngleUp } from 'react-icons/fa';
+import { MyContext } from '../../App';
 
 const Orders = () => {
     const [isOpenOrderProduct, setIsOpenOrderProduct] = useState(null);
@@ -14,6 +15,13 @@ const Orders = () => {
             setIsOpenOrderProduct(index);
         }
     }
+
+    const context = useContext(MyContext);
+
+    useEffect(() => {
+        context?.getOrdersData();
+    }, []);
+
     return (
         <section className='py-10 w-full'>
             <div className='container flex gap-5'>
@@ -25,8 +33,11 @@ const Orders = () => {
                     <div className='shadow-md rounded-md bg-white'>
                         <div className='py-2 px-3 border-b border-[rgba(0,0,0,0.1)]'>
                             <h2 >My orders</h2>
+                            {
+                                console.log(context?.ordersData?.length)
+                            }
                             <p className='mt-0'>
-                                There are <span className='font-bold text-primary'>2</span> orders
+                                There are <span className='font-bold text-primary'>{context?.ordersData?.length}</span> orders
                             </p>
                             <div className="relative overflow-x-auto mt-5">
                                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -71,131 +82,61 @@ const Orders = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                            <td className="px-6 py-4 font-[500]">
-                                                <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full bg-[#f1f1f1]' onClick={() => isShowOrderProduct(0)}>
-                                                    {
-                                                        isOpenOrderProduct === 0 ? (
-                                                            <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                                                        ) : (
-                                                            <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                                                        )
-                                                    }
-
-                                                </Button>
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                <span className='text-primary'>advadfbvcxafbsgfbvdc</span>
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                <span className='text-primary'>pay_asgfwrtsbfdv</span>
-                                            </td>
-
-                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                Nguyen Cong Thanh
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                0923707056
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                <span className='block w-[400px]'>646 Thien Loi Street, Le Chan District, Haiphong City </span>
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                12314
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                58
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                thanh.nc2701@gmail.com
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                <span className='text-primary'>arhnszfgfq345gtbsfv</span>
-                                            </td>
-                                            <td className="px-6 py-4 font-[500]">
-                                                <Badge status='delivered' />
-                                            </td>
-                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                2024-12-04
-                                            </td>
-                                        </tr>
                                         {
-                                            isOpenOrderProduct === 0 && (
-                                                <tr>
-                                                    <td className='pl-20' colSpan="6">
-                                                        <div className="relative overflow-x-auto">
-                                                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                                                    <tr>
-                                                                        <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                            Product ID
-                                                                        </th>
-                                                                        <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                            Product title
-                                                                        </th>
-                                                                        <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                            Image
-                                                                        </th>
-                                                                        <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                            Quantity
-                                                                        </th>
-                                                                        <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                            Price
-                                                                        </th>
-                                                                        <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                            Subtotal
-                                                                        </th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            <span className='text-gray-600'>advadfbvcxafbsgfbvdc</span>
-                                                                        </td>
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            title_asgfwrtsbfdv
-                                                                        </td>
-
-                                                                        <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                            <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-[40px] h-[40px] object-cover rounded-md' />
-                                                                        </td>
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            1
-                                                                        </td>
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            58
-                                                                        </td>
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            58
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            <span className='text-gray-600'>advadfbvcxafbsgfbvdc</span>
-                                                                        </td>
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            title_asgfwrtsbfdv
-                                                                        </td>
-
-                                                                        <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                            <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-[40px] h-[40px] object-cover rounded-md' />
-                                                                        </td>
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            1
-                                                                        </td>
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            58
-                                                                        </td>
-                                                                        <td className="px-6 py-4 font-[500]">
-                                                                            58
-                                                                        </td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )
+                                            context?.ordersData?.length > 0 && context?.ordersData?.map((item, index) => {
+                                                console.log(item);
+                                                return (
+                                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={index}>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            <Button
+                                                                className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full bg-[#f1f1f1]'
+                                                                onClick={() => isShowOrderProduct(0)}
+                                                            >
+                                                                {
+                                                                    isOpenOrderProduct === 0 ? (
+                                                                        <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                                                                    ) : (
+                                                                        <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                                                                    )
+                                                                }
+                                                            </Button>
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            <span className='text-primary'>{item?._id}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            <span className='text-primary'>{item?.paymentId}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                            {item?.userId?.name}
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            {item?.delivery_address?.mobile}
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            <span className='block w-[400px]'>{item?.delivery_address?.address_line1} </span>
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            {item?.delivery_address?.pincode}
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            {item?.totalAmt}
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            {item?.userId?.email}
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            <span className='text-primary'>{item?.userId?._id}</span>
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500]">
+                                                            <Badge status={item?.order_status} />
+                                                        </td>
+                                                        <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                            {item?.createdAt}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
                                         }
                                     </tbody>
                                 </table>

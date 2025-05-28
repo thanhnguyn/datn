@@ -173,7 +173,6 @@ const CartItems = (props) => {
     return (
         <div className='cartItem w-full p-3 flex items-center gap-4 pb-5 border-b border-[rgba(0,0,0,0.1)]'>
             <div className='img w-[15%] rounded-md overflow-hidden'>
-                {console.log(props?.item)}
                 <Link to={`/product/${props?.item?.productId}`} className='group'>
                     <img
                         src={props?.item?.image}

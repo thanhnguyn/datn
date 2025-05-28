@@ -92,7 +92,7 @@ const ProductItem = (props) => {
                         <img src={props?.item?.images[1]} className='w-full transition-all duration-700 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-105' />
                     </div>
                 </Link>
-                <span className='discount flex items-center absolute top-[10px] left-[10px] z-50 bg-primary text-white rounded-lg p-1 text-[12px] font-[500]'>{props?.item?.discount} %</span>
+                <span className='discount flex items-center absolute top-[10px] left-[10px] bg-primary text-white rounded-lg p-1 text-[12px] font-[500]'>{props?.item?.discount} %</span>
                 <div className='actions absolute top-[-200px] right-[5px] z-50 flex items-center gap-2 flex-col w-[50px] transition-all duration-300 group-hover:top-[15px] opacity-0 group-hover:opacity-100'>
                     <Button className={`!w-[35px] !h-[35px] !min-w-[35px] !rounded-full text-black hover:!bg-primary hover:text-white group ${isAddedToMyList === true ? '!bg-primary' : '!bg-white'}`}
                         onClick={() => handleAddToMyList(props?.item)}

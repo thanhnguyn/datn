@@ -431,15 +431,15 @@ export async function updateUserDetailsController(request, response) {
             }
         );
 
-        if (email !== userExit.email) {
-            //Send verification email
-            await sendEmailFun({
-                to: email,
-                subject: "Verify email from Ecommerce App",
-                text: '',
-                html: VerificationEmail(name, verifyCode)
-            })
-        }
+        // if (email !== userExit.email) {
+        //     //Send verification email
+        //     await sendEmailFun({
+        //         to: email,
+        //         subject: "Verify email from Ecommerce App",
+        //         text: '',
+        //         html: VerificationEmail(name, verifyCode)
+        //     })
+        // }
 
 
         return response.json({
