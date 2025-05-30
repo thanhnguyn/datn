@@ -20,6 +20,7 @@ import { editData, fetchDataFromApi, postData } from './utils/api'
 import Address from './Pages/MyAccount/address'
 import OrderSuccess from './Pages/Orders/success'
 import OrderFail from './Pages/Orders/fail'
+import OrderVNPaySuccess from './Pages/Checkout/VNPaySuccess'
 
 const MyContext = createContext();
 
@@ -271,6 +272,7 @@ function App() {
             <Route path={"/order/success"} exact={true} element={<OrderSuccess />} />
             <Route path={"/order/fail"} exact={true} element={<OrderFail />} />
             <Route path={"/address"} exact={true} element={<Address />} />
+            <Route path={"/order/vnpay-success"} exact={true} element={<OrderVNPaySuccess />} />
           </Routes>
           <Footer />
         </MyContext.Provider>

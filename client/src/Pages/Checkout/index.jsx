@@ -162,6 +162,38 @@ const Checkout = () => {
         })
     }
 
+    const handleVNPayPayment = async () => {
+        const headers = {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+            'Content-Type': 'application/json',
+        };
+
+        const orderInfo = {
+            userId: context?.userData?._id,
+            products: context?.cartData,
+            payment_status: 'COMPLETE',
+            delivery_address: selectedAddress,
+            totalAmount: totalAmount,
+            date: new Date().toLocaleDateString('vi-VN', {
+                month: 'short',
+                day: '2-digit',
+                year: 'numeric'
+            })
+        };
+
+        localStorage.setItem('vnpay_order_info', JSON.stringify(orderInfo));
+
+        const res = await axios.get(`${VITE_API_URL}/api/order/create-order-vnpay?amount=${totalAmount}`,
+            {
+                headers,
+                withCredentials: true
+            }
+        );
+
+        window.location.href = res.data.paymentUrl;
+    };
+
+
     const cashOnDelivery = (e) => {
         const user = context?.userData;
 
@@ -271,7 +303,21 @@ const Checkout = () => {
                             </div>
 
                             <div className='flex items-cente flex-col gap-3 mb-2'>
-                                <Button type='submit' className='btn-org btn-lg w-full flex gap-2 items-center'><BsFillBagCheckFill className='text-[20px]' /> Checkout</Button>
+                                <Button
+                                    type='submit'
+                                    className='btn-org btn-lg w-full flex gap-2 items-center'
+                                >
+                                    <BsFillBagCheckFill className='text-[20px]' />
+                                    Checkout
+                                </Button>
+                                <Button
+                                    type='button'
+                                    className='btn-org btn-lg w-full flex gap-2 items-center'
+                                    onClick={handleVNPayPayment}
+                                >
+                                    <BsFillBagCheckFill className='text-[20px]' />
+                                    VNPay
+                                </Button>
                                 <div id='paypal-button-container'></div>
                                 <Button type='button' className='btn-dark btn-lg w-full flex gap-2 items-center' onClick={cashOnDelivery}>
                                     <BsFillBagCheckFill className='text-[20px]' />
