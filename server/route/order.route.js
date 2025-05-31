@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
-import { captureOrderPaypalController, createOrderController, createOrderPaypalController, createOrderVnPayController, getOrderDetailsController, vnPayReturnController } from '../controllers/order.controller.js';
+import { captureOrderPaypalController, createOrderController, createOrderPaypalController, createOrderVnPayController, getOrderDetailsController, updateOrderStatusController, vnPayReturnController } from '../controllers/order.controller.js';
 
 const orderRouter = Router();
 orderRouter.post('/create', auth, createOrderController);
@@ -9,6 +9,7 @@ orderRouter.get('/create-order-paypal', auth, createOrderPaypalController);
 orderRouter.post('/capture-order-paypal', auth, captureOrderPaypalController);
 orderRouter.get('/create-order-vnpay', auth, createOrderVnPayController);
 orderRouter.get('/vnpay-return', auth, vnPayReturnController);
+orderRouter.put('/order-status/:id', auth, updateOrderStatusController);
 
 
 export default orderRouter;

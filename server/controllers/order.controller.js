@@ -4,6 +4,7 @@ import paypal from '@paypal/checkout-server-sdk';
 import moment from 'moment';
 import qs from 'qs';
 import crypto from 'crypto';
+import { request } from "http";
 
 export const createOrderController = async (request, response) => {
     try {
@@ -163,15 +164,15 @@ export const captureOrderPaypalController = async (request, response) => {
     }
 }
 
-export const createOrderVnPayController = async (req, res) => {
+export const createOrderVnPayController = async (request, response) => {
     try {
         let date = new Date();
         let createDate = moment(date).format('YYYYMMDDHHmmss');
 
-        let ipAddr = req.headers['x-forwarded-for'] ||
-            req.connection.remoteAddress ||
-            req.socket.remoteAddress ||
-            req.connection.socket.remoteAddress;
+        let ipAddr = request.headers['x-forwarded-for'] ||
+            request.connection.remoteAddress ||
+            request.socket.remoteAddress ||
+            request.connection.socket.remoteAddress;
 
         const vnp_TmnCode = process.env.VNP_TMNCODE; // Mã website VNPay cung cấp
         const vnp_HashSecret = process.env.VNP_HASHSECRET; // Secret key VNPay cung cấp
@@ -179,9 +180,8 @@ export const createOrderVnPayController = async (req, res) => {
         const vnp_ReturnUrl = process.env.VNP_RETURNURL;
         let orderId = moment(date).format('DDHHmmss');
 
-        let amount = req.query.amount;
-        // let bankCode = req.query.bankCode;
-
+        let amount = request.query.amount;
+        // let bankCode = request.query.bankCode;
 
         let currCode = 'VND';
         let vnp_Params = {};
@@ -200,28 +200,29 @@ export const createOrderVnPayController = async (req, res) => {
         // if (bankCode !== null && bankCode !== '') {
         //     vnp_Params['vnp_BankCode'] = bankCode;
         // }
-        console.log(vnp_Params);
 
         vnp_Params = sortObject(vnp_Params);
 
-        console.log(vnp_Params);
         let signData = qs.stringify(vnp_Params, { encode: false });
         let hmac = crypto.createHmac("sha512", vnp_HashSecret);
         let signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
         vnp_Params['vnp_SecureHash'] = signed;
         vnp_Url += '?' + qs.stringify(vnp_Params, { encode: false });
 
-        return res.status(200).json({
+        return response.status(200).json({
             paymentUrl: vnp_Url
         });
     } catch (error) {
         console.error('Lỗi VNPay:', error);
-        return res.status(500).json({ message: error.message, success: false });
+        return response.status(500).json({
+            message: error.message,
+            success: false
+        });
     }
 };
 
-export const vnPayReturnController = async (req, res) => {
-    let vnp_Params = req.query;
+export const vnPayReturnController = async (request, response) => {
+    let vnp_Params = request.query;
     const secureHash = vnp_Params['vnp_SecureHash'];
 
     delete vnp_Params['vnp_SecureHash'];
@@ -229,7 +230,6 @@ export const vnPayReturnController = async (req, res) => {
 
     vnp_Params = sortObject(vnp_Params);
 
-    const tmnCode = process.env.VNP_TMNCODE;
     const secretKey = process.env.VNP_HASHSECRET;
 
     const signData = qs.stringify(vnp_Params, { encode: false });
@@ -239,14 +239,17 @@ export const vnPayReturnController = async (req, res) => {
     if (secureHash === signed) {
         const isSuccess = vnp_Params['vnp_ResponseCode'] === '00';
 
-        return res.json({
+        return response.json({
             success: isSuccess,
-            vnp_TransactionNo: vnp_Params['vnp_TransactionNo'],  // ✅ thêm dòng này
-            vnp_OrderId: vnp_Params['vnp_TxnRef'],               // optional nếu cần
-            vnp_Amount: vnp_Params['vnp_Amount'],                // optional nếu cần
+            vnp_TransactionNo: vnp_Params['vnp_TransactionNo'],
+            vnp_OrderId: vnp_Params['vnp_TxnRef'],
+            vnp_Amount: vnp_Params['vnp_Amount'],
         });
     } else {
-        return res.json({ success: false });
+        return response.status(500).json({
+            success: false,
+            error: true
+        });
     }
 };
 function sortObject(obj) {
@@ -263,4 +266,35 @@ function sortObject(obj) {
         sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
     }
     return sorted;
+}
+
+export const updateOrderStatusController = async (request, response) => {
+    try {
+        const { id, order_status } = request.body;
+
+        const updateOrder = await OrderModel.updateOne(
+            {
+                _id: id
+            },
+            {
+                order_status: order_status
+            },
+            {
+                new: true
+            }
+        );
+
+        return response.status(200).json({
+            message: 'Status updated.',
+            success: true,
+            error: false,
+            data: updateOrder
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
 }

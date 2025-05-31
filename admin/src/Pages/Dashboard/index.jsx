@@ -23,6 +23,7 @@ import SearchBox from '../../components/SearchBox';
 import { fetchDataFromApi } from '../../utils/api';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import { useMemo } from 'react';
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -67,7 +68,11 @@ const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [orderPage, setOrderPage] = useState(0);
+    const [orderRowsPerPage, setOrderRowsPerPage] = useState(10);
+
     const [categoryFilterVal, setCategoryFilterVal] = useState('');
+    const [ordersData, setOrdersData] = useState([]);
 
     const [chart1Data, setChart1Data] = useState([
         {
@@ -150,12 +155,20 @@ const Dashboard = () => {
         getProducts();
     }, [context?.isOpenFullScreenPanel]);
 
+    useEffect(() => {
+        fetchDataFromApi(`/api/order/order-list`).then((res) => {
+            setOrdersData(res?.data);
+        });
+    }, []);
+
+    const paginatedOrders = useMemo(() => {
+        const start = orderPage * orderRowsPerPage;
+        const end = start + orderRowsPerPage;
+        return ordersData.slice(start, end);
+    }, [ordersData, orderPage, orderRowsPerPage]);
+
     const isShowOrderProduct = (index) => {
-        if (isOpenOrderProduct === index) {
-            setIsOpenOrderProduct(null);
-        } else {
-            setIsOpenOrderProduct(index);
-        }
+        setIsOpenOrderProduct(prev => prev === index ? null : index);
     };
 
     const handleSelectAll = (e) => {
@@ -509,7 +522,7 @@ const Dashboard = () => {
                 <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
-                    count={10}
+                    count={productData?.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
@@ -521,9 +534,9 @@ const Dashboard = () => {
                 <div className='flex items-center justify-between px-5 py-5'>
                     <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
                 </div>
-                <div className="relative overflow-x-auto mt-5 pb-5">
+                <div className="relative overflow-auto mt-5 pb-5 h-[600px]">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <thead className="sticky top-0 z-10 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" className="px-6 py-3">
                                     &nbsp;
@@ -564,259 +577,140 @@ const Dashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4 font-[500]">
-                                    <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full bg-[#f1f1f1]' onClick={() => isShowOrderProduct(0)}>
-                                        {
-                                            isOpenOrderProduct === 0 ? (
-                                                <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                                            ) : (
-                                                <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                                            )
-                                        }
-                                    </Button>
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <span className='text-primary font-[600]'>advadfbvcxafbsgfbvdc</span>
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <span className='text-primary font-[600]'>pay_asgfwrtsbfdv</span>
-                                </td>
-
-                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                    Nguyen Cong Thanh
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    0923707056
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <span className='block w-[400px]'>646 Thien Loi Street, Le Chan District, Haiphong City </span>
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    12314
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    58
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    thanh.nc2701@gmail.com
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <span className='text-primary font-[600]'>arhnszfgfq345gtbsfv</span>
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <Badge status='delivered' />
-                                </td>
-                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                    2024-12-04
-                                </td>
-                            </tr>
                             {
-                                isOpenOrderProduct === 0 && (
-                                    <tr>
-                                        <td className='pl-20' colSpan="6">
-                                            <div className="relative overflow-x-auto">
-                                                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                                        <tr>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Product ID
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Product title
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Image
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Quantity
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Price
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Subtotal
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='text-gray-600'>advadfbvcxafbsgfbvdc</span>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                title_asgfwrtsbfdv
-                                                            </td>
+                                paginatedOrders?.length > 0 && paginatedOrders?.map((item, index) => {
+                                    const realIndex = orderPage * orderRowsPerPage + index;
+                                    return (
+                                        <>
+                                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                <td className="px-6 py-4 font-[500]">
+                                                    <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full bg-[#f1f1f1]' onClick={() => isShowOrderProduct(index)}>
+                                                        {
+                                                            isOpenOrderProduct === index ? (
+                                                                <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                                                            ) : (
+                                                                <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                                                            )
+                                                        }
+                                                    </Button>
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    <span className='text-primary font-[600]'>{item?._id}</span>
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    <span className='text-primary font-[600]'>{item?.paymentId}</span>
+                                                </td>
+                                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                    {item?.userId?.name}
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    {item?.delivery_address?.mobile}
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    <span className='block w-[400px]'>{item?.delivery_address?.address_line1}, {item?.delivery_address?.district}, {item?.delivery_address?.city}</span>
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    {item?.delivery_address?.pincode}
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    {item?.totalAmt}
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    {item?.userId?.email}
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    <span className='text-primary font-[600]'>{item?.userId?._id}</span>
+                                                </td>
+                                                <td className="px-6 py-4 font-[500]">
+                                                    <Badge status={item?.order_status} />
+                                                </td>
+                                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                    {item?.createdAt?.split('T')[0]}
+                                                </td>
+                                            </tr>
+                                            {
+                                                isOpenOrderProduct === realIndex && (
+                                                    <tr>
+                                                        <td className='pl-20' colSpan="6">
+                                                            <div className="relative overflow-x-auto">
+                                                                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                                                        <tr>
+                                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                                                                Product ID
+                                                                            </th>
+                                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                                                                Product title
+                                                                            </th>
+                                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                                                                Image
+                                                                            </th>
+                                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                                                                Quantity
+                                                                            </th>
+                                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                                                                Price
+                                                                            </th>
+                                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                                                                Subtotal
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {
+                                                                            item?.products?.map((product, index_) => {
+                                                                                return (
+                                                                                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                                                                        <td className="px-6 py-4 font-[500]">
+                                                                                            <span className='text-gray-600'>{product.productId}</span>
+                                                                                        </td>
+                                                                                        <td className="px-6 py-4 font-[500]">
+                                                                                            {product.productTitle}
+                                                                                        </td>
 
-                                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-[40px] h-[40px] object-cover rounded-md' />
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                1
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                58
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                58
-                                                            </td>
-                                                        </tr>
-                                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='text-gray-600'>advadfbvcxafbsgfbvdc</span>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                title_asgfwrtsbfdv
-                                                            </td>
-
-                                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-[40px] h-[40px] object-cover rounded-md' />
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                1
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                58
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                58
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
-                            }
-                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <td className="px-6 py-4 font-[500]">
-                                    <Button className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full bg-[#f1f1f1]' onClick={() => isShowOrderProduct(1)}>
-                                        {
-                                            isOpenOrderProduct === 1 ? (
-                                                <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                                            ) : (
-                                                <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                                            )
-                                        }
-                                    </Button>
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <span className='text-primary font-[600]'>advadfbvcxafbsgfbvdc</span>
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <span className='text-primary font-[600]'>pay_asgfwrtsbfdv</span>
-                                </td>
-
-                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                    Nguyen Cong Thanh
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    0923707056
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <span className='block w-[400px]'>646 Thien Loi Street, Le Chan District, Haiphong City </span>
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    12314
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    58
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    thanh.nc2701@gmail.com
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <span className='text-primary font-[600]'>arhnszfgfq345gtbsfv</span>
-                                </td>
-                                <td className="px-6 py-4 font-[500]">
-                                    <Badge status='pending' />
-                                </td>
-                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                    2024-12-04
-                                </td>
-                            </tr>
-                            {
-                                isOpenOrderProduct === 1 && (
-                                    <tr>
-                                        <td className='pl-20' colSpan="6">
-                                            <div className="relative overflow-x-auto">
-                                                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                                        <tr>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Product ID
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Product title
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Image
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Quantity
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Price
-                                                            </th>
-                                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                                                                Subtotal
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='text-gray-600'>advadfbvcxafbsgfbvdc</span>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                title_asgfwrtsbfdv
-                                                            </td>
-
-                                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-[40px] h-[40px] object-cover rounded-md' />
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                1
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                58
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                58
-                                                            </td>
-                                                        </tr>
-                                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='text-gray-600'>advadfbvcxafbsgfbvdc</span>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                title_asgfwrtsbfdv
-                                                            </td>
-
-                                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                <img src="https://serviceapi.spicezgold.com/download/1742463096956_hbhb2.jpg" className='w-[40px] h-[40px] object-cover rounded-md' />
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                1
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                58
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                58
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                )
+                                                                                        <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                                                            <img src={product.image} className='h-[40px] w-[40px] object-cover rounded-md' />
+                                                                                        </td>
+                                                                                        <td className="px-6 py-4 font-[500]">
+                                                                                            {product.quantity}
+                                                                                        </td>
+                                                                                        <td className="px-6 py-4 font-[500]">
+                                                                                            {product.price.toLocaleString('vi-VN')}đ
+                                                                                        </td>
+                                                                                        <td className="px-6 py-4 font-[500]">
+                                                                                            {product.subTotal.toLocaleString('vi-VN')}đ
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                );
+                                                                            })
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            }
+                                        </>
+                                    );
+                                })
                             }
                         </tbody>
                     </table>
                 </div>
+                <TablePagination
+                    className="sticky bottom-0 z-10"
+                    component="div"
+                    count={ordersData.length}
+                    page={orderPage}
+                    onPageChange={(e, newPage) => setOrderPage(newPage)}
+                    rowsPerPage={orderRowsPerPage}
+                    onRowsPerPageChange={(e) => {
+                        setOrderRowsPerPage(parseInt(e.target.value, 10));
+                        setOrderPage(0);
+                    }}
+                    rowsPerPageOptions={[10, 25, 50]}
+                />
             </div>
 
             <div className='card my-4 shadow-md sm:rounded-lg bg-white'>

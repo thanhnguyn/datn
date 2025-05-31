@@ -304,21 +304,13 @@ const Checkout = () => {
 
                             <div className='flex items-cente flex-col gap-3 mb-2'>
                                 <Button
-                                    type='submit'
-                                    className='btn-org btn-lg w-full flex gap-2 items-center'
-                                >
-                                    <BsFillBagCheckFill className='text-[20px]' />
-                                    Checkout
-                                </Button>
-                                <Button
                                     type='button'
-                                    className='btn-org btn-lg w-full flex gap-2 items-center'
+                                    className='!bg-[#f1f1f1] w-full flex gap-2 items-center hover:!bg-[rgba(0,0,0,0.2)]'
                                     onClick={handleVNPayPayment}
                                 >
-                                    <BsFillBagCheckFill className='text-[20px]' />
-                                    VNPay
+                                    <img src="/payment img/VNPAY_id-sVSMjm2_0.png" className='!h-[35px]' />
                                 </Button>
-                                <div id='paypal-button-container'></div>
+                                <div id='paypal-button-container' className='w-full flex items-center'></div>
                                 <Button type='button' className='btn-dark btn-lg w-full flex gap-2 items-center' onClick={cashOnDelivery}>
                                     <BsFillBagCheckFill className='text-[20px]' />
                                     Cash on Delivery
