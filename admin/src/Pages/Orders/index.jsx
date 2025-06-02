@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { Button } from '@mui/material';
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
-import Badge from '../../components/Badge';
 import SearchBox from '../../components/SearchBox';
 import { useEffect } from 'react';
 import { editData, fetchDataFromApi } from '../../utils/api.js';
@@ -14,6 +13,9 @@ const Orders = () => {
     const [isOpenOrderProduct, setIsOpenOrderProduct] = useState(null);
     const [ordersData, setOrdersData] = useState([]);
     const [orderStatus, setOrderStatus] = useState('');
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [totalOrdersData, setTotalOrdersData] = useState([0]);
 
     const context = useContext(MyContext);
 
@@ -40,7 +42,6 @@ const Orders = () => {
                 context?.openAlertBox('error', res?.data?.message);
             }
         });
-
     };
 
     useEffect(() => {
@@ -49,12 +50,38 @@ const Orders = () => {
         });
     }, [orderStatus]);
 
+    useEffect(() => {
+        fetchDataFromApi(`/api/order/order-list`).then((res) => {
+            setTotalOrdersData(res?.data);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (searchQuery !== '') {
+            const filteredOrders = totalOrdersData?.filter((order) =>
+                order?._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                order?.userId?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                order?.userId?.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                order?.createdAt.includes(searchQuery)
+            );
+
+            setOrdersData(filteredOrders)
+        } else {
+            fetchDataFromApi(`/api/order/order-list`).then((res) => {
+                setOrdersData(res?.data);
+            });
+        }
+    }, [searchQuery]);
+
     return (
         <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
             <div className='flex items-center justify-between px-5 py-5'>
                 <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
                 <div className='w-[40%]'>
-                    <SearchBox />
+                    <SearchBox
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                    />
                 </div>
             </div>
             <div className="relative overflow-x-auto mt-5 pb-5">
@@ -69,6 +96,9 @@ const Orders = () => {
                             </th>
                             <th scope="col" className="px-6 py-3 whitespace-nowrap">
                                 Payment ID
+                            </th>
+                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                Payment Method
                             </th>
                             <th scope="col" className="px-6 py-3 whitespace-nowrap">
                                 Name
@@ -121,6 +151,9 @@ const Orders = () => {
                                             </td>
                                             <td className="px-6 py-4 font-[500]">
                                                 <span className='text-primary font-[600]'>{item?.paymentId}</span>
+                                            </td>
+                                            <td className="px-6 py-4 font-[500]">
+                                                <span className='text-primary font-[600]'>{item?.payment_method}</span>
                                             </td>
                                             <td className="px-6 py-4 font-[500] whitespace-nowrap">
                                                 {item?.userId?.name}

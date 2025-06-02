@@ -17,7 +17,7 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Select from '@mui/material/Select';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { MyContext } from '../../App';
 import SearchBox from '../../components/SearchBox';
 import { fetchDataFromApi } from '../../utils/api';
@@ -70,84 +70,17 @@ const Dashboard = () => {
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [orderPage, setOrderPage] = useState(0);
     const [orderRowsPerPage, setOrderRowsPerPage] = useState(10);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [totalOrdersData, setTotalOrdersData] = useState([0]);
 
-    const [categoryFilterVal, setCategoryFilterVal] = useState('');
     const [ordersData, setOrdersData] = useState([]);
+    const [ordersCount, setOrdersCount] = useState(null);
 
-    const [chart1Data, setChart1Data] = useState([
-        {
-            name: "JANUARY",
-            totalUsers: 4000,
-            totalSales: 2400,
-            amt: 2400,
-        },
-        {
-            name: "FEBRUARY",
-            totalUsers: 3000,
-            totalSales: 1398,
-            amt: 2210,
-        },
-        {
-            name: "MARCH",
-            totalUsers: 2000,
-            totalSales: 9800,
-            amt: 2290,
-        },
-        {
-            name: "APRIL",
-            totalUsers: 2780,
-            totalSales: 3908,
-            amt: 2000,
-        },
-        {
-            name: "MAY",
-            totalUsers: 1890,
-            totalSales: 4800,
-            amt: 2181,
-        },
-        {
-            name: "JUNE",
-            totalUsers: 2390,
-            totalSales: 3800,
-            amt: 2500,
-        },
-        {
-            name: "JULY",
-            totalUsers: 3490,
-            totalSales: 4300,
-            amt: 2100,
-        },
-        {
-            name: "AUGUST",
-            totalUsers: 2390,
-            totalSales: 3800,
-            amt: 2500,
-        },
-        {
-            name: "SEPTEM",
-            totalUsers: 2780,
-            totalSales: 3908,
-            amt: 2000,
-        },
-        {
-            name: "OCTO",
-            totalUsers: 1890,
-            totalSales: 4800,
-            amt: 2181,
-        },
-        {
-            name: "NOVEM",
-            totalUsers: 4000,
-            totalSales: 2400,
-            amt: 2400,
-        },
-        {
-            name: "DECEM",
-            totalUsers: 3000,
-            totalSales: 1398,
-            amt: 2210,
-        },
-    ]);
+    const [users, setUsers] = useState([]);
+    const [allReviews, setAllReviews] = useState([]);
+
+    const [chartData, setChartData] = useState([]);
+    const [year, setYear] = useState(new Date().getFullYear());
 
     const context = useContext(MyContext);
 
@@ -158,6 +91,48 @@ const Dashboard = () => {
     useEffect(() => {
         fetchDataFromApi(`/api/order/order-list`).then((res) => {
             setOrdersData(res?.data);
+            setTotalOrdersData(res?.data);
+        });
+
+        fetchDataFromApi(`/api/order/count`).then((res) => {
+            if (res?.error === false) {
+                setOrdersCount(res?.count);
+            }
+        })
+    }, []);
+
+    useEffect(() => {
+        if (searchQuery !== '') {
+            const filteredOrders = totalOrdersData?.filter((order) =>
+                order?._id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                order?.userId?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                order?.userId?.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                order?.createdAt.includes(searchQuery)
+            );
+
+            setOrdersData(filteredOrders)
+            setOrderPage(0);
+        } else {
+            fetchDataFromApi(`/api/order/order-list`).then((res) => {
+                setOrdersData(res?.data);
+                setOrderPage(0);
+            });
+        }
+    }, [searchQuery]);
+
+    useEffect(() => {
+        getTotalSalesByYear();
+
+        fetchDataFromApi('/api/user/getAllUsers').then((res) => {
+            if (res?.error === false) {
+                setUsers(res?.users);
+            }
+        });
+
+        fetchDataFromApi('/api/user/getAllReviews').then((res) => {
+            if (res?.error === false) {
+                setAllReviews(res?.reviews);
+            }
         });
     }, []);
 
@@ -202,10 +177,6 @@ const Dashboard = () => {
             .map((item) => item._id)
             .sort((a, b) => a - b);
         setSortedIds(selectedIds);
-    };
-
-    const handleChangeCatFilter = (event) => {
-        setCategoryFilterVal(event.target.value);
     };
 
     const handleChangePage = (event, newPage) => {
@@ -279,6 +250,43 @@ const Dashboard = () => {
         });
     };
 
+    const getTotalUsersByYear = () => {
+        fetchDataFromApi(`/api/order/users`).then((res) => {
+            const users = [];
+            res?.TotalUsers?.length !== 0 &&
+                res?.TotalUsers?.map((item) => {
+                    users.push({
+                        name: item?.name,
+                        TotalUsers: parseInt(item?.TotalUsers)
+                    });
+                });
+
+            const uniqueArr = users.filter(
+                (obj, index, self) => index === self.findIndex((t) => t.name === obj.name)
+            );
+
+            setChartData(uniqueArr);
+        })
+    };
+
+    const getTotalSalesByYear = () => {
+        fetchDataFromApi(`/api/order/sales`).then((res) => {
+            const sales = [];
+            res?.monthlySales?.length !== 0 &&
+                res?.monthlySales?.map((item) => {
+                    sales.push({
+                        name: item?.name,
+                        TotalSales: parseInt(item?.TotalSales)
+                    });
+                });
+
+            const uniqueArr = sales.filter(
+                (obj, index, self) => index === self.findIndex((t) => t.name === obj.name)
+            );
+            setChartData(uniqueArr);
+        })
+    };
+
     return (
         <>
             <div className='w-full py-2 px-5 border bg-[#f1faff] border-[rgba(0,0,0,0.1)] flex items-center gap-8 mb-5 justify-between rounded-md'>
@@ -293,7 +301,17 @@ const Dashboard = () => {
                 </div>
                 <img src="/shop-illustration.png" className='w-[250px]' />
             </div>
-            <DashboardBoxes />
+
+            {
+                productData?.length !== 0 && context?.userData?.length !== 0 && allReviews?.length !== 0 &&
+                <DashboardBoxes
+                    orders={ordersCount}
+                    products={productData?.length}
+                    users={users?.length}
+                    reviews={allReviews?.length}
+                    category={context?.catData?.length}
+                />
+            }
 
             <div className='card my-4 pt-5 shadow-md sm:rounded-lg bg-white'>
                 <div className='flex items-center w-full px-5 justify-between gap-4'>
@@ -533,6 +551,12 @@ const Dashboard = () => {
             <div className='card my-4 shadow-md sm:rounded-lg bg-white'>
                 <div className='flex items-center justify-between px-5 py-5'>
                     <h2 className='text-[18px] font-[600]'>Recent Orders</h2>
+                    <div className='w-[25%]'>
+                        <SearchBox
+                            searchQuery={searchQuery}
+                            setSearchQuery={setSearchQuery}
+                        />
+                    </div>
                 </div>
                 <div className="relative overflow-auto mt-5 pb-5 h-[600px]">
                     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -718,32 +742,60 @@ const Dashboard = () => {
                     <h2 className='text-[18px] font-[600]'>Total users & Total sales</h2>
                 </div>
                 <div className='flex items-center gap-5 px-5 py-5 pt-0'>
-                    <span className='flex items-center gap-1 text-[15px]'>
-                        <span className='block w-[8px] h-[8px] rounded-full bg-green-600'></span>
+                    <span className='flex items-center gap-1 text-[15px] cursor-pointer' onClick={getTotalUsersByYear}>
+                        <span className='block w-[8px] h-[8px] rounded-full bg-[#0858f7]'></span>
                         Total users
                     </span>
-                    <span className='flex items-center gap-1 text-[15px]'>
-                        <span className='block w-[8px] h-[8px] rounded-full bg-primary'></span>
+                    <span className='flex items-center gap-1 text-[15px] cursor-pointer' onClick={getTotalSalesByYear}>
+                        <span className='block w-[8px] h-[8px] rounded-full bg-[#16a34a]'></span>
                         Total sales
                     </span>
                 </div>
-                <ResponsiveContainer width={1000} height={500}>
-                    <LineChart data={chart1Data} margin={{ top: 20 }} accessibilityLayer>
-                        <CartesianGrid strokeDasharray="3 3" stroke='none' />
-                        <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                        <YAxis tick={{ fontSize: 12 }} />
-                        <Tooltip />
+                {
+                    chartData?.length !== 0 &&
+                    <BarChart
+                        width={1000}
+                        height={500}
+                        data={chartData}
+                        margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5
+                        }}
+                    >
+                        <XAxis
+                            dataKey='name'
+                            scale='point'
+                            padding={{ left: 10, right: 10 }}
+                            tick={{ fontSize: 12 }}
+                            label={{ position: 'insideBottoom', fontSize: 14 }}
+                            style={{ fill: context?.theme === 'dark' ? 'white' : '#000' }}
+                        />
+                        <YAxis
+                            tick={{ fontSize: 12 }}
+                            label={{ position: 'insideBottoom', fontSize: 14 }}
+                            style={{ fill: context?.theme === 'dark' ? 'white' : '#000' }}
+                        />
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: '#071739',
+                                color: 'white'
+                            }}
+                            labelStyle={{ color: 'yellow' }}
+                            itemStyle={{ color: 'cyan' }}
+                            cursor={{ fill: 'white' }}
+                        />
                         <Legend />
-                        <Line
-                            type="monotone"
-                            dataKey="totalUsers"
-                            stroke="#8884d8"
-                            strokeWidth={3}
-                            activeDot={{ r: 8 }}
-                        ></Line>
-                        <Line type="monotone" dataKey="totalSales" stroke="#82ca9d" strokeWidth={3}></Line>
-                    </LineChart>
-                </ResponsiveContainer>
+                        <CartesianGrid
+                            strokeDasharray='3 3'
+                            horizontal={false}
+                            vertical={false}
+                        />
+                        <Bar dataKey='TotalSales' stackId='a' fill='#16a34a' />
+                        <Bar dataKey='TotalUsers' stackId='b' fill='#0858f7' />
+                    </BarChart>
+                }
             </div>
         </>
     )

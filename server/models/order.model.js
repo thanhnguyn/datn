@@ -32,6 +32,10 @@ const orderSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    payment_method: {
+        type: String,
+        default: 'CASH'
+    },
     payment_status: {
         type: String,
         default: ""
@@ -41,8 +45,8 @@ const orderSchema = new mongoose.Schema({
         default: 'pending'
     },
     delivery_address: {
-        type: mongoose.Schema.ObjectId,
-        ref: 'address'
+        type: Object,
+        default: {}
     },
     totalAmt: {
         type: Number,

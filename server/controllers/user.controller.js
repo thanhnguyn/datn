@@ -812,3 +812,55 @@ export async function getReviewsController(request, response) {
         });
     }
 }
+
+
+export async function getAllReviewsController(request, response) {
+    try {
+        const reviews = await ReviewModel.find();
+
+        if (!reviews) {
+            return response.status(400).json({
+                error: true,
+                success: false
+            });
+        }
+
+        return response.status(200).json({
+            error: false,
+            success: true,
+            reviews: reviews
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: "Something is wrong",
+            error: true,
+            success: false
+        });
+    }
+}
+
+
+export async function getAllUsersController(request, response) {
+    try {
+        const users = await UserModel.find();
+
+        if (!users) {
+            return response.status(400).json({
+                error: true,
+                success: false
+            });
+        }
+
+        return response.status(200).json({
+            error: false,
+            success: true,
+            users: users
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: "Something is wrong",
+            error: true,
+            success: false
+        });
+    }
+}

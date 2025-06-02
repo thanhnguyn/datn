@@ -50,6 +50,9 @@ const Orders = () => {
                                                 Payment ID
                                             </th>
                                             <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                                                Payment Method
+                                            </th>
+                                            <th scope="col" className="px-6 py-3 whitespace-nowrap">
                                                 Name
                                             </th>
                                             <th scope="col" className="px-6 py-3 whitespace-nowrap">
@@ -103,6 +106,9 @@ const Orders = () => {
                                                             </td>
                                                             <td className="px-6 py-4 font-[500]">
                                                                 <span className='text-primary'>{item?.paymentId}</span>
+                                                            </td>
+                                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                                {item?.payment_method}
                                                             </td>
                                                             <td className="px-6 py-4 font-[500] whitespace-nowrap">
                                                                 {item?.userId?.name}

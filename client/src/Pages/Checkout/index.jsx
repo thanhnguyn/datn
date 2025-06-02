@@ -19,7 +19,7 @@ const Checkout = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
         setSelectedAddress(
-            context?.userData?.address_details[0]?._id
+            context?.userData?.address_details[0]
         );
     }, [context?.userData])
 
@@ -71,40 +71,45 @@ const Checkout = () => {
 
     const onApprovePayment = async (data) => {
         const user = context?.userData;
-        const info = {
-            userId: user?._id,
-            products: context?.cartData,
-            payment_status: 'COMPLETE',
-            delivery_address: selectedAddress,
-            totalAmount: totalAmount,
-            date: new Date().toLocaleString('vi-VN', {
-                month: 'short',
-                day: '2-digit',
-                year: 'numeric'
-            })
-        };
+        if (user?.address_details?.length !== 0) {
+            const info = {
+                userId: user?._id,
+                products: context?.cartData,
+                payment_method: 'PAYPAL',
+                payment_status: 'COMPLETE',
+                delivery_address: selectedAddress,
+                totalAmount: totalAmount,
+                date: new Date().toLocaleString('vi-VN', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric'
+                })
+            };
 
-        const headers = {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            'Content-Type': 'application/json'
-        }
+            const headers = {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                'Content-Type': 'application/json'
+            }
 
-        const response = await axios.post(
-            VITE_API_URL + "/api/order/capture-order-paypal",
-            {
-                ...info,
-                paymentId: data.orderID
-            }, { headers }
-        ).then((res) => {
-            context?.openAlertBox('success', res?.data?.message);
-            history('/order/success');
-            deleteData(`/api/cart/emptyCart/${context?.userData?._id}`).then((res) => {
-                context?.getCartItems();
-            })
-        });
+            const response = await axios.post(
+                VITE_API_URL + "/api/order/capture-order-paypal",
+                {
+                    ...info,
+                    paymentId: data.orderID
+                }, { headers }
+            ).then((res) => {
+                context?.openAlertBox('success', res?.data?.message);
+                history('/order/success');
+                deleteData(`/api/cart/emptyCart/${context?.userData?._id}`).then((res) => {
+                    context?.getCartItems();
+                })
+            });
 
-        if (response.data.success) {
-            context?.openAlertBox('success', 'Order completed and saved to database.');
+            if (response.data.success) {
+                context?.openAlertBox('success', 'Order completed and saved to database.');
+            }
+        } else {
+            context?.openAlertBox('error', 'Please add address');
         }
     };
 
@@ -137,6 +142,7 @@ const Checkout = () => {
             userId: user?._id,
             products: context?.cartData,
             paymentId: '',
+            payment_method: 'CASH',
             payment_status: 'CASH ON DELIVERY',
             delivery_address: selectedAddress,
             totalAmt: totalAmount,
@@ -163,65 +169,76 @@ const Checkout = () => {
     }
 
     const handleVNPayPayment = async () => {
-        const headers = {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-            'Content-Type': 'application/json',
-        };
+        const user = context?.userData;
+        if (user?.address_details?.length !== 0) {
+            const headers = {
+                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+                'Content-Type': 'application/json',
+            };
 
-        const orderInfo = {
-            userId: context?.userData?._id,
-            products: context?.cartData,
-            payment_status: 'COMPLETE',
-            delivery_address: selectedAddress,
-            totalAmount: totalAmount,
-            date: new Date().toLocaleDateString('vi-VN', {
-                month: 'short',
-                day: '2-digit',
-                year: 'numeric'
-            })
-        };
+            const orderInfo = {
+                userId: context?.userData?._id,
+                products: context?.cartData,
+                payment_method: 'VNPAY',
+                payment_status: 'COMPLETE',
+                delivery_address: selectedAddress,
+                totalAmount: totalAmount,
+                date: new Date().toLocaleDateString('vi-VN', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric'
+                })
+            };
 
-        localStorage.setItem('vnpay_order_info', JSON.stringify(orderInfo));
+            localStorage.setItem('vnpay_order_info', JSON.stringify(orderInfo));
 
-        const res = await axios.get(`${VITE_API_URL}/api/order/create-order-vnpay?amount=${totalAmount}`,
-            {
-                headers,
-                withCredentials: true
-            }
-        );
+            const res = await axios.get(`${VITE_API_URL}/api/order/create-order-vnpay?amount=${totalAmount}`,
+                {
+                    headers,
+                    withCredentials: true
+                }
+            );
 
-        window.location.href = res.data.paymentUrl;
+            window.location.href = res.data.paymentUrl;
+        } else {
+            context?.openAlertBox('error', 'Please add address');
+        }
     };
 
 
     const cashOnDelivery = (e) => {
         const user = context?.userData;
 
-        const payLoad = {
-            userId: user?._id,
-            products: context?.cartData,
-            paymentId: '',
-            payment_status: 'CASH ON DELIVERY',
-            delivery_address: selectedAddress,
-            totalAmt: totalAmount,
-            date: new Date().toLocaleDateString('vi-VN', {
-                month: 'short',
-                day: '2-digit',
-                year: 'numeric'
-            })
-        };
+        if (user?.address_details?.length !== 0) {
+            const payLoad = {
+                userId: user?._id,
+                products: context?.cartData,
+                paymentId: '',
+                payment_method: 'CASH',
+                payment_status: 'CASH ON DELIVERY',
+                delivery_address: selectedAddress,
+                totalAmt: totalAmount,
+                date: new Date().toLocaleDateString('vi-VN', {
+                    month: 'short',
+                    day: '2-digit',
+                    year: 'numeric'
+                })
+            };
 
-        postData(`/api/order/create`, payLoad).then((res) => {
-            context?.openAlertBox('success', res?.message);
-            if (res?.error === false) {
-                deleteData(`/api/cart/emptyCart/${user?._id}`).then((res) => {
-                    context?.getCartItems();
-                });
-            } else {
-                context?.openAlertBox('error', res?.message);
-            }
-            history('/order/success');
-        })
+            postData(`/api/order/create`, payLoad).then((res) => {
+                context?.openAlertBox('success', res?.message);
+                if (res?.error === false) {
+                    deleteData(`/api/cart/emptyCart/${user?._id}`).then((res) => {
+                        context?.getCartItems();
+                    });
+                } else {
+                    context?.openAlertBox('error', res?.message);
+                }
+                history('/order/success');
+            })
+        } else {
+            context?.openAlertBox('error', 'Please add address');
+        }
     }
 
     return (
@@ -249,7 +266,7 @@ const Checkout = () => {
                                         return (
                                             <label className={`flex gap-3 p-4 border border-[rgba(0,0,0,0.1)] rounded-md relative ${isChecked === index && 'bg-[#fff2f2]'}`} key={index}>
                                                 <div>
-                                                    <Radio size='small' onChange={(e) => handleChange(e, index)} checked={isChecked === index} value={item?._id} />
+                                                    <Radio size='small' onChange={(e) => handleChange(e, index)} checked={isChecked === index} value={item} />
                                                 </div>
                                                 <div className='info'>
                                                     <span className='inline-block p-1 bg-[#e7e7e7] text-[12px] rounded-sm'>{item?.addressType}</span>
@@ -310,7 +327,7 @@ const Checkout = () => {
                                 >
                                     <img src="/payment img/VNPAY_id-sVSMjm2_0.png" className='!h-[35px]' />
                                 </Button>
-                                <div id='paypal-button-container' className='w-full flex items-center'></div>
+                                <div id='paypal-button-container' className={`w-full flex items-center ${context?.userData?.address_details?.length === 0 ? 'pointer-events-none' : ''}`}></div>
                                 <Button type='button' className='btn-dark btn-lg w-full flex gap-2 items-center' onClick={cashOnDelivery}>
                                     <BsFillBagCheckFill className='text-[20px]' />
                                     Cash on Delivery
