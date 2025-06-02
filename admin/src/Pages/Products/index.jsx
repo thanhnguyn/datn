@@ -189,13 +189,14 @@ const Products = () => {
             return;
         }
         try {
-            deleteMultipleData('/api/product/deleteMultiple', { ids: sortedIds })
-            if (res?.data?.error === false) {
-                getProducts();
-                context.openAlertBox('success', res?.data?.message);
-            } else {
-                context.openAlertBox('error', res?.data?.message);
-            }
+            deleteMultipleData('/api/product/deleteMultiple', { data: { ids: sortedIds } }).then((res) => {
+                if (res?.data?.error === false) {
+                    getProducts();
+                    context.openAlertBox('success', res?.data?.message);
+                } else {
+                    context.openAlertBox('error', res?.data?.message);
+                }
+            })
         } catch (error) {
             context.openAlertBox('error', 'Error in deleting products.');
         }

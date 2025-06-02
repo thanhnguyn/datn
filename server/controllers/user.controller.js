@@ -864,3 +864,36 @@ export async function getAllUsersController(request, response) {
         });
     }
 }
+
+
+export async function deleteMultipleUserController(request, response) {
+    const { ids } = request.body;
+
+    if (!ids || !Array.isArray(ids)) {
+        return response.status(400).json({
+            error: true,
+            success: false,
+            message: "Invalid input"
+        });
+    }
+
+    try {
+        await UserModel.deleteMany({
+            _id: {
+                $in: ids
+            }
+        });
+
+        return response.status(200).json({
+            message: 'User deleted successfully',
+            error: false,
+            success: true
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        });
+    }
+}

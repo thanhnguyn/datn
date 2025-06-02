@@ -162,6 +162,7 @@ const Orders = () => {
                                                 {item?.delivery_address?.mobile}
                                             </td>
                                             <td className="px-6 py-4 font-[500]">
+                                                <span className='inline-block p-1 bg-[#e7e7e7] text-[12px] rounded-sm'>{item?.delivery_address?.addressType}</span>
                                                 <span className='block w-[400px]'>{item?.delivery_address?.address_line1}, {item?.delivery_address?.district}, {item?.delivery_address?.city}</span>
                                             </td>
                                             <td className="px-6 py-4 font-[500]">
