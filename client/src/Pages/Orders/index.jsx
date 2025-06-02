@@ -141,7 +141,7 @@ const Orders = () => {
                                                         {
                                                             isOpenOrderProduct === index && (
                                                                 <tr>
-                                                                    <td className='pl-20' colSpan={6}>
+                                                                    <td className='pl-20' colSpan={7}>
                                                                         <div className='relative overflow-x-auto'>
                                                                             <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
                                                                                 <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
@@ -168,6 +168,12 @@ const Orders = () => {
                                                                                             scope='col'
                                                                                             className='px-6 py-3 whitespace-nowrap'
                                                                                         >
+                                                                                            Attribute
+                                                                                        </th>
+                                                                                        <th
+                                                                                            scope='col'
+                                                                                            className='px-6 py-3 whitespace-nowrap'
+                                                                                        >
                                                                                             Quantity
                                                                                         </th>
                                                                                         <th
@@ -185,46 +191,39 @@ const Orders = () => {
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody>
-                                                                                    {
-                                                                                        item?.products?.map((product, index_) => {
-                                                                                            return (
-                                                                                                <>
-                                                                                                    <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                                                                                                        <td className='px-6 py-4 font-[500]'>
-                                                                                                            <span className='text-gray-600'>
-                                                                                                                {product.productId}
-                                                                                                            </span>
-                                                                                                        </td>
-                                                                                                        <td className='px-6 py-4 font-[500]'>
-                                                                                                            <span className='text-gray-600'>
-                                                                                                                <div className='w-[200px]'>
-                                                                                                                    {product.productTitle}
-                                                                                                                </div>
-                                                                                                            </span>
-                                                                                                        </td>
-                                                                                                        <td className='px-6 py-4 font-[500]'>
-                                                                                                            <img src={product.image} className='h-[40px] w-[40px] object-cover rounded-md' />
-                                                                                                        </td>
-                                                                                                        <td className='px-6 py-4 font-[500]'>
-                                                                                                            <span className='text-gray-600'>
-                                                                                                                {product.quantity}
-                                                                                                            </span>
-                                                                                                        </td>
-                                                                                                        <td className='px-6 py-4 font-[500]'>
-                                                                                                            <span className='text-gray-600'>
-                                                                                                                {product.price.toLocaleString('vi-VN')}đ
-                                                                                                            </span>
-                                                                                                        </td>
-                                                                                                        <td className='px-6 py-4 font-[500]'>
-                                                                                                            <span className='text-gray-600'>
-                                                                                                                {product.subTotal.toLocaleString('vi-VN')}đ
-                                                                                                            </span>
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                </>
-                                                                                            );
-                                                                                        })
-                                                                                    }
+                                                                                    {item?.products?.map((product, index_) => {
+                                                                                        return (
+                                                                                            <tr key={index_} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
+                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>{product.productId}</td>
+                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                    <div className='w-[200px]'>{product.productTitle}</div>
+                                                                                                </td>
+                                                                                                <td className='px-6 py-4 font-[500]'>
+                                                                                                    <img src={product.image} className='h-[40px] w-[40px] object-cover rounded-md' />
+                                                                                                </td>
+
+                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                    {product.attribute
+                                                                                                        ? Object.entries(product.attribute).map(([key, value], idx) => (
+                                                                                                            <div key={idx}>
+                                                                                                                <strong>{key}:</strong> {value}
+                                                                                                            </div>
+                                                                                                        ))
+                                                                                                        : 'Không có'}
+                                                                                                </td>
+
+                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                    {product.quantity}
+                                                                                                </td>
+                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                    {product.price.toLocaleString('vi-VN')}đ
+                                                                                                </td>
+                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                    {product.subTotal.toLocaleString('vi-VN')}đ
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        );
+                                                                                    })}
                                                                                 </tbody>
                                                                             </table>
                                                                         </div>

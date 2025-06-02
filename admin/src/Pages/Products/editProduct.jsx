@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { Button, CircularProgress, Rating } from '@mui/material';
+import { Button, CircularProgress, Rating, TextField } from '@mui/material';
 import UploadBox from '../../components/UploadBox';
 import { IoMdClose } from 'react-icons/io';
 import { FaCloudUploadAlt } from "react-icons/fa";
@@ -32,9 +32,7 @@ const EditProduct = () => {
         rating: '',
         isFeatured: false,
         discount: '',
-        productRam: [],
-        size: [],
-        productWeight: [],
+        attribute: {},
         bannerTitleName: '',
         bannerImage: [],
         isDisplayOnHomeBanner: false
@@ -44,13 +42,10 @@ const EditProduct = () => {
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLevelCat, setProductThirdLevelCat] = useState('');
     const [productFeature, setProductFeature] = useState('');
-    const [productRams, setProductRams] = useState([]);
-    const [productRamsData, setProductRamsData] = useState([]);
-    const [productWeight, setProductWeight] = useState([]);
-    const [productWeightData, setProductWeightData] = useState([]);
-    const [productSize, setProductSize] = useState([]);
-    const [productSizeData, setProductSizeData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [newAttributeKey, setNewAttributeKey] = useState('');
+    const [newAttributeValues, setNewAttributeValues] = useState('');
 
     const [previews, setPreviews] = useState([]);
     const [bannerPreviews, setBannerPreviews] = useState([]);
@@ -61,22 +56,6 @@ const EditProduct = () => {
     const context = useContext(MyContext);
 
     useEffect(() => {
-        fetchDataFromApi('/api/product/productRAMS/get').then((res) => {
-            if (res?.error === false) {
-                setProductRamsData(res?.data)
-            }
-        });
-        fetchDataFromApi('/api/product/productWEIGHT/get').then((res) => {
-            if (res?.error === false) {
-                setProductWeightData(res?.data)
-            }
-        });
-        fetchDataFromApi('/api/product/productSIZE/get').then((res) => {
-            if (res?.error === false) {
-                setProductSizeData(res?.data)
-            }
-        });
-
         fetchDataFromApi(`/api/product/${context?.isOpenFullScreenPanel?.id}`).then((res) => {
             setFormFields({
                 name: res?.product?.name,
@@ -96,9 +75,7 @@ const EditProduct = () => {
                 rating: res?.product?.rating,
                 isFeatured: res?.product?.isFeatured,
                 discount: res?.product?.discount,
-                productRam: res?.product?.productRam,
-                size: res?.product?.size,
-                productWeight: res?.product?.productWeight,
+                attribute: res?.product?.attribute,
                 bannerTitleName: res?.product?.bannerTitleName,
                 bannerImage: res?.product?.bannerImage,
                 isDisplayOnHomeBanner: res?.product?.isDisplayOnHomeBanner
@@ -108,9 +85,6 @@ const EditProduct = () => {
             setProductSubCat(res?.product?.subCatId);
             setProductThirdLevelCat(res?.product?.thirdSubCatId);
             setProductFeature(res?.product?.isFeatured);
-            setProductRams(res?.product?.productRam);
-            setProductSize(res?.product?.size);
-            setProductWeight(res?.product?.productWeight);
             setCheckedSwitch(res?.product?.isDisplayOnHomeBanner);
 
             setPreviews(res?.product?.images);
@@ -150,29 +124,6 @@ const EditProduct = () => {
         setProductFeature(event.target.value);
         formFields.isFeatured = event.target.value;
     };
-
-    const handleChangeProductRams = (event) => {
-        const { target: { value } } = event;
-        setProductRams(
-            typeof value === "string" ? value.split(",") : value
-        );
-        formFields.productRam = value;
-    };
-    const handleChangeProductWeight = (event) => {
-        const { target: { value } } = event;
-        setProductWeight(
-            typeof value === "string" ? value.split(",") : value
-        );
-        formFields.productWeight = value;
-    };
-    const handleChangeProductSize = (event) => {
-        const { target: { value } } = event;
-        setProductSize(
-            typeof value === "string" ? value.split(",") : value
-        );
-        formFields.size = value;
-    };
-
 
     const onChangeInput = (e) => {
         const { name, value } = e.target;
@@ -243,6 +194,29 @@ const EditProduct = () => {
         setCheckedSwitch(event.target.checked);
         setFormFields.isDisplayOnHomeBanner = event.target.checked;
     }
+
+    const handleAddNewAttribute = () => {
+        if (!newAttributeKey || !newAttributeValues) {
+            context.openAlertBox("error", "Please provide attribute name and values.");
+            return;
+        }
+
+        const valuesArray = newAttributeValues.split(',').map(v => v.trim());
+
+        setFormFields(prev => ({
+            ...prev,
+            attribute: {
+                ...prev.attribute,
+                [newAttributeKey]: valuesArray
+            }
+        }));
+        setNewAttributeKey('');
+        setNewAttributeValues('');
+    };
+
+    useEffect(() => {
+        console.log('Updated formFields.attribute:', formFields.attribute);
+    }, [formFields.attribute]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -501,81 +475,6 @@ const EditProduct = () => {
                                 onChange={onChangeInput}
                             />
                         </div> */}
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product RAMS</h3>
-                            {
-                                productRamsData?.length !== 0
-                                &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productRams}
-                                    label="RAMS"
-                                    onChange={handleChangeProductRams}
-                                >
-                                    {
-                                        productRamsData?.map((item, index) => {
-                                            return (
-                                                <MenuItem key={index} value={item?.name}>{item.name}</MenuItem>
-                                            );
-                                        })
-                                    }
-                                </Select>
-                            }
-                        </div>
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product weight</h3>
-                            {
-                                productWeightData?.length !== 0
-                                &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productWeight}
-                                    label="WEIGHT"
-                                    onChange={handleChangeProductWeight}
-                                >
-                                    {
-                                        productWeightData?.map((item, index) => {
-                                            return (
-                                                <MenuItem key={index} value={item?.name}>{item.name}</MenuItem>
-                                            );
-                                        })
-                                    }
-                                </Select>
-                            }
-                        </div>
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product size</h3>
-                            {
-                                productSizeData?.length !== 0
-                                &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productSize}
-                                    label="SIZE"
-                                    onChange={handleChangeProductSize}
-                                >
-                                    {
-                                        productSizeData?.map((item, index) => {
-                                            return (
-                                                <MenuItem key={index} value={item?.name}>{item.name}</MenuItem>
-                                            );
-                                        })
-                                    }
-                                </Select>
-                            }
-                        </div>
                         {/* <div className='col'>
                             <h3 className='text-[14px] font-[500] mb-1 text-black'>Product rating</h3>
                             <Rating
@@ -584,6 +483,37 @@ const EditProduct = () => {
                                 onChange={(event, newValue) => onChangeRating(newValue)}
                             />
                         </div> */}
+                    </div>
+                    <div className='col-span-4 bg-white p-4 rounded border border-gray-200 mb-4'>
+                        <h3 className='text-[16px] font-semibold text-black mb-3'>Add New Attribute</h3>
+                        <div className='grid grid-cols-3 gap-4'>
+                            <TextField
+                                label="Attribute Name"
+                                size='small'
+                                value={newAttributeKey}
+                                onChange={(e) => setNewAttributeKey(e.target.value)}
+                                placeholder='e.g. color, material'
+                            />
+                            <TextField
+                                label="Attribute Values (comma separated)"
+                                size='small'
+                                value={newAttributeValues}
+                                onChange={(e) => setNewAttributeValues(e.target.value)}
+                                placeholder='e.g. red, green, blue'
+                            />
+                            <Button
+                                variant="contained"
+                                onClick={handleAddNewAttribute}
+                                className='bg-blue-600 text-white'
+                            >
+                                Add Attribute
+                            </Button>
+                            {Object.entries(formFields.attribute).map(([key, values]) => (
+                                <div key={key} className='mt-2'>
+                                    <strong>{key}:</strong> {values.join(', ')}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <div className='col w-full p-5 px-0'>
                         <h3 className='font-[700] text-[18px] mb-3'>Media & Image</h3>

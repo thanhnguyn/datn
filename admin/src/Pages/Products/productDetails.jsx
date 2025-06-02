@@ -117,58 +117,33 @@ const ProductDetails = () => {
                                     <span className='w-[20%] font-[500] flex items-center gap-2 text-[14px]'>
                                         <BiSolidCategoryAlt className='opacity-65' /> Category :
                                     </span>
-                                    <span className='text-[14px]'>{product?.catName}</span>
+                                    <span className='text-[14px]'>{product?.category?.name}</span>
                                 </div>
                                 {
-                                    product?.productRam?.length !== 0 &&
-                                    <div className='flex items-center py-1'>
-                                        <span className='w-[20%] font-[500] flex items-center gap-2 text-[14px]'>
-                                            <MdFilterVintage className='opacity-65' /> Ram :
-                                        </span>
-                                        <div className='flex items-center gap-2'>
-                                            {
-                                                product?.productRam?.map((ram, index) => {
-                                                    return (
-                                                        <span className='inline-block p-1 shadow-sm bg-[#fff] text-[12px] font-[500]' key={index}>{ram}</span>
-                                                    );
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                }
-                                {
-                                    product?.size?.length !== 0 &&
-                                    <div className='flex items-center py-1'>
-                                        <span className='w-[20%] font-[500] flex items-center gap-2 text-[14px]'>
-                                            <MdFilterVintage className='opacity-65' /> Size :
-                                        </span>
-                                        <div className='flex items-center gap-2'>
-                                            {
-                                                product?.size?.map((size, index) => {
-                                                    return (
-                                                        <span className='inline-block p-1 shadow-sm bg-[#fff] text-[12px] font-[500]' key={index}>{size}</span>
-                                                    );
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                }
-                                {
-                                    product?.productWeight?.length !== 0 &&
-                                    <div className='flex items-center py-1'>
-                                        <span className='w-[20%] font-[500] flex items-center gap-2 text-[14px]'>
-                                            <MdFilterVintage className='opacity-65' /> Weight :
-                                        </span>
-                                        <div className='flex items-center gap-2'>
-                                            {
-                                                product?.productWeight?.map((weight, index) => {
-                                                    return (
-                                                        <span className='inline-block p-1 shadow-sm bg-[#fff] text-[12px] font-[500]' key={index}>{weight}</span>
-                                                    );
-                                                })
-                                            }
-                                        </div>
-                                    </div>
+                                    product?.attribute &&
+                                    Object.entries(product.attribute).map(([key, values]) => {
+                                        if (!Array.isArray(values) || values.length === 0) return null;
+
+                                        return (
+                                            <div className='flex items-center py-1' key={key}>
+                                                <span className='w-[20%] font-[500] flex items-center gap-2 text-[14px] capitalize'>
+                                                    <MdFilterVintage className='opacity-65' /> {key.replace(/([A-Z])/g, ' $1')} :
+                                                </span>
+                                                <div className='flex items-center gap-2 flex-wrap'>
+                                                    {
+                                                        values.map((value, index) => (
+                                                            <span
+                                                                className='inline-block p-1 shadow-sm bg-[#fff] text-[12px] font-[500]'
+                                                                key={index}
+                                                            >
+                                                                {value}
+                                                            </span>
+                                                        ))
+                                                    }
+                                                </div>
+                                            </div>
+                                        );
+                                    })
                                 }
                                 <div className='flex items-center py-1'>
                                     <span className='w-[20%] font-[500] flex items-center gap-2 text-[14px]'>

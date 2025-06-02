@@ -24,8 +24,11 @@ const orderSchema = new mongoose.Schema({
             },
             subTotal: {
                 type: Number
+            },
+            attribute: {
+                type: mongoose.Schema.Types.Mixed,
+                default: {}
             }
-
         }
     ],
     paymentId: {

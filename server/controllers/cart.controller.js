@@ -3,7 +3,7 @@ import CartModel from '../models/cart.model.js';
 export async function addItemToCartController(request, response) {
     try {
         const userId = request.userId;
-        const { productTitle, image, rating, price, oldPrice, discount, size, weight, ram, quantity, subTotal, productId, countInStock, brand } = request.body;
+        const { productTitle, image, rating, price, oldPrice, discount, attribute, quantity, subTotal, productId, countInStock, brand } = request.body;
         if (!productId) {
             return response.status(402).json({
                 message: "Provide productId",
@@ -25,9 +25,7 @@ export async function addItemToCartController(request, response) {
             countInStock: countInStock,
             userId: userId,
             brand: brand,
-            size: size,
-            weight: weight,
-            ram: ram
+            attribute: attribute
         });
 
         const save = await cartItem.save();
@@ -76,7 +74,7 @@ export async function getCartItemController(request, response) {
 export async function updateCartItemQtyController(request, response) {
     try {
         const userId = request.userId;
-        const { _id, qty, subTotal, size, weight, ram } = request.body;
+        const { _id, qty, subTotal, attribute } = request.body;
 
         if (!_id) {
             return response.status(400).json({
@@ -86,20 +84,19 @@ export async function updateCartItemQtyController(request, response) {
             });
         }
 
-        // Tạo object update động
         const updateFields = {};
         if (qty !== undefined) updateFields.quantity = qty;
         if (subTotal !== undefined) updateFields.subTotal = subTotal;
-        if (size !== undefined) updateFields.size = size;
-        if (ram !== undefined) updateFields.ram = ram;
-        if (weight !== undefined) updateFields.weight = weight;
+        if (attribute !== undefined) updateFields.attribute = attribute;
 
         const updateCartItem = await CartModel.updateOne(
             {
                 _id: _id,
                 userId: userId
             },
-            updateFields,
+            {
+                $set: updateFields
+            },
             {
                 new: true
             }
@@ -120,6 +117,7 @@ export async function updateCartItemQtyController(request, response) {
         });
     }
 }
+
 
 
 export async function deleteCartItemController(request, response) {

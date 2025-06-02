@@ -75,24 +75,10 @@ const productSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    productRam: [
-        {
-            type: String,
-            default: null
-        }
-    ],
-    size: [
-        {
-            type: String,
-            default: null
-        }
-    ],
-    productWeight: [
-        {
-            type: String,
-            default: null
-        }
-    ],
+    attribute: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+    },
     bannerImage: [
         {
             type: String,

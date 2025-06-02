@@ -123,12 +123,13 @@ function App() {
     }
   }
 
+  const isSameAttributes = (attr1 = {}, attr2 = {}) => {
+    return JSON.stringify(attr1) === JSON.stringify(attr2);
+  };
   const findDuplicateItem = (cartData, newItem) => {
     return cartData.find(item =>
       item.productId === newItem.productId &&
-      item.size === newItem.size &&
-      item.ram === newItem.ram &&
-      item.weight === newItem.weight
+      isSameAttributes(item.attribute, newItem.attribute)
     );
   };
 
@@ -185,9 +186,7 @@ function App() {
       countInStock: product?.countInStock,
       userId: userId,
       brand: product?.brand,
-      size: product?.size,
-      ram: product?.ram,
-      weight: product?.weight
+      attribute: product?.attribute
     };
 
     await mergeOrAddToCart(

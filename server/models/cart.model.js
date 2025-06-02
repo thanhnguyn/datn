@@ -25,14 +25,9 @@ const cartSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    size: {
-        type: String
-    },
-    weight: {
-        type: String
-    },
-    ram: {
-        type: String
+    attribute: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
     },
     quantity: {
         type: Number,

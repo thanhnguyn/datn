@@ -11,9 +11,6 @@ import Users from './Pages/Users';
 import Orders from './Pages/Orders';
 import Profile from './Pages/Profile';
 import ProductDetails from './Pages/Products/productDetails';
-import AddRAMS from './Pages/Products/addRAMS';
-import AddWEIGHT from './Pages/Products/addWEIGHT';
-import AddSIZE from './Pages/Products/addSIZE';
 import BannerV1List from './Pages/Banners/bannerV1List';
 import BlogList from './Pages/Blog';
 
@@ -48,12 +45,6 @@ const Layout = (props) => {
                             <Profile />
                         ) : props.page === "ProductDetails" ? (
                             <ProductDetails />
-                        ) : props.page === "AddRAMS" ? (
-                            <AddRAMS />
-                        ) : props.page === "AddWEIGHT" ? (
-                            <AddWEIGHT />
-                        ) : props.page === "AddSIZE" ? (
-                            <AddSIZE />
                         ) : props.page === "BannerV1List" ? (
                             <BannerV1List />
                         ) : props.page === "BlogList" ? (

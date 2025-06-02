@@ -204,33 +204,6 @@ function App() {
       ),
     },
     {
-      path: '/product/addRams',
-      exact: true,
-      element: (
-        <>
-          <Layout page={'AddRAMS'} />
-        </>
-      ),
-    },
-    {
-      path: '/product/addWeight',
-      exact: true,
-      element: (
-        <>
-          <Layout page={'AddWEIGHT'} />
-        </>
-      ),
-    },
-    {
-      path: '/product/addSize',
-      exact: true,
-      element: (
-        <>
-          <Layout page={'AddSIZE'} />
-        </>
-      ),
-    },
-    {
       path: '/bannerV1/list',
       exact: true,
       element: (

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { Button, CircularProgress, Rating } from '@mui/material';
+import { Button, CircularProgress, Rating, TextField } from '@mui/material';
 import UploadBox from '../../components/UploadBox';
 import { IoMdClose } from 'react-icons/io';
 import { FaCloudUploadAlt } from "react-icons/fa";
@@ -32,9 +32,7 @@ const AddProduct = () => {
         rating: '0',
         isFeatured: false,
         discount: '0',
-        productRam: [],
-        size: [],
-        productWeight: [],
+        attribute: {},
         bannerTitleName: '',
         bannerImage: [],
         isDisplayOnHomeBanner: false
@@ -44,13 +42,10 @@ const AddProduct = () => {
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLevelCat, setProductThirdLevelCat] = useState('');
     const [productFeature, setProductFeature] = useState('');
-    const [productRams, setProductRams] = useState([]);
-    const [productRamsData, setProductRamsData] = useState([]);
-    const [productWeight, setProductWeight] = useState([]);
-    const [productWeightData, setProductWeightData] = useState([]);
-    const [productSize, setProductSize] = useState([]);
-    const [productSizeData, setProductSizeData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+
+    const [newAttributeKey, setNewAttributeKey] = useState('');
+    const [newAttributeValues, setNewAttributeValues] = useState('');
 
     const [previews, setPreviews] = useState([]);
     const [bannerPreviews, setBannerPreviews] = useState([]);
@@ -59,24 +54,6 @@ const AddProduct = () => {
 
     const history = useNavigate();
     const context = useContext(MyContext);
-
-    useEffect(() => {
-        fetchDataFromApi('/api/product/productRAMS/get').then((res) => {
-            if (res?.error === false) {
-                setProductRamsData(res?.data);
-            }
-        });
-        fetchDataFromApi('/api/product/productWEIGHT/get').then((res) => {
-            if (res?.error === false) {
-                setProductWeightData(res?.data);
-            }
-        });
-        fetchDataFromApi('/api/product/productSIZE/get').then((res) => {
-            if (res?.error === false) {
-                setProductSizeData(res?.data);
-            }
-        });
-    }, []);
 
     const handleChangeProductCat = (event) => {
         setProductCat(event.target.value);
@@ -111,28 +88,6 @@ const AddProduct = () => {
         formFields.isFeatured = event.target.value;
     };
 
-    const handleChangeProductRams = (event) => {
-        const { target: { value } } = event;
-        setProductRams(
-            typeof value === "string" ? value.split(",") : value
-        );
-        formFields.productRam = value;
-    };
-    const handleChangeProductWeight = (event) => {
-        const { target: { value } } = event;
-        setProductWeight(
-            typeof value === "string" ? value.split(",") : value
-        );
-        formFields.productWeight = value;
-    };
-    const handleChangeProductSize = (event) => {
-        const { target: { value } } = event;
-        setProductSize(
-            typeof value === "string" ? value.split(",") : value
-        );
-        formFields.size = value;
-    };
-
 
     const onChangeInput = (e) => {
         const { name, value } = e.target;
@@ -144,11 +99,6 @@ const AddProduct = () => {
             }
         });
     }
-
-    // const onChangeRating = (value) => {
-    //     formFields.rating = value;
-    // }
-
 
     const setPreviewsFun = (previewsArr) => {
         const imgArr = previews;
@@ -205,6 +155,36 @@ const AddProduct = () => {
         setFormFields.isDisplayOnHomeBanner = event.target.checked;
     }
 
+    const handleAddNewAttribute = () => {
+        if (!newAttributeKey || !newAttributeValues) {
+            context.openAlertBox("error", "Please provide attribute name and values.");
+            return;
+        }
+
+        const valuesArray = newAttributeValues.split(',').map(v => v.trim());
+
+        setFormFields(prev => ({
+            ...prev,
+            attribute: {
+                ...prev.attribute,
+                [newAttributeKey]: valuesArray
+            }
+        }));
+        setNewAttributeKey('');
+        setNewAttributeValues('');
+    };
+
+    const handleRemoveAttribute = (keyToRemove) => {
+        setFormFields(prev => {
+            const updatedAttributes = { ...prev.attribute };
+            delete updatedAttributes[keyToRemove];
+            return {
+                ...prev,
+                attribute: updatedAttributes
+            };
+        });
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -252,12 +232,6 @@ const AddProduct = () => {
         }
 
         formFields.discount = Math.floor((formFields.oldPrice - formFields.price) * 100 / formFields.oldPrice);
-
-        // if (formFields.rating === "") {
-        //     context.openAlertBox("error", "Please enter product rating.");
-        //     setIsLoading(false);
-        //     return false;
-        // }
 
         if (previews?.length === 0) {
             context.openAlertBox("error", "Please select images for product.");
@@ -448,90 +422,47 @@ const AddProduct = () => {
                                 onChange={onChangeInput}
                             />
                         </div>
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product RAMS</h3>
-                            {
-                                productRamsData?.length !== 0
-                                &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productRams}
-                                    label="RAMS"
-                                    onChange={handleChangeProductRams}
-                                >
-                                    {
-                                        productRamsData?.map((item, index) => {
-                                            return (
-                                                <MenuItem key={index} value={item?.name}>{item.name}</MenuItem>
-                                            );
-                                        })
-                                    }
-                                </Select>
-                            }
-                        </div>
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product weight</h3>
-                            {
-                                productWeightData?.length !== 0
-                                &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productWeight}
-                                    label="WEIGHT"
-                                    onChange={handleChangeProductWeight}
-                                >
-                                    {
-                                        productWeightData?.map((item, index) => {
-                                            return (
-                                                <MenuItem key={index} value={item?.name}>{item.name}</MenuItem>
-                                            );
-                                        })
-                                    }
-                                </Select>
-                            }
-                        </div>
-                        <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product size</h3>
-                            {
-                                productSizeData?.length !== 0
-                                &&
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-label"
-                                    id="productCatDrop"
-                                    size='small'
-                                    className='w-full'
-                                    value={productSize}
-                                    label="SIZE"
-                                    onChange={handleChangeProductSize}
-                                >
-                                    {
-                                        productSizeData?.map((item, index) => {
-                                            return (
-                                                <MenuItem key={index} value={item?.name}>{item.name}</MenuItem>
-                                            );
-                                        })
-                                    }
-                                </Select>
-                            }
-                        </div>
-                        {/* <div className='col'>
-                            <h3 className='text-[14px] font-[500] mb-1 text-black'>Product rating</h3>
-                            <Rating
-                                name="half-rating"
-                                defaultValue={0}
-                                precision={0.5}
-                                onChange={(event, newValue) => onChangeRating(newValue)}
+                    </div>
+                    <div className='col-span-4 bg-white p-4 rounded border border-gray-200 mb-4'>
+                        <h3 className='text-[16px] font-semibold text-black mb-3'>Add New Attribute</h3>
+                        <div className='grid grid-cols-3 gap-4'>
+                            <TextField
+                                label="Attribute Name"
+                                size='small'
+                                value={newAttributeKey}
+                                onChange={(e) => setNewAttributeKey(e.target.value)}
+                                placeholder='e.g. color, material'
                             />
-                        </div> */}
+                            <TextField
+                                label="Attribute Values (comma separated)"
+                                size='small'
+                                value={newAttributeValues}
+                                onChange={(e) => setNewAttributeValues(e.target.value)}
+                                placeholder='e.g. red, green, blue'
+                            />
+                            <Button
+                                variant="contained"
+                                onClick={handleAddNewAttribute}
+                                className='bg-blue-600 text-white'
+                            >
+                                Add Attribute
+                            </Button>
+                            {Object.entries(formFields.attribute).map(([key, values]) => (
+                                <div key={key} className='mt-2 flex items-center gap-2'>
+                                    <div className='text-sm'>
+                                        <strong>{key}:</strong> {values.join(', ')}
+                                    </div>
+                                    <Button
+                                        type='button'
+                                        className='!min-w-0 !w-6 !h-6 !bg-red-500 !text-white !rounded-full flex items-center justify-center hover:!bg-red-600'
+                                        onClick={() => handleRemoveAttribute(key)}
+                                    >
+                                        x
+                                    </Button>
+                                </div>
+                            ))}
+
+                        </div>
                     </div>
                     <div className='col w-full p-5 px-0'>
                         <h3 className='font-[700] text-[18px] mb-3'>Media & Image</h3>
@@ -584,6 +515,7 @@ const AddProduct = () => {
                         </div>
 
                     </div>
+
                 </div>
                 <hr />
                 <br />

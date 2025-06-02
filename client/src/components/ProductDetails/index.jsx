@@ -7,17 +7,10 @@ import { Button, Rating } from '@mui/material';
 import { MyContext } from '../../App';
 
 const ProductDetailsComponent = (props) => {
-    const [productRamActionIndex, setProductRamActionIndex] = useState(null);
-    const [productSizeActionIndex, setProductSizeActionIndex] = useState(null);
-    const [productWeightActionIndex, setProductWeightActionIndex] = useState(null);
-    const [tabErrorSize, setTabErrorSize] = useState(false);
-    const [tabErrorWeight, setTabErrorWeight] = useState(false);
-    const [tabErrorRam, setTabErrorRam] = useState(false);
     const [quantity, setQuantity] = useState(1);
 
-    const [selectedSize, setSelectedSize] = useState('');
-    const [selectedRam, setSelectedRam] = useState('');
-    const [selectedWeight, setSelectedWeight] = useState('');
+    const [selectedAttributes, setSelectedAttributes] = useState({});
+    const [attributeErrors, setAttributeErrors] = useState({});
 
     const context = useContext(MyContext);
 
@@ -25,34 +18,25 @@ const ProductDetailsComponent = (props) => {
         setQuantity(qty);
     };
 
-    const handleSelectTab = (type, index, value) => {
-        if (type === 'size') {
-            setSelectedSize(value);
-            setTabErrorSize(false);
-        } else if (type === 'ram') {
-            setSelectedRam(value);
-            setTabErrorRam(false);
-        } else if (type === 'weight') {
-            setSelectedWeight(value);
-            setTabErrorWeight(false);
-        }
+    const handleSelectAttribute = (type, value) => {
+        setSelectedAttributes(prev => ({ ...prev, [type]: value }));
+        setAttributeErrors(prev => ({ ...prev, [type]: false }));
     };
 
     const addToCart = (product, userId, quantity) => {
-        if (product?.size?.length > 0 && !selectedSize) {
-            context?.openAlertBox('error', 'Please choose Size before adding to cart.');
-            setTabErrorSize(true);
-            return false;
+        const requiredAttrs = Object.entries(product?.attribute || {});
+        const errors = {};
+
+        for (let [key, values] of requiredAttrs) {
+            if (Array.isArray(values) && values.length > 0 && !selectedAttributes[key]) {
+                errors[key] = true;
+            }
         }
-        if (product?.productRam?.length > 0 && !selectedRam) {
-            context?.openAlertBox('error', 'Please choose RAM before adding to cart.');
-            setTabErrorRam(true);
-            return false;
-        }
-        if (product?.productWeight?.length > 0 && !selectedWeight) {
-            context?.openAlertBox('error', 'Please choose Weight before adding to cart.');
-            setTabErrorWeight(true);
-            return false;
+
+        if (Object.keys(errors).length > 0) {
+            setAttributeErrors(errors);
+            context?.openAlertBox('error', 'Please select all required attributes before adding to cart.');
+            return;
         }
 
         const productItem = {
@@ -63,19 +47,20 @@ const ProductDetailsComponent = (props) => {
             price: product?.price,
             oldPrice: product?.oldPrice,
             discount: product?.discount,
-            quantity: quantity,
+            quantity,
             subTotal: parseInt(product?.price * quantity),
             productId: product?._id,
             countInStock: product?.countInStock,
-            userId: userId,
+            userId,
             brand: product?.brand,
-            ...(selectedSize && { size: selectedSize }),
-            ...(selectedRam && { ram: selectedRam }),
-            ...(selectedWeight && { weight: selectedWeight })
+            attribute: selectedAttributes
         };
+
+        console.log('Product item to add:', productItem);
 
         context?.addToCart(productItem, userId, quantity);
     };
+
 
     return (
         <>
@@ -94,83 +79,32 @@ const ProductDetailsComponent = (props) => {
                 <span className='text-[14px]'>Available in stock: <span className='text-green-600  text-[14px] font-bold'>{props?.item?.countInStock} items</span></span>
             </div>
             <p className='mt-3 pr-10 mb-5'>{props?.item?.description}</p>
-            {
-                props?.item?.productRam?.length !== 0 &&
-                <>
-                    <div className='flex items-center gap-3'>
-                        <span className='text-[16px]'>RAM: </span>
-                        <div className='flex items-center gap-1 actions'>
-                            {
-                                props?.item?.productRam?.map((item, index) => {
-                                    return (
-                                        <Button
-                                            key={index}
-                                            className={`${productRamActionIndex === index ? '!bg-primary !text-white' : ''} ${tabErrorRam === true ? '!border-2 !border-red-500' : ''}`}
-                                            onClick={() => {
-                                                setProductRamActionIndex(index);
-                                                handleSelectTab('ram', index, item);
-                                            }}
-                                        >
-                                            {item}
-                                        </Button>
-                                    );
-                                })
-                            }
-                        </div>
-                    </div >
-                    <br />
-                </>
-            }
-            {
-                props?.item?.size?.length !== 0 &&
-                <>
-                    <div className='flex items-center gap-3'>
-                        <span className='text-[16px]'>Size: </span>
-                        <div className='flex items-center gap-1 actions'>
-                            {
-                                props?.item?.size?.map((item, index) => {
-                                    return (
-                                        <Button
-                                            key={index}
-                                            className={`${productSizeActionIndex === index ? '!bg-primary !text-white' : ''} ${tabErrorSize === true ? '!border-2 !border-red-500' : ''}`}
-                                            onClick={() => {
-                                                setProductSizeActionIndex(index);
-                                                handleSelectTab('size', index, item);
-                                            }}
-                                        >
-                                            {item}
-                                        </Button>
-                                    );
-                                })
-                            }
-                        </div>
-                    </div>
-                    <br />
-                </>
-            }
-            {
-                props?.item?.productWeight?.length !== 0 &&
-                <div className='flex items-center gap-3'>
-                    <span className='text-[16px]'>Weight: </span>
-                    <div className='flex items-center gap-1 actions'>
-                        {
-                            props?.item?.productWeight?.map((item, index) => {
-                                return (
+            {props?.item?.attribute &&
+                Object.entries(props.item.attribute).map(([attrKey, attrValues]) => {
+                    if (!Array.isArray(attrValues) || attrValues.length === 0) return null;
+
+                    return (
+                        <div key={attrKey} className='flex items-center gap-3 mt-2'>
+                            <span className='text-[16px] capitalize'>
+                                {attrKey.replace(/^product/, '')}:
+                            </span>
+                            <div className='flex items-center gap-1 actions'>
+                                {attrValues.map((val, index) => (
                                     <Button
                                         key={index}
-                                        className={`${productWeightActionIndex === index ? '!bg-primary !text-white' : ''} ${tabErrorWeight === true ? '!border-2 !border-red-500' : ''}`}
-                                        onClick={() => {
-                                            setProductWeightActionIndex(index);
-                                            handleSelectTab('weight', index, item);
-                                        }}
+                                        className={`
+                                ${selectedAttributes[attrKey] === val ? '!bg-primary !text-white' : ''}
+                                ${attributeErrors[attrKey] ? '!border-2 !border-red-500' : ''}
+                            `}
+                                        onClick={() => handleSelectAttribute(attrKey, val)}
                                     >
-                                        {item}
+                                        {val}
                                     </Button>
-                                );
-                            })
-                        }
-                    </div>
-                </div>
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })
             }
             <p className='text-[14px] mt-5 mb-2 text-[#000]'>Free shipping (Est. Delivery time 2-3 days)</p>
             <div className='flex items-center gap-4 py-4'>
