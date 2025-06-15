@@ -20,7 +20,6 @@ const googleProvider = new GoogleAuthProvider();
 const Login = () => {
 
     const [loadingGoogle, setLoadingGoogle] = useState(false);
-    const [loadingFacebook, setLoadingFacebook] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const [isPasswordShow, setIsPasswordShow] = useState(false);
@@ -155,12 +154,12 @@ const Login = () => {
 
     return (
         <section className='bg-white w-full'>
-            <header className='w-full fixed top-0 left-0 px-4 py-3 flex items-center justify-between z-50'>
+            <header className='w-full static lg:fixed top-0 left-0 px-4 py-3 flex items-center justify-center sm:justify-between z-50'>
                 <Link to='/'>
                     <img src="/vite.svg" className='w-[60px]' />
                 </Link>
 
-                <div className='flex items-center gap-0'>
+                <div className='hidden sm:flex items-center gap-0'>
                     <NavLink to='/login' exact={true} activeClassName='isActive'>
                         <Button className='!rounded-full !text-[rgba(0,0,0,0.8)] !px-5 flex gap-1'>
                             <CgLogIn className='text-[18px]' />Login
@@ -175,12 +174,12 @@ const Login = () => {
                 </div>
             </header>
             <img src="/OIP.jpg" className='w-full fixed top-0 left-0 opacity-5' />
-            <div className='loginBox card w-[600px] h-auto pb-20 mx-auto pt-20 relative z-50'>
+            <div className='loginBox card w-full md:w-[600px] h-auto pb-20 mx-auto pt-5 lg:pt-20 relative z-50'>
                 <div className='text-center'>
                     <img src="/vite.svg" className='m-auto' />
                 </div>
 
-                <h1 className='text-center text-[35px] font-[800] mt-4'>Welcome Back! <br />
+                <h1 className='text-center text-[18px] sm:text-[35px] font-[800] mt-4'>Welcome Back! <br />
                     Sign in with your crendentials.
                 </h1>
 
@@ -202,7 +201,7 @@ const Login = () => {
 
                 <div className='w-full flex items-center justify-center gap-3'>
                     <span className='flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]'></span>
-                    <span className='text-[14px] font-[500]'>Or, sign in with your email</span>
+                    <span className='text-[10px] lg:text-[14px] font-[500]'>Or, sign in with your email</span>
                     <span className='flex items-center w-[100px] h-[1px] bg-[rgba(0,0,0,0.2)]'></span>
                 </div>
                 <br />
@@ -250,6 +249,15 @@ const Login = () => {
                         >
                             Forgot password?
                         </a>
+                    </div>
+                    <div className='flex items-center justify-between mb-4'>
+                        <span className='text-[14px]'>Don't have an account?</span>
+                        <Link
+                            to='/sign-up'
+                            className='text-primary font-[700] text-[15px] hover:underline hover:text-gray-700 cursor-pointer'
+                        >
+                            Sign up
+                        </Link>
                     </div>
                     <Button type='submit' disabled={!valideValue} className='btn-blue btn-lg w-full'>
                         {

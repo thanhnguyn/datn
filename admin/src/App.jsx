@@ -1,4 +1,5 @@
-import './App.css'
+import './App.css';
+import './responsive.css';
 import React, { useEffect } from 'react';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { createContext, useState } from 'react';

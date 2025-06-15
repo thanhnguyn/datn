@@ -137,6 +137,10 @@ const Dashboard = () => {
     }, []);
 
     const paginatedOrders = useMemo(() => {
+        if (!ordersData || ordersData.length === 0) {
+            return [];
+        }
+
         const start = orderPage * orderRowsPerPage;
         const end = start + orderRowsPerPage;
         return ordersData.slice(start, end);
@@ -725,7 +729,7 @@ const Dashboard = () => {
                 <TablePagination
                     className="sticky bottom-0 z-10"
                     component="div"
-                    count={ordersData.length}
+                    count={!ordersData || ordersData.length === 0 ? 0 : ordersData.length}
                     page={orderPage}
                     onPageChange={(e, newPage) => setOrderPage(newPage)}
                     rowsPerPage={orderRowsPerPage}

@@ -19,7 +19,7 @@ import orderRouter from './route/order.route.js';
 
 const app = express();
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: '*',
     credentials: true,
 }));
 app.options('*', cors());
