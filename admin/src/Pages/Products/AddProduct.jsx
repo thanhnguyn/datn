@@ -59,6 +59,7 @@ const AddProduct = () => {
         setProductCat(event.target.value);
         formFields.catId = event.target.value;
         formFields.category = event.target.value;
+        formFields.catName = event.target.value;
     };
 
     const selectCatByName = (name) => {

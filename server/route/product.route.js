@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import auth from '../middlewares/auth.js';
 import upload from '../middlewares/multer.js';
-import { createProductController, deleteProductController, getAllFeaturedProductsController, getAllProductsController, getAllProductsByCatIdController, getAllProductsByCatNameController, getAllProductsByPriceController, getAllProductsByRatingController, getAllProductsBySubCatIdController, getAllProductsBySubCatNameController, getAllProductsByThirdLevelCatIdController, getAllProductsByThirdLevelCatNameController, getProductController, getProductsCountController, removeImageFromCloudinaryController, updateProductController, uploadImagesController, deleteMultipleProductController, uploadBannerImagesController, filtersController, sortByController } from '../controllers/product.controller.js';
+import { createProductController, deleteProductController, getAllFeaturedProductsController, getAllProductsController, getAllProductsByCatIdController, getAllProductsByCatNameController, getAllProductsByPriceController, getAllProductsByRatingController, getAllProductsBySubCatIdController, getAllProductsBySubCatNameController, getAllProductsByThirdLevelCatIdController, getAllProductsByThirdLevelCatNameController, getProductController, getProductsCountController, removeImageFromCloudinaryController, updateProductController, uploadImagesController, deleteMultipleProductController, uploadBannerImagesController, filtersController, sortByController, searchProductController } from '../controllers/product.controller.js';
 
 const productRouter = Router();
 
@@ -27,5 +27,6 @@ productRouter.put('/updateProduct/:id', auth, updateProductController);
 
 productRouter.post('/filters', filtersController);
 productRouter.post('/sortBy', sortByController);
+productRouter.post('/search/get', searchProductController);
 
 export default productRouter;

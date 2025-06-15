@@ -119,7 +119,6 @@ export async function updateCartItemQtyController(request, response) {
 }
 
 
-
 export async function deleteCartItemController(request, response) {
     try {
         const userId = request.userId;

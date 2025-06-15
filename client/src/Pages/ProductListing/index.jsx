@@ -76,7 +76,7 @@ const ProductListing = () => {
                     </div>
 
                     <div className='rightContent w-[80%] py-3'>
-                        <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between sticky top-[80px] z-[100]'>
+                        <div className='bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between sticky top-[80px] z-10'>
                             <div className='col1 flex items-center itemViewActions'>
                                 <Button className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${itemView === 'list' && 'active'}`} onClick={() => setItemView('list')}>
                                     <LuMenu className='text-[rgba(0,0,0,0.7)]' />

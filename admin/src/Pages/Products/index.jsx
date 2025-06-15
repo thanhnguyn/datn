@@ -72,14 +72,12 @@ const Products = () => {
     const handleSelectAll = (e) => {
         const isChecked = e.target.checked;
 
-        //Update all items checked status
         const updatedItems = productData.map((item) => ({
             ...item,
             checked: isChecked
         }));
         setProductData(updatedItems);
 
-        //Update sorted IDS State
         if (isChecked) {
             const ids = updatedItems.map((item) => item._id).sort((a, b) => a - b);
             console.log(ids);
@@ -450,7 +448,7 @@ const Products = () => {
                 <TablePagination
                     rowsPerPageOptions={[10, 25, 100]}
                     component="div"
-                    count={10}
+                    count={productData?.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

@@ -56,7 +56,7 @@ const Navigation = () => {
                                                         {
                                                             cat?.children?.map((subCat, index_) => {
                                                                 return (
-                                                                    <li className='list-none w-full relative' key={index_}>
+                                                                    <li className='list-none w-full relative z-[100]' key={index_}>
                                                                         <Link to={`/products?subCatId=${subCat?._id}`} className='w-full'>
                                                                             <Button className='!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{subCat?.name}</Button>
                                                                         </Link>
@@ -68,7 +68,7 @@ const Navigation = () => {
                                                                                     {
                                                                                         subCat?.children?.map((thirdSubCat, index__) => {
                                                                                             return (
-                                                                                                <li className='list-none w-full' key={index__}>
+                                                                                                <li className='list-none w-full z-[100]' key={index__}>
                                                                                                     <Link to={`/products?thirdSubCatId=${thirdSubCat?._id}`} className='w-full'>
                                                                                                         <Button className='!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none'>{thirdSubCat?.name}</Button>
                                                                                                     </Link>

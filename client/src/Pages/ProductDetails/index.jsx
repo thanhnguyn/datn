@@ -32,6 +32,7 @@ const ProductDetails = () => {
         fetchDataFromApi(`/api/product/${id}`).then((res) => {
             window.scrollTo(0, 0);
             if (res?.error === false) {
+                console.log(res?.product);
                 setProductData(res?.product);
                 fetchDataFromApi(`/api/product/getAllProductsBySubCatId/${res?.product?.subCatId}`).then((res) => {
                     if (res?.error === false) {
@@ -64,7 +65,7 @@ const ProductDetails = () => {
                         <Link
                             underline="hover"
                             color="inherit"
-                            href="/"
+                            to="/"
                             className='link transition !text-[14px]'
                         >
                             Home
@@ -72,17 +73,17 @@ const ProductDetails = () => {
                         <Link
                             underline="hover"
                             color="inherit"
-                            href="/"
+                            to={`/products?catId=${productData?.catId}`}
                             className='link transition !text-[14px]'
                         >
-                            Fashion
+                            {productData?.catName}
                         </Link>
                         <Link
                             underline="hover"
                             color="inherit"
                             className='link transition !text-[14px]'
                         >
-                            Men Opaque Casual Shirt
+                            {productData?.name}
                         </Link>
                     </Breadcrumbs>
                 </div>

@@ -39,6 +39,8 @@ const Sidebar = (props) => {
     const location = useLocation();
 
     const handleCheckboxChange = (field, value) => {
+        context?.setSearchData({});
+
         const currentValues = filters[field] || [];
         const updatedValues = currentValues?.includes(value) ?
             currentValues.filter((item) => item !== value) : [...currentValues, value];
@@ -69,6 +71,8 @@ const Sidebar = (props) => {
             filters.subCatId = [];
             filters.thirdsubCatId = [];
             filters.rating = [];
+
+            context?.setSearchData([]);
         }
 
         if (url.includes('subCatId')) {
@@ -79,6 +83,8 @@ const Sidebar = (props) => {
             filters.subCatId = subCatArr;
             filters.thirdsubCatId = [];
             filters.rating = [];
+
+            context?.setSearchData([]);
         }
 
         if (url.includes('thirdSubCatId')) {
@@ -89,23 +95,43 @@ const Sidebar = (props) => {
             filters.subCatId = [];
             filters.thirdsubCatId = thirdSubCatArr;
             filters.rating = [];
+
+            context?.setSearchData([]);
         }
 
         filters.page = 1;
         setTimeout(() => {
             filtersData();
         }, 200);
+
     }, [location]);
 
     const filtersData = () => {
         props.setIsLoading(true);
 
-        postData(`/api/product/filters`, filters).then((res) => {
-            props.setProductsData(res);
+        console.log(context?.searchData);
+
+        if (context?.searchData?.products?.length > 0) {
+            props?.setProductsData(context?.searchData);
             props.setIsLoading(false);
-            props.setTotalPages(res?.totalPages);
+            props.setTotalPages(context?.searchData?.totalPages);
             window.scrollTo(0, 0);
-        });
+        } else if (context?.searchData?.products?.length === 0) {
+
+            postData(`/api/product/filters`, filters).then((res) => {
+                props.setProductsData(res);
+                props.setIsLoading(false);
+                props.setTotalPages(res?.totalPages);
+                window.scrollTo(0, 0);
+            });
+        } else {
+            postData(`/api/product/filters`, filters).then((res) => {
+                props.setProductsData(res);
+                props.setIsLoading(false);
+                props.setTotalPages(res?.totalPages);
+                window.scrollTo(0, 0);
+            });
+        }
     };
 
     useEffect(() => {

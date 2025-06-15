@@ -76,7 +76,7 @@ export async function registerUserController(request, response) {
             success: true,
             error: false,
             message: "User registered successfully! Please verify your email.",
-            token: token, //Optional: include this if needed for verification
+            token: token,
         });
 
     } catch (error) {

@@ -21,6 +21,7 @@ import Address from './Pages/MyAccount/address'
 import OrderSuccess from './Pages/Orders/success'
 import OrderFail from './Pages/Orders/fail'
 import OrderVNPaySuccess from './Pages/Checkout/VNPaySuccess'
+import SearchPage from './Pages/Search'
 
 const MyContext = createContext();
 
@@ -40,6 +41,7 @@ function App() {
 
   const [addressMode, setAddressMode] = useState('add');
   const [addressId, setAddressId] = useState('');
+  const [searchData, setSearchData] = useState([]);
   const [ordersData, setOrdersData] = useState([]);
 
   useEffect(() => {
@@ -246,7 +248,9 @@ function App() {
     setAddressId,
     addressId,
     ordersData,
-    getOrdersData
+    getOrdersData,
+    searchData,
+    setSearchData
   };
 
   return (
@@ -272,6 +276,7 @@ function App() {
             <Route path={"/order/fail"} exact={true} element={<OrderFail />} />
             <Route path={"/address"} exact={true} element={<Address />} />
             <Route path={"/order/vnpay-success"} exact={true} element={<OrderVNPaySuccess />} />
+            <Route path={"/search"} exact={true} element={<SearchPage />} />
           </Routes>
           <Footer />
         </MyContext.Provider>
