@@ -32,7 +32,6 @@ app.use(helmet({
 }));
 
 app.get("/", (request, response) => {
-    ///server to client
     response.json({
         message: "Server is running on PORT " + process.env.PORT
     })

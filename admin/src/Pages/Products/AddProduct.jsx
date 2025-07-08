@@ -41,7 +41,7 @@ const AddProduct = () => {
     const [productCat, setProductCat] = useState('');
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLevelCat, setProductThirdLevelCat] = useState('');
-    const [productFeature, setProductFeature] = useState('');
+    const [productFeature, setProductFeature] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
     const [newAttributeKey, setNewAttributeKey] = useState('');
@@ -59,7 +59,7 @@ const AddProduct = () => {
         setProductCat(event.target.value);
         formFields.catId = event.target.value;
         formFields.category = event.target.value;
-        formFields.catName = event.target.value;
+        // formFields.catName = event.target.value;
     };
 
     const selectCatByName = (name) => {
@@ -85,9 +85,14 @@ const AddProduct = () => {
     };
 
     const handleChangeProductFeature = (event) => {
+        const value = event.target.value === "true"; // ép kiểu từ chuỗi sang boolean
         setProductFeature(event.target.value);
-        formFields.isFeatured = event.target.value;
+        setFormFields(prev => ({
+            ...prev,
+            isFeatured: value
+        }));
     };
+
 
 
     const onChangeInput = (e) => {
@@ -399,8 +404,8 @@ const AddProduct = () => {
                                 label="isFeatured"
                                 onChange={handleChangeProductFeature}
                             >
-                                <MenuItem value={true}>True</MenuItem>
-                                <MenuItem value={false}>False</MenuItem>
+                                <MenuItem value='true'>True</MenuItem>
+                                <MenuItem value='false'>False</MenuItem>
                             </Select>
                         </div>
                         <div className='col'>

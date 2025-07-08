@@ -600,8 +600,7 @@ export async function getAllFeaturedProductsController(request, response) {
     try {
         const products = await ProductModel.find({
             isfeatured: true
-        })
-            .populate('category');
+        });
         if (!products) {
             response.status(500).json({
                 error: true,
@@ -903,36 +902,75 @@ export async function sortByController(request, response) {
 
 export async function searchProductController(request, response) {
     try {
-        const { query, page, limit } = request.body;
+        const { query, page = 1, limit = 10 } = request.body;
 
         if (!query) {
             return response.status(400).json({
                 error: true,
                 success: false,
                 message: 'Query is required.'
-            })
+            });
         }
 
-        const products = await ProductModel.find({
-            $or: [
-                { name: { $regex: query, $options: 'i' } },
-                { brand: { $regex: query, $options: 'i' } },
-                { catName: { $regex: query, $options: 'i' } },
-                { subCat: { $regex: query, $options: 'i' } },
-                { thirdsubCat: { $regex: query, $options: 'i' } },
-            ]
+        const queryKeywords = query
+            .split(' ')
+            .map(keyword => keyword.trim())
+            .filter(keyword => keyword.length > 0);
+
+        // Tạo danh sách điều kiện regex (mở rộng tìm kiếm)
+        const regexConditions = [];
+        queryKeywords.forEach(keyword => {
+            regexConditions.push(
+                { name: { $regex: keyword, $options: 'i' } },
+                { brand: { $regex: keyword, $options: 'i' } },
+                { catName: { $regex: keyword, $options: 'i' } },
+                { subCat: { $regex: keyword, $options: 'i' } },
+                { thirdsubCat: { $regex: keyword, $options: 'i' } }
+            );
+        });
+
+        // Tìm tất cả sản phẩm thỏa mãn ít nhất một điều kiện
+        const matchedProducts = await ProductModel.find({
+            $or: regexConditions
         }).populate('category');
 
-        const total = await products?.length;
+        // Tính điểm khớp cho mỗi sản phẩm
+        const calculateMatchScore = (product) => {
+            let score = 0;
+            const fields = [product.name, product.brand, product.catName, product.subCat, product.thirdsubCat];
+
+            queryKeywords.forEach(keyword => {
+                fields.forEach(field => {
+                    if (field?.toLowerCase().includes(keyword.toLowerCase())) {
+                        score++;
+                    }
+                });
+            });
+
+            return score;
+        };
+
+        // Sắp xếp sản phẩm theo điểm khớp giảm dần
+        const sortedProducts = matchedProducts
+            .map(product => ({
+                product,
+                score: calculateMatchScore(product)
+            }))
+            .sort((a, b) => b.score - a.score)
+            .map(item => item.product);
+
+        // Phân trang sau khi đã sắp xếp
+        const startIndex = (page - 1) * limit;
+        const paginatedProducts = sortedProducts.slice(startIndex, startIndex + limit);
 
         return response.status(200).json({
             error: false,
             success: true,
-            products: products,
-            total: total,
+            products: paginatedProducts,
+            total: sortedProducts.length,
             page: parseInt(page),
-            totalPages: Math.ceil(total / limit)
-        })
+            totalPages: Math.ceil(sortedProducts.length / limit)
+        });
     } catch (error) {
         return response.status(500).json({
             message: error.message || error,

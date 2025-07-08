@@ -20,12 +20,25 @@ export const createOrderController = async (request, response) => {
         });
 
         if (!order) {
-            response.status(500).json({
+            return response.status(500).json({
                 error: true,
                 success: false
             });
         }
 
+        // Check stock before processing the order
+        for (let i = 0; i < request.body.products.length; i++) {
+            const product = await ProductModel.findById(request.body.products[i].productId);
+            if (product.countInStock < request.body.products[i].quantity) {
+                return response.status(400).json({
+                    error: true,
+                    success: false,
+                    message: `Not enough stock for product ${product.name}`
+                });
+            }
+        }
+
+        // Update stock after order is placed
         for (let i = 0; i < request.body.products.length; i++) {
             await ProductModel.findByIdAndUpdate(
                 request.body.products[i].productId,
@@ -35,12 +48,13 @@ export const createOrderController = async (request, response) => {
                 { new: true }
             );
         }
+
         order = await order.save();
 
         return response.status(200).json({
             error: false,
             success: true,
-            message: 'Order placed',
+            message: 'Order placed successfully.',
             order: order
         });
     } catch (error) {
@@ -50,7 +64,7 @@ export const createOrderController = async (request, response) => {
             success: false
         });
     }
-}
+};
 
 
 export const getOrderDetailsController = async (request, response) => {
@@ -140,24 +154,39 @@ export const captureOrderPaypalController = async (request, response) => {
             date: request.body.date
         };
 
+        // Check stock before saving the order
+        for (let i = 0; i < request.body.products.length; i++) {
+            const product = await ProductModel.findById(request.body.products[i].productId);
+            if (product.countInStock < request.body.products[i].quantity) {
+                return response.status(400).json({
+                    error: true,
+                    success: false,
+                    message: `Not enough stock for product ${product.name}`
+                });
+            }
+        }
+
+        // Save the order
         const order = new OrderModel(orderInfo);
         await order.save();
 
+        // Update stock after order is captured
         for (let i = 0; i < request.body.products.length; i++) {
             await ProductModel.findByIdAndUpdate(
                 request.body.products[i].productId,
                 {
-                    countInStock: parseInt(request.body.products[i].countInStock - request.body.products[i].quantity)
+                    countInStock: product.countInStock - request.body.products[i].quantity
                 },
                 { new: true }
             );
         }
+
         return response.status(200).json({
             success: true,
             error: false,
             order: order,
-            message: 'Order placed.'
-        })
+            message: 'Order placed successfully.'
+        });
     } catch (error) {
         return response.status(500).json({
             message: error.message || error,
@@ -165,7 +194,8 @@ export const captureOrderPaypalController = async (request, response) => {
             success: false
         });
     }
-}
+};
+
 
 export const createOrderVnPayController = async (request, response) => {
     try {

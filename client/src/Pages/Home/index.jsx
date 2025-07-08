@@ -123,7 +123,7 @@ const Home = () => {
                 </div>
             </section>
 
-            <section className='py-6 '>
+            {/* <section className='py-6 '>
                 <div className='container flex gap-5'>
                     <div className='part1 w-[70%]'>
                         {
@@ -136,7 +136,7 @@ const Home = () => {
                         <BannerBoxV2 info="right" image={"https://serviceapi.spicezgold.com/download/1741664665391_1741497254110_New_Project_50.jpg"} />
                     </div>
                 </div>
-            </section>
+            </section> */}
 
             <section className='py-4 pt-2 bg-white'>
                 <div className='container'>
@@ -152,9 +152,9 @@ const Home = () => {
                         </div>
                         <p className='font-bold text-[30px]'>- Only $200*</p>
                     </div>
-                    {
+                    {/* {
                         bannerV1Data?.length !== 0 && <AdsBannerSliderV2 items={4} data={bannerV1Data} />
-                    }
+                    } */}
                 </div>
             </section>
 

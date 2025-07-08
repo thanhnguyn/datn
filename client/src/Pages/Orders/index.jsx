@@ -20,6 +20,7 @@ const Orders = () => {
 
     useEffect(() => {
         context?.getOrdersData();
+        context?.getUserDetails();
     }, []);
 
     return (
@@ -34,7 +35,7 @@ const Orders = () => {
                         <div className='py-2 px-3 border-b border-[rgba(0,0,0,0.1)]'>
                             <h2 >My orders</h2>
                             <p className='mt-0'>
-                                There are <span className='font-bold text-primary'>{context?.ordersData?.length}</span> orders
+                                There are <span className='font-bold text-primary'>{context?.ordersData?.filter((item) => item?.userId?._id === context?.userData?._id)?.length}</span> orders
                             </p>
                             <div className="relative overflow-x-auto mt-5">
                                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -83,157 +84,159 @@ const Orders = () => {
                                     </thead>
                                     <tbody>
                                         {
-                                            context?.ordersData?.length > 0 && context?.ordersData?.map((item, index) => {
-                                                return (
-                                                    <>
-                                                        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={index}>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <Button
-                                                                    className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full bg-[#f1f1f1]'
-                                                                    onClick={() => isShowOrderProduct(index)}
-                                                                >
-                                                                    {
-                                                                        isOpenOrderProduct === index ? (
-                                                                            <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                                                                        ) : (
-                                                                            <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
-                                                                        )
-                                                                    }
-                                                                </Button>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='text-primary'>{item?._id}</span>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='text-primary'>{item?.paymentId}</span>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                {item?.payment_method}
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                {item?.userId?.name}
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                {item?.delivery_address?.mobile}
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='block w-[400px]'>{item?.delivery_address?.address_line1}, {item?.delivery_address?.district}, {item?.delivery_address?.city} </span>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                {item?.delivery_address?.pincode}
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                {item?.totalAmt}
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                {item?.userId?.email}
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <span className='text-primary'>{item?.userId?._id}</span>
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500]">
-                                                                <Badge status={item?.order_status} />
-                                                            </td>
-                                                            <td className="px-6 py-4 font-[500] whitespace-nowrap">
-                                                                {item?.createdAt?.split('T')[0]}
-                                                            </td>
-                                                        </tr>
-                                                        {
-                                                            isOpenOrderProduct === index && (
-                                                                <tr>
-                                                                    <td className='pl-20' colSpan={7}>
-                                                                        <div className='relative overflow-x-auto'>
-                                                                            <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
-                                                                                <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
-                                                                                    <tr>
-                                                                                        <th
-                                                                                            scope='col'
-                                                                                            className='px-6 py-3 whitespace-nowrap'
-                                                                                        >
-                                                                                            Product ID
-                                                                                        </th>
-                                                                                        <th
-                                                                                            scope='col'
-                                                                                            className='px-6 py-3 whitespace-nowrap'
-                                                                                        >
-                                                                                            Product Title
-                                                                                        </th>
-                                                                                        <th
-                                                                                            scope='col'
-                                                                                            className='px-6 py-3 whitespace-nowrap'
-                                                                                        >
-                                                                                            Product Image
-                                                                                        </th>
-                                                                                        <th
-                                                                                            scope='col'
-                                                                                            className='px-6 py-3 whitespace-nowrap'
-                                                                                        >
-                                                                                            Attribute
-                                                                                        </th>
-                                                                                        <th
-                                                                                            scope='col'
-                                                                                            className='px-6 py-3 whitespace-nowrap'
-                                                                                        >
-                                                                                            Quantity
-                                                                                        </th>
-                                                                                        <th
-                                                                                            scope='col'
-                                                                                            className='px-6 py-3 whitespace-nowrap'
-                                                                                        >
-                                                                                            Price
-                                                                                        </th>
-                                                                                        <th
-                                                                                            scope='col'
-                                                                                            className='px-6 py-3 whitespace-nowrap'
-                                                                                        >
-                                                                                            Sub Total
-                                                                                        </th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    {item?.products?.map((product, index_) => {
-                                                                                        return (
-                                                                                            <tr key={index_} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>{product.productId}</td>
-                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
-                                                                                                    <div className='w-[200px]'>{product.productTitle}</div>
-                                                                                                </td>
-                                                                                                <td className='px-6 py-4 font-[500]'>
-                                                                                                    <img src={product.image} className='h-[40px] w-[40px] object-cover rounded-md' />
-                                                                                                </td>
+                                            context?.ordersData?.length > 0 && context?.ordersData
+                                                ?.filter((item) => item?.userId?._id === context?.userData?._id)?.map((item, index) => {
+                                                    return (
+                                                        <>
+                                                            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700" key={index}>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    <Button
+                                                                        className='!w-[35px] !h-[35px] !min-w-[35px] !rounded-full bg-[#f1f1f1]'
+                                                                        onClick={() => isShowOrderProduct(index)}
+                                                                    >
+                                                                        {
+                                                                            isOpenOrderProduct === index ? (
+                                                                                <FaAngleUp className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                                                                            ) : (
+                                                                                <FaAngleDown className='text-[16px] text-[rgba(0,0,0,0.7)]' />
+                                                                            )
+                                                                        }
+                                                                    </Button>
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    <span className='text-primary'>{item?._id}</span>
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    <span className='text-primary'>{item?.paymentId}</span>
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                                    {item?.payment_method}
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                                    {item?.userId?.name}
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    {item?.delivery_address?.mobile}
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    <span className='block w-[400px]'>{item?.delivery_address?.address_line1}, {item?.delivery_address?.district}, {item?.delivery_address?.city} </span>
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    {item?.delivery_address?.pincode}
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    {item?.totalAmt}
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    {item?.userId?.email}
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    <span className='text-primary'>{item?.userId?._id}</span>
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500]">
+                                                                    <Badge status={item?.order_status} />
+                                                                </td>
+                                                                <td className="px-6 py-4 font-[500] whitespace-nowrap">
+                                                                    {item?.createdAt?.split('T')[0]}
+                                                                </td>
+                                                            </tr>
+                                                            {
+                                                                isOpenOrderProduct === index && (
+                                                                    <tr>
+                                                                        <td className='pl-20' colSpan={7}>
+                                                                            <div className='relative overflow-x-auto'>
+                                                                                <table className='w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400'>
+                                                                                    <thead className='text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400'>
+                                                                                        <tr>
+                                                                                            <th
+                                                                                                scope='col'
+                                                                                                className='px-6 py-3 whitespace-nowrap'
+                                                                                            >
+                                                                                                Product ID
+                                                                                            </th>
+                                                                                            <th
+                                                                                                scope='col'
+                                                                                                className='px-6 py-3 whitespace-nowrap'
+                                                                                            >
+                                                                                                Product Title
+                                                                                            </th>
+                                                                                            <th
+                                                                                                scope='col'
+                                                                                                className='px-6 py-3 whitespace-nowrap'
+                                                                                            >
+                                                                                                Product Image
+                                                                                            </th>
+                                                                                            <th
+                                                                                                scope='col'
+                                                                                                className='px-6 py-3 whitespace-nowrap'
+                                                                                            >
+                                                                                                Attribute
+                                                                                            </th>
+                                                                                            <th
+                                                                                                scope='col'
+                                                                                                className='px-6 py-3 whitespace-nowrap'
+                                                                                            >
+                                                                                                Quantity
+                                                                                            </th>
+                                                                                            <th
+                                                                                                scope='col'
+                                                                                                className='px-6 py-3 whitespace-nowrap'
+                                                                                            >
+                                                                                                Price
+                                                                                            </th>
+                                                                                            <th
+                                                                                                scope='col'
+                                                                                                className='px-6 py-3 whitespace-nowrap'
+                                                                                            >
+                                                                                                Sub Total
+                                                                                            </th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        {item?.products
+                                                                                            ?.map((product, index_) => {
+                                                                                                return (
+                                                                                                    <tr key={index_} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
+                                                                                                        <td className='px-6 py-4 font-[500] text-gray-600'>{product.productId}</td>
+                                                                                                        <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                            <div className='w-[200px]'>{product.productTitle}</div>
+                                                                                                        </td>
+                                                                                                        <td className='px-6 py-4 font-[500]'>
+                                                                                                            <img src={product.image} className='h-[40px] w-[40px] object-cover rounded-md' />
+                                                                                                        </td>
 
-                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
-                                                                                                    {product.attribute
-                                                                                                        ? Object.entries(product.attribute).map(([key, value], idx) => (
-                                                                                                            <div key={idx}>
-                                                                                                                <strong>{key}:</strong> {value}
-                                                                                                            </div>
-                                                                                                        ))
-                                                                                                        : 'Không có'}
-                                                                                                </td>
+                                                                                                        <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                            {product.attribute
+                                                                                                                ? Object.entries(product.attribute).map(([key, value], idx) => (
+                                                                                                                    <div key={idx}>
+                                                                                                                        <strong>{key}:</strong> {value}
+                                                                                                                    </div>
+                                                                                                                ))
+                                                                                                                : 'Không có'}
+                                                                                                        </td>
 
-                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
-                                                                                                    {product.quantity}
-                                                                                                </td>
-                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
-                                                                                                    {product.price.toLocaleString('vi-VN')}đ
-                                                                                                </td>
-                                                                                                <td className='px-6 py-4 font-[500] text-gray-600'>
-                                                                                                    {product.subTotal.toLocaleString('vi-VN')}đ
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        );
-                                                                                    })}
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            )}
-                                                    </>
+                                                                                                        <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                            {product.quantity}
+                                                                                                        </td>
+                                                                                                        <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                            {product.price.toLocaleString('vi-VN')}đ
+                                                                                                        </td>
+                                                                                                        <td className='px-6 py-4 font-[500] text-gray-600'>
+                                                                                                            {product.subTotal.toLocaleString('vi-VN')}đ
+                                                                                                        </td>
+                                                                                                    </tr>
+                                                                                                );
+                                                                                            })}
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                )}
+                                                        </>
 
-                                                );
-                                            })
+                                                    );
+                                                })
                                         }
                                     </tbody>
                                 </table>

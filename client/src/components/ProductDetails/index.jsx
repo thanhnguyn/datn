@@ -8,6 +8,7 @@ import { MyContext } from '../../App';
 
 const ProductDetailsComponent = (props) => {
     const [quantity, setQuantity] = useState(1);
+    const [isQtyValid, setIsQtyValid] = useState(true);
 
     const [selectedAttributes, setSelectedAttributes] = useState({});
     const [attributeErrors, setAttributeErrors] = useState({});
@@ -16,6 +17,11 @@ const ProductDetailsComponent = (props) => {
 
     const handleSelectQty = (qty) => {
         setQuantity(qty);
+        if (qty <= props?.item?.countInStock && qty >= 1) {
+            setIsQtyValid(true);
+        } else {
+            setIsQtyValid(false);
+        }
     };
 
     const handleSelectAttribute = (type, value) => {
@@ -36,6 +42,16 @@ const ProductDetailsComponent = (props) => {
         if (Object.keys(errors).length > 0) {
             setAttributeErrors(errors);
             context?.openAlertBox('error', 'Please select all required attributes before adding to cart.');
+            return;
+        }
+
+        if (quantity > product?.countInStock) {
+            context?.openAlertBox('error', `Only ${product?.countInStock} items in stock. Please reduce quantity.`);
+            return;
+        }
+
+        if (!isQtyValid) {
+            context?.openAlertBox('error', `Invalid quantity: only ${product?.countInStock} items in stock.`);
             return;
         }
 
@@ -74,8 +90,8 @@ const ProductDetailsComponent = (props) => {
                 <span className='text-[13px] cursor-pointer'>Review ({props?.reviewsCount})</span>
             </div>
             <div className='flex items-center gap-4 mt-4'>
-                <span className='oldPrice line-through text-gray-500 text-[20px] font-[500]'>{props?.item?.price?.toLocaleString('vi-VN')}đ</span>
-                <span className='price text-primary text-[20px] font-[600]'>{props?.item?.oldPrice?.toLocaleString('vi-VN')}đ</span>
+                <span className='oldPrice line-through text-gray-500 text-[20px] font-[500]'>{props?.item?.oldPrice?.toLocaleString('vi-VN')}đ</span>
+                <span className='price text-primary text-[20px] font-[600]'>{props?.item?.price?.toLocaleString('vi-VN')}đ</span>
                 <span className='text-[14px]'>Available in stock: <span className='text-green-600  text-[14px] font-bold'>{props?.item?.countInStock} items</span></span>
             </div>
             <p className='mt-3 pr-10 mb-5'>{props?.item?.description}</p>
@@ -109,11 +125,16 @@ const ProductDetailsComponent = (props) => {
             <p className='text-[14px] mt-5 mb-2 text-[#000]'>Free shipping (Est. Delivery time 2-3 days)</p>
             <div className='flex items-center gap-4 py-4'>
                 <div className='qtyBoxWrapper w-[70px]'>
-                    <QtyBox handleSelectQty={handleSelectQty} />
+                    <QtyBox handleSelectQty={handleSelectQty} maxQty={props?.item?.countInStock} />
                 </div>
-                <Button className='btn-org flex gap-2' onClick={() => addToCart(props?.item, context?.userData?._id, quantity)}>
-                    <MdOutlineShoppingCart className='text-[22px]' /> Add to cart
-                </Button>
+                {
+                    props?.item?.countInStock === 0 ?
+                        <></>
+                        :
+                        <Button className='btn-org flex gap-2' onClick={() => addToCart(props?.item, context?.userData?._id, quantity)}>
+                            <MdOutlineShoppingCart className='text-[22px]' /> Add to cart
+                        </Button>
+                }
             </div>
             <div className='flex items-center gap-4 mt-4'>
                 <span className='flex items-center gap-2 text-[15px] link cursor-pointer font-[500]'> <FaRegHeart className='text-[18px]' /> Add to wishlist</span>

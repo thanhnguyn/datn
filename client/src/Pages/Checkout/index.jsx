@@ -72,6 +72,14 @@ const Checkout = () => {
     const onApprovePayment = async (data) => {
         const user = context?.userData;
         if (user?.address_details?.length !== 0) {
+            for (const item of context?.cartData) {
+                const productInStock = item.countInStock;
+                if (item.quantity > productInStock) {
+                    context?.openAlertBox('error', `Product "${item.productTitle}" exceeds available stock. Only ${productInStock} left.`);
+                    return;
+                }
+            }
+
             const info = {
                 userId: user?._id,
                 products: context?.cartData,
@@ -89,7 +97,7 @@ const Checkout = () => {
             const headers = {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
                 'Content-Type': 'application/json'
-            }
+            };
 
             const response = await axios.post(
                 VITE_API_URL + "/api/order/capture-order-paypal",
@@ -102,7 +110,7 @@ const Checkout = () => {
                 history('/order/success');
                 deleteData(`/api/cart/emptyCart/${context?.userData?._id}`).then((res) => {
                     context?.getCartItems();
-                })
+                });
             });
 
             if (response.data.success) {
@@ -154,12 +162,12 @@ const Checkout = () => {
         };
 
         postData(`/api/order/create`, payLoad).then((res) => {
-            context?.openAlertBox('success', res?.message);
             context?.getOrdersData();
-            if (res?.error === false) {
+            if (res?.data?.error === false) {
                 deleteData(`/api/cart/emptyCart/${user?._id}`).then((res) => {
                     context?.getCartItems();
                 });
+                context?.openAlertBox('success', res?.message);
             } else {
                 history('/order/fail');
                 context?.openAlertBox('error', res?.message);
@@ -171,6 +179,15 @@ const Checkout = () => {
     const handleVNPayPayment = async () => {
         const user = context?.userData;
         if (user?.address_details?.length !== 0) {
+            // Kiểm tra số lượng sản phẩm với countInStock
+            for (const item of context?.cartData) {
+                const productInStock = item.countInStock;
+                if (item.quantity > productInStock) {
+                    context?.openAlertBox('error', `Product "${item.productTitle}" exceeds available stock. Only ${productInStock} left.`);
+                    return; // Nếu vượt quá số lượng tồn kho, dừng và không tiếp tục
+                }
+            }
+
             const headers = {
                 'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
                 'Content-Type': 'application/json',
@@ -210,6 +227,14 @@ const Checkout = () => {
         const user = context?.userData;
 
         if (user?.address_details?.length !== 0) {
+            for (const item of context?.cartData) {
+                const productInStock = item.countInStock;
+                if (item.quantity > productInStock) {
+                    context?.openAlertBox('error', `Product "${item.productTitle}" exceeds available stock. Only ${productInStock} left.`);
+                    return;
+                }
+            }
+
             const payLoad = {
                 userId: user?._id,
                 products: context?.cartData,
@@ -226,20 +251,22 @@ const Checkout = () => {
             };
 
             postData(`/api/order/create`, payLoad).then((res) => {
-                context?.openAlertBox('success', res?.message);
                 if (res?.error === false) {
                     deleteData(`/api/cart/emptyCart/${user?._id}`).then((res) => {
                         context?.getCartItems();
                     });
+                    context?.openAlertBox('success', res?.message);
+                    history('/order/success');
                 } else {
+                    history('/order/fail');
                     context?.openAlertBox('error', res?.message);
                 }
-                history('/order/success');
-            })
+            });
         } else {
             context?.openAlertBox('error', 'Please add address');
         }
-    }
+    };
+
 
     return (
         <section className='py-10'>

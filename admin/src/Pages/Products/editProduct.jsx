@@ -41,7 +41,7 @@ const EditProduct = () => {
     const [productCat, setProductCat] = useState('');
     const [productSubCat, setProductSubCat] = useState('');
     const [productThirdLevelCat, setProductThirdLevelCat] = useState('');
-    const [productFeature, setProductFeature] = useState('');
+    const [productFeature, setProductFeature] = useState();
     const [isLoading, setIsLoading] = useState(false);
 
     const [newAttributeKey, setNewAttributeKey] = useState('');
@@ -121,10 +121,13 @@ const EditProduct = () => {
     };
 
     const handleChangeProductFeature = (event) => {
+        const value = event.target.value === "true"; // ép kiểu từ chuỗi sang boolean
         setProductFeature(event.target.value);
-        formFields.isFeatured = event.target.value;
+        setFormFields(prev => ({
+            ...prev,
+            isFeatured: value
+        }));
     };
-
     const onChangeInput = (e) => {
         const { name, value } = e.target;
 
@@ -167,28 +170,21 @@ const EditProduct = () => {
     }
 
     const removeProductImg = (image, index) => {
-        const imageArr = [...previews];
+        const imageArr = previews.filter((img, idx) => idx !== index); // Remove the image directly by filtering it out
         deleteImages(`/api/product/deleteImage?img=${image}`).then(() => {
-            imageArr.splice(index, 1);
-            setPreviews([]);
-            setTimeout(() => {
-                setPreviews(imageArr);
-                setFormFields(prev => ({ ...prev, image: imageArr }));
-            }, 100);
+            setPreviews(imageArr); // Set updated previews
+            setFormFields(prev => ({ ...prev, image: imageArr })); // Update formFields with new images
         });
     };
 
     const removeBannerImg = (image, index) => {
-        const imageArr = [...bannerPreviews];
+        const imageArr = bannerPreviews.filter((img, idx) => idx !== index); // Remove the image directly by filtering it out
         deleteImages(`/api/product/deleteImage?img=${image}`).then(() => {
-            imageArr.splice(index, 1);
-            setBannerPreviews([]);
-            setTimeout(() => {
-                setBannerPreviews(imageArr);
-                setFormFields(prev => ({ ...prev, bannerImage: imageArr }));
-            }, 100);
+            setBannerPreviews(imageArr); // Set updated banner previews
+            setFormFields(prev => ({ ...prev, bannerImage: imageArr })); // Update formFields with new banner images
         });
     };
+
 
     const handleChangeSwitch = (event) => {
         setCheckedSwitch(event.target.checked);
@@ -441,8 +437,8 @@ const EditProduct = () => {
                                 label="isFeatured"
                                 onChange={handleChangeProductFeature}
                             >
-                                <MenuItem value={10}>True</MenuItem>
-                                <MenuItem value={20}>False</MenuItem>
+                                <MenuItem value='true'>True</MenuItem>
+                                <MenuItem value='false'>False</MenuItem>
                             </Select>
                         </div>
                         <div className='col'>
